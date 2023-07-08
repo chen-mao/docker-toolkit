@@ -59,7 +59,7 @@ var (
 type Config struct {
 	AcceptEnvvarUnprivileged bool `toml:"accept-nvidia-visible-devices-envvar-when-unprivileged"`
 
-	NVIDIAContainerCLIConfig         ContainerCLIConfig `toml:"nvidia-container-cli"`
+	NVIDIAContainerCLIConfig         ContainerCLIConfig `toml:"xdxct-container-cli"`
 	NVIDIACTKConfig                  CTKConfig          `toml:"nvidia-ctk"`
 	NVIDIAContainerRuntimeConfig     RuntimeConfig      `toml:"nvidia-container-runtime"`
 	NVIDIAContainerRuntimeHookConfig RuntimeHookConfig  `toml:"nvidia-container-runtime-hook"`
@@ -161,17 +161,17 @@ func GetDefaultConfigToml() (*toml.Tree, error) {
 	tree.SetWithComment("accept-nvidia-visible-devices-envvar-when-unprivileged", "", true, true)
 	tree.SetWithComment("accept-nvidia-visible-devices-as-volume-mounts", "", true, false)
 
-	// nvidia-container-cli
-	tree.SetWithComment("nvidia-container-cli.root", "", true, "/run/nvidia/driver")
-	tree.SetWithComment("nvidia-container-cli.path", "", true, "/usr/bin/nvidia-container-cli")
-	tree.Set("nvidia-container-cli.environment", []string{})
-	tree.SetWithComment("nvidia-container-cli.debug", "", true, "/var/log/nvidia-container-toolkit.log")
-	tree.SetWithComment("nvidia-container-cli.ldcache", "", true, "/etc/ld.so.cache")
-	tree.Set("nvidia-container-cli.load-kmods", true)
-	tree.SetWithComment("nvidia-container-cli.no-cgroups", "", true, false)
+	// xdxct-container-cli
+	tree.SetWithComment("xdxct-container-cli.root", "", true, "/run/nvidia/driver")
+	tree.SetWithComment("xdxct-container-cli.path", "", true, "/usr/bin/xdxct-container-cli")
+	tree.Set("xdxct-container-cli.environment", []string{})
+	tree.SetWithComment("xdxct-container-cli.debug", "", true, "/var/log/nvidia-container-toolkit.log")
+	tree.SetWithComment("xdxct-container-cli.ldcache", "", true, "/etc/ld.so.cache")
+	tree.Set("xdxct-container-cli.load-kmods", true)
+	tree.SetWithComment("xdxct-container-cli.no-cgroups", "", true, false)
 
-	tree.SetWithComment("nvidia-container-cli.user", "", getCommentedUserGroup(), getUserGroup())
-	tree.Set("nvidia-container-cli.ldconfig", getLdConfigPath())
+	tree.SetWithComment("xdxct-container-cli.user", "", getCommentedUserGroup(), getUserGroup())
+	tree.Set("xdxct-container-cli.ldconfig", getLdConfigPath())
 
 	// nvidia-container-runtime
 	tree.SetWithComment("nvidia-container-runtime.debug", "", true, "/var/log/nvidia-container-runtime.log")
@@ -205,12 +205,12 @@ func getLdConfigPath() string {
 	return "@/sbin/ldconfig"
 }
 
-// getUserGroup returns the user and group to use for the nvidia-container-cli and whether the config option should be commented.
+// getUserGroup returns the user and group to use for the xdxct-container-cli and whether the config option should be commented.
 func getUserGroup() string {
 	return "root:video"
 }
 
-// getCommentedUserGroup returns whether the nvidia-container-cli user and group config option should be commented.
+// getCommentedUserGroup returns whether the xdxct-container-cli user and group config option should be commented.
 func getCommentedUserGroup() bool {
 	uncommentIf := map[string]bool{
 		"suse":     true,

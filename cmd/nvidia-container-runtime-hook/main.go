@@ -49,9 +49,9 @@ func getCLIPath(config CLIConfig) string {
 		log.Panicln("couldn't set PATH variable:", err)
 	}
 
-	path, err := exec.LookPath("nvidia-container-cli")
+	path, err := exec.LookPath("xdxct-container-cli")
 	if err != nil {
-		log.Panicln("couldn't find binary nvidia-container-cli in", os.Getenv("PATH"), ":", err)
+		log.Panicln("couldn't find binary xdxct-container-cli in", os.Getenv("PATH"), ":", err)
 	}
 	return path
 }

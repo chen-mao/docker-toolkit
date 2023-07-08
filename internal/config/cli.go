@@ -16,7 +16,7 @@
 
 package config
 
-// ContainerCLIConfig stores the options for the nvidia-container-cli
+// ContainerCLIConfig stores the options for the xdxct-container-cli
 type ContainerCLIConfig struct {
 	Root string `toml:"root"`
 }

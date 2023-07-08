@@ -43,7 +43,7 @@ When `mode` is set to `"auto"`, the runtime employs heuristics to determine whic
 
 #### Legacy Mode
 
-When `mode` is set to `"legacy"`, the NVIDIA Container Runtime adds a [`prestart` hook](https://github.com/opencontainers/runtime-spec/blob/master/config.md#prestart) to the incomming OCI specification that invokes the NVIDIA Container Runtime Hook for all containers created. This hook checks whether NVIDIA devices are requested and ensures GPU access is configured using the `nvidia-container-cli` from the [libnvidia-container](https://github.com/NVIDIA/libnvidia-container) project.
+When `mode` is set to `"legacy"`, the NVIDIA Container Runtime adds a [`prestart` hook](https://github.com/opencontainers/runtime-spec/blob/master/config.md#prestart) to the incomming OCI specification that invokes the NVIDIA Container Runtime Hook for all containers created. This hook checks whether NVIDIA devices are requested and ensures GPU access is configured using the `xdxct-container-cli` from the [libxdxct-container](https://github.com/NVIDIA/libxdxct-container) project.
 
 #### CSV Mode
 

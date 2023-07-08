@@ -8,7 +8,7 @@ nvidia-container-runtime-hook (1.4.0-1) UNRELEASED; urgency=medium
 
 nvidia-container-runtime-hook (1.3.0-1) UNRELEASED; urgency=medium
 
-  * b4d7682 Search for nvidia-container-cli in the custom root directory
+  * b4d7682 Search for xdxct-container-cli in the custom root directory
   * 6e589e0 Add support for display capability
   * b406749 Add support for Ubuntu 14.04, Debian Jessie and Amazon Linux 2
 

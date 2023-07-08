@@ -36,7 +36,7 @@ const (
 	// DefaultNvidiaDriverRoot specifies the default NVIDIA driver run directory
 	DefaultNvidiaDriverRoot = "/run/nvidia/driver"
 
-	nvidiaContainerCliSource         = "/usr/bin/nvidia-container-cli"
+	nvidiaContainerCliSource         = "/usr/bin/xdxct-container-cli"
 	nvidiaContainerRuntimeHookSource = "/usr/bin/nvidia-container-runtime-hook"
 
 	nvidiaContainerToolkitConfigSource = "/etc/nvidia-container-runtime/config.toml"
@@ -167,8 +167,8 @@ func main() {
 			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_HOOK_SKIP_MODE_DETECTION"},
 		},
 		&cli.StringFlag{
-			Name:        "nvidia-container-cli.debug",
-			Aliases:     []string{"nvidia-container-cli-debug"},
+			Name:        "xdxct-container-cli.debug",
+			Aliases:     []string{"xdxct-container-cli-debug"},
 			Usage:       "Specify the location of the debug log file for the NVIDIA Container CLI",
 			Destination: &opts.ContainerCLIDebug,
 			EnvVars:     []string{"NVIDIA_CONTAINER_CLI_DEBUG"},
@@ -338,8 +338,8 @@ func installContainerLibraries(toolkitRoot string) error {
 	log.Infof("Installing NVIDIA container library to '%v'", toolkitRoot)
 
 	libs := []string{
-		"libnvidia-container.so.1",
-		"libnvidia-container-go.so.1",
+		"libxdxct-container.so.1",
+		"libxdxct-container-go.so.1",
 	}
 
 	for _, l := range libs {
@@ -395,7 +395,7 @@ func installToolkitConfig(c *cli.Context, toolkitConfigPath string, nvidiaContai
 
 	// Read the ldconfig path from the config as this may differ per platform
 	// On ubuntu-based systems this ends in `.real`
-	ldconfigPath := fmt.Sprintf("%s", config.GetDefault("nvidia-container-cli.ldconfig", "/sbin/ldconfig"))
+	ldconfigPath := fmt.Sprintf("%s", config.GetDefault("xdxct-container-cli.ldconfig", "/sbin/ldconfig"))
 	// Use the driver run root as the root:
 	driverLdconfigPath := "@" + filepath.Join(opts.DriverRoot, strings.TrimPrefix(ldconfigPath, "@/"))
 
@@ -403,10 +403,10 @@ func installToolkitConfig(c *cli.Context, toolkitConfigPath string, nvidiaContai
 		// Set the options in the root toml table
 		"accept-nvidia-visible-devices-envvar-when-unprivileged": opts.acceptNVIDIAVisibleDevicesWhenUnprivileged,
 		"accept-nvidia-visible-devices-as-volume-mounts":         opts.acceptNVIDIAVisibleDevicesAsVolumeMounts,
-		// Set the nvidia-container-cli options
-		"nvidia-container-cli.root":     opts.DriverRoot,
-		"nvidia-container-cli.path":     nvidiaContainerCliExecutablePath,
-		"nvidia-container-cli.ldconfig": driverLdconfigPath,
+		// Set the xdxct-container-cli options
+		"xdxct-container-cli.root":     opts.DriverRoot,
+		"xdxct-container-cli.path":     nvidiaContainerCliExecutablePath,
+		"xdxct-container-cli.ldconfig": driverLdconfigPath,
 		// Set nvidia-ctk options
 		"nvidia-ctk.path": nvidiaCTKPath,
 		// Set the nvidia-container-runtime-hook options
@@ -425,7 +425,7 @@ func installToolkitConfig(c *cli.Context, toolkitConfigPath string, nvidiaContai
 		"nvidia-container-runtime.modes.cdi.annotation-prefixes": opts.ContainerRuntimeModesCDIAnnotationPrefixes,
 		"nvidia-container-runtime.modes.cdi.default-kind":        opts.ContainerRuntimeModesCdiDefaultKind,
 		"nvidia-container-runtime.runtimes":                      opts.ContainerRuntimeRuntimes,
-		"nvidia-container-cli.debug":                             opts.ContainerCLIDebug,
+		"xdxct-container-cli.debug":                             opts.ContainerCLIDebug,
 	}
 	for key, value := range optionalConfigValues {
 		if !c.IsSet(key) {
@@ -500,8 +500,8 @@ func installContainerCLI(toolkitRoot string) (string, error) {
 	e := executable{
 		source: nvidiaContainerCliSource,
 		target: executableTarget{
-			dotfileName: "nvidia-container-cli.real",
-			wrapperName: "nvidia-container-cli",
+			dotfileName: "xdxct-container-cli.real",
+			wrapperName: "xdxct-container-cli",
 		},
 		env: env,
 	}

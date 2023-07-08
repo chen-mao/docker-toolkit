@@ -17,7 +17,7 @@
 function assert_usage() {
     echo "Incorrect arguments: $*"
     echo "$(basename ${BASH_SOURCE[0]}) PACKAGE_REPO_ROOT [SHA]"
-    echo "\tPACKAGE_REPO_ROOT: The path to the libnvidia-container repository"
+    echo "\tPACKAGE_REPO_ROOT: The path to the libxdxct-container repository"
     echo "\tSHA: The SHA / reference to release. [Default: HEAD]"
     exit 1
 }
@@ -120,7 +120,7 @@ function sync() {
     fi
     mkdir -p ${dst}
 
-    for f in $(ls ${src}/libnvidia-container*.${pkg_type} ${src}/nvidia-container-toolkit*.${pkg_type}); do
+    for f in $(ls ${src}/libxdxct-container*.${pkg_type} ${src}/nvidia-container-toolkit*.${pkg_type}); do
         # We never release nvidia-container-toolkit-operator-extensions packages
         if [[ "${f/"nvidia-container-toolkit-operator-extensions"/}" != "${f}" ]]; then
             echo "Skipping ${f}"
@@ -162,9 +162,9 @@ if [[ x"${_current_branch}" != x"gh-pages" ]]; then
 fi
 
 : ${UPSTREAM_REMOTE:="origin"}
-_remote_name=$( git remote -v | grep "git@gitlab.com:nvidia/container-toolkit/libnvidia-container.git (push)" | cut -d$'\t' -f1 )
+_remote_name=$( git remote -v | grep "git@gitlab.com:nvidia/container-toolkit/libxdxct-container.git (push)" | cut -d$'\t' -f1 )
 if [[ x"${_remote_name}" != x"${UPSTREAM_REMOTE}" ]]; then
-    echo "Identified ${_remote_name} as git@gitlab.com:nvidia/container-toolkit/libnvidia-container.git remote."
+    echo "Identified ${_remote_name} as git@gitlab.com:nvidia/container-toolkit/libxdxct-container.git remote."
     echo "Set UPSTREAM_REMOTE=${_remote_name} instead of ${UPSTREAM_REMOTE}"
 fi
 
@@ -184,7 +184,7 @@ git -C ${PACKAGE_REPO_ROOT} commit -s -F- <<EOF
 Add packages for NVIDIA Container Toolkit ${VERSION} release
 
 These include:
-* libnvidia-container* ${LIBNVIDIA_CONTAINER_PACKAGE_VERSION}
+* libxdxct-container* ${LIBNVIDIA_CONTAINER_PACKAGE_VERSION}
 * nvidia-container-toolkit ${NVIDIA_CONTAINER_TOOLKIT_PACKAGE_VERSION}
 * nvidia-container-runtime ${NVIDIA_CONTAINER_RUNTIME_PACKAGE_VERSION}
 * nvidia-docker ${NVIDIA_DOCKER_PACKAGE_VERSION}
@@ -195,7 +195,7 @@ git -C ${PACKAGE_REPO_ROOT} commit -s -F- <<EOF
 Add packages for NVIDIA Container Toolkit ${VERSION} ${REPO} release
 
 These include:
-* libnvidia-container* ${LIBNVIDIA_CONTAINER_PACKAGE_VERSION}
+* libxdxct-container* ${LIBNVIDIA_CONTAINER_PACKAGE_VERSION}
 * nvidia-container-toolkit ${NVIDIA_CONTAINER_TOOLKIT_PACKAGE_VERSION}
 EOF
 fi

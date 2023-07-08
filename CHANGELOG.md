@@ -15,7 +15,7 @@
 * Add option to create device nodes when creating `/dev/char` symlinks
 * Bump CUDA base image version to 12.1.1.
 
-* [libnvidia-container] Support OpenSSL 3 with the Encrypt/Decrypt library
+* [libxdxct-container] Support OpenSSL 3 with the Encrypt/Decrypt library
 
 ## v1.13.1
 
@@ -41,9 +41,9 @@
 * Add `nvidia-ctk cdi transform` command to apply transforms to CDI specifications.
 * Add `--vendor` and `--class` options to `nvidia-ctk cdi generate`
 
-* [libnvidia-container] Fix segmentation fault when RPC initialization fails.
-* [libnvidia-container] Build centos variants of the NVIDIA Container Library with static libtirpc v1.3.2.
-* [libnvidia-container] Remove make targets for fedora35 as the centos8 packages are compatible.
+* [libxdxct-container] Fix segmentation fault when RPC initialization fails.
+* [libxdxct-container] Build centos variants of the NVIDIA Container Library with static libtirpc v1.3.2.
+* [libxdxct-container] Remove make targets for fedora35 as the centos8 packages are compatible.
 
 * [toolkit-container] Add `nvidia-container-runtime.modes.cdi.annotation-prefixes` config option that allows the CDI annotation prefixes that are read to be overridden.
 * [toolkit-container] Create device nodes when generating CDI specification for management containers.
@@ -62,7 +62,7 @@
 * Add support for generating CDI specifications for GDS and MOFED devices
 * Ensure CDI specification is validated on save when generating a spec
 * Rename `--discovery-mode` argument to `--mode` for `nvidia-ctk cdi generate`
-* [libnvidia-container] Fix segfault on WSL2 systems
+* [libxdxct-container] Fix segfault on WSL2 systems
 * [toolkit-container] Add `--cdi-enabled` flag to toolkit config
 * [toolkit-container] Install `nvidia-ctk` from toolkit container
 * [toolkit-container] Use installed `nvidia-ctk` path in NVIDIA Container Toolkit config
@@ -83,9 +83,9 @@
 * Discover all `gsb*.bin` GSP firmware files when generating CDI specification.
 * Align `.deb` and `.rpm` release candidate package versions
 * Remove `fedora35` packaging targets
-* [libnvidia-container] Include all `gsp*.bin` firmware files if present
-* [libnvidia-container] Align `.deb` and `.rpm` release candidate package versions
-* [libnvidia-container] Remove `fedora35` packaging targets
+* [libxdxct-container] Include all `gsp*.bin` firmware files if present
+* [libxdxct-container] Align `.deb` and `.rpm` release candidate package versions
+* [libxdxct-container] Remove `fedora35` packaging targets
 * [toolkit-container] Install `nvidia-container-toolkit-operator-extensions` package for mode-specific executables.
 * [toolkit-container] Allow `nvidia-container-runtime.mode` to be set when configuring the NVIDIA Container Toolkit
 
@@ -93,7 +93,7 @@
 
 * Promote `v1.12.0-rc.5` to `v1.12.0`
 * Rename `nvidia cdi generate` `--root` flag to `--driver-root` to better indicate intent
-* [libnvidia-container] Add nvcubins.bin to DriverStore components under WSL2
+* [libxdxct-container] Add nvcubins.bin to DriverStore components under WSL2
 * [toolkit-container] Bump CUDA base images to 12.0.1
 
 ## v1.12.0-rc.5
@@ -122,14 +122,14 @@
 * Improve logging of errors from the NVIDIA Container Runtime
 * Improve CDI specification generation to support rootless podman
 * Use `nvidia-ctk cdi generate` to generate CDI specifications instead of `nvidia-ctk info generate-cdi`
-* [libnvidia-container] Skip creation of existing files when these are already mounted
+* [libxdxct-container] Skip creation of existing files when these are already mounted
 
 ## v1.12.0-rc.1
 
 * Add support for multiple Docker Swarm resources
 * Improve injection of Vulkan configurations and libraries
 * Add `nvidia-ctk info generate-cdi` command to generated CDI specification for available devices
-* [libnvidia-container] Include NVVM compiler library in compute libs
+* [libxdxct-container] Include NVVM compiler library in compute libs
 
 ## v1.11.0
 
@@ -142,12 +142,12 @@
 * Fix removal of `nvidia-container-runtime-hook` on RPM-based systems
 * Inject platform files into container on Tegra-based systems
 * [toolkit container] Update CUDA base images to 11.7.1
-* [libnvidia-container] Preload libgcc_s.so.1 on arm64 systems
+* [libxdxct-container] Preload libgcc_s.so.1 on arm64 systems
 
 ## v1.11.0-rc.2
 
 * Allow `accept-nvidia-visible-devices-*` config options to be set by toolkit container
-* [libnvidia-container] Fix bug where LDCache was not updated when the `--no-pivot-root` option was specified
+* [libxdxct-container] Fix bug where LDCache was not updated when the `--no-pivot-root` option was specified
 
 ## v1.11.0-rc.1
 
@@ -180,9 +180,9 @@
 * Replace experimental option for NVIDIA Container Runtime with nvidia-container-runtime.mode = csv option
 * Use csv as default mode on Tegra systems without NVML
 * Add --version flag to all CLIs
-* [libnvidia-container] Bump libtirpc to 1.3.2
-* [libnvidia-container] Fix bug when running host ldconfig using glibc compiled with a non-standard prefix
-* [libnvidia-container] Add libcudadebugger.so to list of compute libraries
+* [libxdxct-container] Bump libtirpc to 1.3.2
+* [libxdxct-container] Fix bug when running host ldconfig using glibc compiled with a non-standard prefix
+* [libxdxct-container] Add libcudadebugger.so to list of compute libraries
 
 ## v1.10.0-rc.1
 
@@ -191,18 +191,18 @@
 
 ## v1.9.0
 
-* [libnvidia-container] Add additional check for Tegra in /sys/.../family file in CLI
-* [libnvidia-container] Update jetpack-specific CLI option to only load Base CSV files by default
-* [libnvidia-container] Fix bug (from 1.8.0) when mounting GSP firmware into containers without /lib to /usr/lib symlinks
-* [libnvidia-container] Update nvml.h to CUDA 11.6.1 nvML_DEV 11.6.55
-* [libnvidia-container] Update switch statement to include new brands from latest nvml.h
-* [libnvidia-container] Process all --require flags on Jetson platforms
-* [libnvidia-container] Fix long-standing issue with running ldconfig on Debian systems
+* [libxdxct-container] Add additional check for Tegra in /sys/.../family file in CLI
+* [libxdxct-container] Update jetpack-specific CLI option to only load Base CSV files by default
+* [libxdxct-container] Fix bug (from 1.8.0) when mounting GSP firmware into containers without /lib to /usr/lib symlinks
+* [libxdxct-container] Update nvml.h to CUDA 11.6.1 nvML_DEV 11.6.55
+* [libxdxct-container] Update switch statement to include new brands from latest nvml.h
+* [libxdxct-container] Process all --require flags on Jetson platforms
+* [libxdxct-container] Fix long-standing issue with running ldconfig on Debian systems
 
 ## v1.8.1
 
-* [libnvidia-container] Fix bug in determining cgroup root when running in nested containers
-* [libnvidia-container] Fix permission issue when determining cgroup version
+* [libxdxct-container] Fix bug in determining cgroup root when running in nested containers
+* [libxdxct-container] Fix permission issue when determining cgroup version
 
 ## v1.8.0
 
@@ -214,7 +214,7 @@
 
 ## v1.8.0-rc.1
 
-* [libnvidia-container] Add support for cgroupv2
+* [libxdxct-container] Add support for cgroupv2
 * Release toolkit-container images from nvidia-container-toolkit repository
 
 ## v1.7.0
@@ -256,29 +256,29 @@
 
 ## v1.5.0
 
-* Add dependence on libnvidia-container-tools >= 1.4.0
+* Add dependence on libxdxct-container-tools >= 1.4.0
 * Add golang check targets to Makefile
 * Add Jenkinsfile definition for build targets
 * Move docker.mk to docker folder
 
 ## v1.4.2
 
-* Add dependence on libnvidia-container-tools >= 1.3.3
+* Add dependence on libxdxct-container-tools >= 1.3.3
 
 ## v1.4.1
 
 * Ignore NVIDIA_VISIBLE_DEVICES for containers with insufficent privileges
-* Add dependence on libnvidia-container-tools >= 1.3.2
+* Add dependence on libxdxct-container-tools >= 1.3.2
 
 ## v1.4.0
 
 * Add 'compute' capability to list of defaults
-* Add dependence on libnvidia-container-tools >= 1.3.1
+* Add dependence on libxdxct-container-tools >= 1.3.1
 
 ## v1.3.0
 
 * Promote 1.3.0-rc.2-1 to 1.3.0
-* Add dependence on libnvidia-container-tools >= 1.3.0
+* Add dependence on libxdxct-container-tools >= 1.3.0
 
 ## v1.3.0-rc.2
 
@@ -302,7 +302,7 @@
 ## v1.2.0
 
 *  8e0aab46 Fix repo listed in changelog for debian distributions
-*  320bb6e4 Update dependence on libnvidia-container to 1.2.0
+*  320bb6e4 Update dependence on libxdxct-container to 1.2.0
 *  6cfc8097 Update package license to match source license
 *  e7dc3cbb Fix debian copyright file
 *  d3aee3e0 Add the 'ngx' driver capability
@@ -313,7 +313,7 @@
 
 ## v1.1.1
 
-* d202aded Update dependence to libnvidia-container 1.1.1
+* d202aded Update dependence to libxdxct-container 1.1.1
 
 ## v1.1.0
 

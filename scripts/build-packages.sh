@@ -53,7 +53,7 @@ fi
 
 # if [[ "${NVIDIA_CONTAINER_TOOLKIT_PACKAGE_VERSION}" != "${LIBNVIDIA_CONTAINER_PACKAGE_VERSION}" ]]; then
 #     set +x
-#     echo "The libnvidia-container and nvidia-container-toolkit versions do not match."
+#     echo "The libxdxct-container and nvidia-container-toolkit versions do not match."
 #     echo "lib: '${LIBNVIDIA_CONTAINER_PACKAGE_VERSION}'"
 #     echo "toolkit: '${NVIDIA_CONTAINER_TOOLKIT_PACKAGE_VERSION}'"
 #     set -x

@@ -24,7 +24,7 @@ make local-ubuntu18.04
 ```
 will build the `ubuntu18.04-amd64` packages for release and launch a docker container with these packages added to a local APT repository.
 
-The various `apt` workflows can then be tested as if the packages were released to the `libnvidia-container` experimental repository.
+The various `apt` workflows can then be tested as if the packages were released to the `libxdxct-container` experimental repository.
 
 The `local-centos8` make target is available for testing the `centos8-x86_64` workflows as representative of `yum`-based installation workflows.
 
@@ -47,15 +47,15 @@ $ yum install -y nvidia-docker2
 installs the following packages:
 ```bash
 $ yum list installed | grep nvidia
-libnvidia-container-tools.x86_64   1.5.1-1                                 @libnvidia-container
-libnvidia-container1.x86_64        1.5.1-1                                 @libnvidia-container
+libxdxct-container-tools.x86_64   1.5.1-1                                 @libxdxct-container
+libxdxct-container1.x86_64        1.5.1-1                                 @libxdxct-container
 nvidia-container-runtime.x86_64    3.5.0-1                                 @nvidia-container-runtime
 nvidia-container-toolkit.x86_64    1.5.1-2                                 @nvidia-container-runtime
 nvidia-docker2.noarch              2.6.0-1                                 @nvidia-docker
 ```
 Note the repositories where these packages were installed from.
 
-We now enable the `local-repository` to simulate the new packages being published to the `libnvidia-container` experimental repository and check the available `nvidia-docker2` versions:
+We now enable the `local-repository` to simulate the new packages being published to the `libxdxct-container` experimental repository and check the available `nvidia-docker2` versions:
 ```bash
 $ yum-config-manager --enable local-repository
 $ yum list --showduplicates nvidia-docker2 | tail -2
@@ -74,8 +74,8 @@ Dependencies resolved.
  Package                                Architecture        Version                        Repository                     Size
 ===============================================================================================================================
 Upgrading:
- libnvidia-container-tools              x86_64              1.6.0-0.1.rc.1                 local-repository               48 k
- libnvidia-container1                   x86_64              1.6.0-0.1.rc.1                 local-repository               95 k
+ libxdxct-container-tools              x86_64              1.6.0-0.1.rc.1                 local-repository               48 k
+ libxdxct-container1                   x86_64              1.6.0-0.1.rc.1                 local-repository               95 k
  nvidia-container-toolkit               x86_64              1.6.0-0.1.rc.1                 local-repository              1.5 M
      replacing  nvidia-container-runtime.x86_64 3.5.0-1
  nvidia-docker2                         noarch              2.6.1-0.1.rc.1                 local-repository               13 k
@@ -91,8 +91,8 @@ Showing that all the components of the stack will be updated with versions from 
 After installation the installed packages are shown as:
 ```bash
 $ yum list installed | grep nvidia
-libnvidia-container-tools.x86_64   1.6.0-0.1.rc.1                          @local-repository
-libnvidia-container1.x86_64        1.6.0-0.1.rc.1                          @local-repository
+libxdxct-container-tools.x86_64   1.6.0-0.1.rc.1                          @local-repository
+libxdxct-container1.x86_64        1.6.0-0.1.rc.1                          @local-repository
 nvidia-container-toolkit.x86_64    1.6.0-0.1.rc.1                          @local-repository
 nvidia-docker2.noarch              2.6.1-0.1.rc.1                          @local-repository
 ```

@@ -88,7 +88,7 @@ func TestGetConfig(t *testing.T) {
 			description: "config options set inline",
 			contents: []string{
 				"accept-nvidia-visible-devices-envvar-when-unprivileged = false",
-				"nvidia-container-cli.root = \"/bar/baz\"",
+				"xdxct-container-cli.root = \"/bar/baz\"",
 				"nvidia-container-runtime.debug = \"/foo/bar\"",
 				"nvidia-container-runtime.experimental = true",
 				"nvidia-container-runtime.discover-mode = \"not-legacy\"",
@@ -136,7 +136,7 @@ func TestGetConfig(t *testing.T) {
 			description: "config options set in section",
 			contents: []string{
 				"accept-nvidia-visible-devices-envvar-when-unprivileged = false",
-				"[nvidia-container-cli]",
+				"[xdxct-container-cli]",
 				"root = \"/bar/baz\"",
 				"[nvidia-container-runtime]",
 				"debug = \"/foo/bar\"",

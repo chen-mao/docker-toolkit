@@ -43,7 +43,7 @@ export DIST_DIR
 
 echo "Building ${TARGET} for all packages to ${DIST_DIR}"
 
-: "${LIBNVIDIA_CONTAINER_ROOT:=${PROJECT_ROOT}/third_party/libnvidia-container}"
+: "${LIBNVIDIA_CONTAINER_ROOT:=${PROJECT_ROOT}/third_party/libxdxct-container}"
 : "${NVIDIA_CONTAINER_TOOLKIT_ROOT:=${PROJECT_ROOT}}"
 : "${NVIDIA_CONTAINER_RUNTIME_ROOT:=${PROJECT_ROOT}/third_party/nvidia-container-runtime}"
 : "${NVIDIA_DOCKER_ROOT:=${PROJECT_ROOT}/third_party/nvidia-docker}"
@@ -55,7 +55,7 @@ if [[ -z "${NVIDIA_CONTAINER_TOOLKIT_VERSION}" || -z "${LIBNVIDIA_CONTAINER_VERS
 eval $(${SCRIPTS_DIR}/get-component-versions.sh)
 fi
 
-# Build libnvidia-container
+# Build libxdxct-container
 if [[ -z ${SKIP_LIBNVIDIA_CONTAINER} ]]; then
     make -C "${LIBNVIDIA_CONTAINER_ROOT}" -f mk/docker.mk "${TARGET}"
 fi

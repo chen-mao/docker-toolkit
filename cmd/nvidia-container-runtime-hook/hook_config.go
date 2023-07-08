@@ -22,7 +22,7 @@ var defaultPaths = [...]string{
 	configPath,
 }
 
-// CLIConfig : options for nvidia-container-cli.
+// CLIConfig : options for xdxct-container-cli.
 type CLIConfig struct {
 	Root        *string  `toml:"root"`
 	Path        *string  `toml:"path"`
@@ -44,7 +44,7 @@ type HookConfig struct {
 	AcceptDeviceListAsVolumeMounts bool               `toml:"accept-nvidia-visible-devices-as-volume-mounts"`
 	SupportedDriverCapabilities    DriverCapabilities `toml:"supported-driver-capabilities"`
 
-	NvidiaContainerCLI         CLIConfig                `toml:"nvidia-container-cli"`
+	NvidiaContainerCLI         CLIConfig                `toml:"xdxct-container-cli"`
 	NVIDIAContainerRuntime     config.RuntimeConfig     `toml:"nvidia-container-runtime"`
 	NVIDIAContainerRuntimeHook config.RuntimeHookConfig `toml:"nvidia-container-runtime-hook"`
 }

@@ -39,8 +39,8 @@ RUN fpm -s empty \
     rm -f /tmp/docker.deb
 
 
-RUN curl -s -L https://nvidia.github.io/libnvidia-container/gpgkey | apt-key add - \
-   && curl -s -L https://nvidia.github.io/libnvidia-container/ubuntu18.04/libnvidia-container.list | tee /etc/apt/sources.list.d/nvidia-container-toolkit.list \
+RUN curl -s -L https://nvidia.github.io/libxdxct-container/gpgkey | apt-key add - \
+   && curl -s -L https://nvidia.github.io/libxdxct-container/ubuntu18.04/libxdxct-container.list | tee /etc/apt/sources.list.d/nvidia-container-toolkit.list \
    && apt-get update
 
 COPY entrypoint.sh /

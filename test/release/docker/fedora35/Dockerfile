@@ -25,7 +25,7 @@ RUN fpm -s empty \
     rm -f /tmp/docker.rpm
 
 
-RUN curl -s -L https://nvidia.github.io/libnvidia-container/fedora35/libnvidia-container.repo \
+RUN curl -s -L https://nvidia.github.io/libxdxct-container/fedora35/libxdxct-container.repo \
     | tee /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 COPY entrypoint.sh /
