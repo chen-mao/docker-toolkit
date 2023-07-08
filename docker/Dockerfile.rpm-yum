@@ -51,11 +51,11 @@ ENV PKG_VERS ${PKG_VERS}
 ENV PKG_REV ${PKG_REV}
 
 # output directory
-ENV DIST_DIR=/tmp/nvidia-container-toolkit-$PKG_VERS/SOURCES
+ENV DIST_DIR=/tmp/xdxct-container-toolkit-$PKG_VERS/SOURCES
 RUN mkdir -p $DIST_DIR /dist
 
-# nvidia-container-toolkit
-WORKDIR $GOPATH/src/nvidia-container-toolkit
+# xdxct-container-toolkit
+WORKDIR $GOPATH/src/xdxct-container-toolkit
 COPY . .
 
 ARG GIT_COMMIT
@@ -82,5 +82,5 @@ CMD arch=$(uname -m) && \
              -D "version ${PKG_VERS}" \
              -D "libnvidia_container_tools_version ${LIBNVIDIA_CONTAINER_TOOLS_VERSION}" \
              -D "release ${PKG_REV}" \
-             SPECS/nvidia-container-toolkit.spec && \
+             SPECS/xdxct-container-toolkit.spec && \
     mv RPMS/$arch/*.rpm /dist

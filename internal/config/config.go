@@ -25,7 +25,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/lookup"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/pelletier/go-toml"
 	"github.com/sirupsen/logrus"
@@ -49,13 +49,13 @@ var (
 	// NVIDIAContainerRuntimeHookExecutable is the executable name for the NVIDIA Container Runtime Hook
 	NVIDIAContainerRuntimeHookExecutable = "nvidia-container-runtime-hook"
 	// NVIDIAContainerToolkitExecutable is the executable name for the NVIDIA Container Toolkit (an alias for the NVIDIA Container Runtime Hook)
-	NVIDIAContainerToolkitExecutable = "nvidia-container-toolkit"
+	NVIDIAContainerToolkitExecutable = "xdxct-container-toolkit"
 
 	configDir = "/etc/"
 )
 
 // Config represents the contents of the config.toml file for the NVIDIA Container Toolkit
-// Note: This is currently duplicated by the HookConfig in cmd/nvidia-container-toolkit/hook_config.go
+// Note: This is currently duplicated by the HookConfig in cmd/xdxct-container-toolkit/hook_config.go
 type Config struct {
 	AcceptEnvvarUnprivileged bool `toml:"accept-nvidia-visible-devices-envvar-when-unprivileged"`
 
@@ -165,7 +165,7 @@ func GetDefaultConfigToml() (*toml.Tree, error) {
 	tree.SetWithComment("xdxct-container-cli.root", "", true, "/run/nvidia/driver")
 	tree.SetWithComment("xdxct-container-cli.path", "", true, "/usr/bin/xdxct-container-cli")
 	tree.Set("xdxct-container-cli.environment", []string{})
-	tree.SetWithComment("xdxct-container-cli.debug", "", true, "/var/log/nvidia-container-toolkit.log")
+	tree.SetWithComment("xdxct-container-cli.debug", "", true, "/var/log/xdxct-container-toolkit.log")
 	tree.SetWithComment("xdxct-container-cli.ldcache", "", true, "/etc/ld.so.cache")
 	tree.Set("xdxct-container-cli.load-kmods", true)
 	tree.SetWithComment("xdxct-container-cli.no-cgroups", "", true, false)

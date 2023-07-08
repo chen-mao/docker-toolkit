@@ -19,7 +19,7 @@ package createdevicenodes
 import (
 	"fmt"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/system"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/system"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

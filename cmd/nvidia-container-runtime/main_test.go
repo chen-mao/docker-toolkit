@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/modifier"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/test"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/modifier"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/test"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"

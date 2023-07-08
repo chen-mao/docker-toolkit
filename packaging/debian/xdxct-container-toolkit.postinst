@@ -3,7 +3,7 @@
 set -e
 
 NVIDIA_CONTAINER_RUNTIME_HOOK=/usr/bin/nvidia-container-runtime-hook
-NVIDIA_CONTAINER_TOOLKIT=/usr/bin/nvidia-container-toolkit
+NVIDIA_CONTAINER_TOOLKIT=/usr/bin/xdxct-container-toolkit
 
 case "$1" in
     configure)

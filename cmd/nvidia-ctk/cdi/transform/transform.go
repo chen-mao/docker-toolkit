@@ -17,7 +17,7 @@
 package transform
 
 import (
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/cdi/transform/root"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/cdi/transform/root"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

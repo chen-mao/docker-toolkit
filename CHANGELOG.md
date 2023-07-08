@@ -86,7 +86,7 @@
 * [libxdxct-container] Include all `gsp*.bin` firmware files if present
 * [libxdxct-container] Align `.deb` and `.rpm` release candidate package versions
 * [libxdxct-container] Remove `fedora35` packaging targets
-* [toolkit-container] Install `nvidia-container-toolkit-operator-extensions` package for mode-specific executables.
+* [toolkit-container] Install `xdxct-container-toolkit-operator-extensions` package for mode-specific executables.
 * [toolkit-container] Allow `nvidia-container-runtime.mode` to be set when configuring the NVIDIA Container Toolkit
 
 ## v1.12.0
@@ -138,7 +138,7 @@
 ## v1.11.0-rc.3
 
 * Build fedora35 packages
-* Introduce an `nvidia-container-toolkit-base` package for better dependency management
+* Introduce an `xdxct-container-toolkit-base` package for better dependency management
 * Fix removal of `nvidia-container-runtime-hook` on RPM-based systems
 * Inject platform files into container on Tegra-based systems
 * [toolkit container] Update CUDA base images to 11.7.1
@@ -154,7 +154,7 @@
 * Add discovery of GPUDirect Storage (`nvidia-fs*`) devices if the `NVIDIA_GDS` environment variable of the container is set to `enabled`
 * Add discovery of MOFED Infiniband devices if the `NVIDIA_MOFED` environment variable of the container is set to `enabled`
 * Fix bug in CSV mode where libraries listed as `sym` entries in mount specification are not added to the LDCache.
-* Rename `nvidia-container-toolkit` executable to `nvidia-container-runtime-hook` and create `nvidia-container-toolkit` as a symlink to `nvidia-container-runtime-hook` instead.
+* Rename `xdxct-container-toolkit` executable to `nvidia-container-runtime-hook` and create `xdxct-container-toolkit` as a symlink to `nvidia-container-runtime-hook` instead.
 * Add `nvidia-ctk runtime configure` command to configure the Docker config file (e.g. `/etc/docker/daemon.json`) for use with the NVIDIA Container Runtime.
 
 ## v1.10.0
@@ -215,7 +215,7 @@
 ## v1.8.0-rc.1
 
 * [libxdxct-container] Add support for cgroupv2
-* Release toolkit-container images from nvidia-container-toolkit repository
+* Release toolkit-container images from xdxct-container-toolkit repository
 
 ## v1.7.0
 
@@ -234,7 +234,7 @@
 
 ## v1.6.0-rc.3
 
-* Add supported-driver-capabilities config option to the nvidia-container-toolkit
+* Add supported-driver-capabilities config option to the xdxct-container-toolkit
 * Move OCI and command line checks for runtime to internal oci package
 
 ## v1.6.0-rc.2
@@ -244,7 +244,7 @@
 ## v1.6.0-rc.1
 
 * Add AARCH64 package for Amazon Linux 2
-* Include nvidia-container-runtime into nvidia-container-toolkit package
+* Include nvidia-container-runtime into xdxct-container-toolkit package
 
 ## v1.5.1
 
@@ -291,7 +291,7 @@
 * fe65573b Add common CI tests for things like golint, gofmt, unit tests, etc.
 * da6fbb34 Revert "Add ability to merge envars of the form NVIDIA_VISIBLE_DEVICES_*"
 * a7fb3330 Flip build-all targets to run automatically on merge requests
-* 8b248b66 Rename github.com/NVIDIA/container-toolkit to nvidia-container-toolkit
+* 8b248b66 Rename github.com/NVIDIA/container-toolkit to xdxct-container-toolkit
 * da36874e Add new config options to pull device list from mounted files instead of ENVVAR
 
 ## v1.2.1

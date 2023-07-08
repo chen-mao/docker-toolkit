@@ -17,9 +17,9 @@
 package cdi
 
 import (
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/cdi/generate"
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/cdi/list"
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/cdi/transform"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/cdi/generate"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/cdi/list"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/cdi/transform"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

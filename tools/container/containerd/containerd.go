@@ -24,9 +24,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/pkg/config/engine"
-	"github.com/NVIDIA/nvidia-container-toolkit/pkg/config/engine/containerd"
-	"github.com/NVIDIA/nvidia-container-toolkit/tools/container/operator"
+	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine"
+	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine/containerd"
+	"github.com/NVIDIA/xdxct-container-toolkit/tools/container/operator"
 	log "github.com/sirupsen/logrus"
 	cli "github.com/urfave/cli/v2"
 )

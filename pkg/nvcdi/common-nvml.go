@@ -19,8 +19,8 @@ package nvcdi
 import (
 	"fmt"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/discover"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/lookup"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
 
 	"github.com/sirupsen/logrus"
 	"gitlab.com/nvidia/cloud-native/go-nvlib/pkg/nvml"

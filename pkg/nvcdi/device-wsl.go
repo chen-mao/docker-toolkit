@@ -17,7 +17,7 @@
 package nvcdi
 
 import (
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/discover"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
 	"github.com/sirupsen/logrus"
 )
 

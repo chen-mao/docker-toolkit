@@ -75,13 +75,13 @@ func TestHookRemover(t *testing.T) {
 			},
 		},
 		{
-			description: "modification removes existing nvidia-container-toolkit",
+			description: "modification removes existing xdxct-container-toolkit",
 			spec: &specs.Spec{
 				Hooks: &specs.Hooks{
 					Prestart: []specs.Hook{
 						{
-							Path: "/path/to/nvidia-container-toolkit",
-							Args: []string{"/path/to/nvidia-container-toolkit", "prestart"},
+							Path: "/path/to/xdxct-container-toolkit",
+							Args: []string{"/path/to/xdxct-container-toolkit", "prestart"},
 						},
 					},
 				},

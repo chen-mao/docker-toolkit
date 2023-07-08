@@ -1,4 +1,4 @@
-Name: nvidia-container-toolkit
+Name: xdxct-container-toolkit
 Version: %{version}
 Release: %{release}
 Group: Development Tools
@@ -7,7 +7,7 @@ Vendor: NVIDIA CORPORATION
 Packager: NVIDIA CORPORATION <cudatools@nvidia.com>
 
 Summary: NVIDIA Container Toolkit
-URL: https://github.com/NVIDIA/nvidia-container-toolkit
+URL: https://github.com/NVIDIA/xdxct-container-toolkit
 License: Apache-2.0
 
 Source0: nvidia-container-runtime-hook
@@ -23,7 +23,7 @@ Obsoletes: nvidia-container-runtime <= 3.5.0-1, nvidia-container-runtime-hook <=
 Provides: nvidia-container-runtime
 Provides: nvidia-container-runtime-hook
 Requires: libxdxct-container-tools >= %{libnvidia_container_tools_version}, libxdxct-container-tools < 2.0.0
-Requires: nvidia-container-toolkit-base == %{version}-%{release}
+Requires: xdxct-container-toolkit-base == %{version}-%{release}
 
 %if 0%{?suse_version}
 Requires: libseccomp2
@@ -53,20 +53,20 @@ mkdir -p %{buildroot}/usr/share/containers/oci/hooks.d
 install -m 644 -t %{buildroot}/usr/share/containers/oci/hooks.d oci-nvidia-hook.json
 
 %post
-mkdir -p %{_localstatedir}/lib/rpm-state/nvidia-container-toolkit
-cp -af %{_bindir}/nvidia-container-runtime-hook %{_localstatedir}/lib/rpm-state/nvidia-container-toolkit
+mkdir -p %{_localstatedir}/lib/rpm-state/xdxct-container-toolkit
+cp -af %{_bindir}/nvidia-container-runtime-hook %{_localstatedir}/lib/rpm-state/xdxct-container-toolkit
 
 %posttrans
 if [ ! -e %{_bindir}/nvidia-container-runtime-hook ]; then
   # reparing lost file nvidia-container-runtime-hook
-  cp -avf %{_localstatedir}/lib/rpm-state/nvidia-container-toolkit/nvidia-container-runtime-hook %{_bindir}
+  cp -avf %{_localstatedir}/lib/rpm-state/xdxct-container-toolkit/nvidia-container-runtime-hook %{_bindir}
 fi
-rm -rf %{_localstatedir}/lib/rpm-state/nvidia-container-toolkit
-ln -sf %{_bindir}/nvidia-container-runtime-hook %{_bindir}/nvidia-container-toolkit
+rm -rf %{_localstatedir}/lib/rpm-state/xdxct-container-toolkit
+ln -sf %{_bindir}/nvidia-container-runtime-hook %{_bindir}/xdxct-container-toolkit
 
 %postun
 if [ "$1" = 0 ]; then  # package is uninstalled, not upgraded
-  if [ -L %{_bindir}/nvidia-container-toolkit ]; then rm -f %{_bindir}/nvidia-container-toolkit; fi
+  if [ -L %{_bindir}/xdxct-container-toolkit ]; then rm -f %{_bindir}/xdxct-container-toolkit; fi
 fi
 
 %files
@@ -88,8 +88,8 @@ Summary: NVIDIA Container Toolkit Base
 Obsoletes: nvidia-container-runtime <= 3.5.0-1, nvidia-container-runtime-hook <= 1.4.0-2
 Provides: nvidia-container-runtime
 # Since this package allows certain components of the NVIDIA Container Toolkit to be installed separately
-# it conflicts with older versions of the nvidia-container-toolkit package that also provide these files.
-Conflicts: nvidia-container-toolkit <= 1.10.0-1
+# it conflicts with older versions of the xdxct-container-toolkit package that also provide these files.
+Conflicts: xdxct-container-toolkit <= 1.10.0-1
 
 %description base
 Provides tools such as the NVIDIA Container Runtime and NVIDIA Container Toolkit CLI to enable GPU support in containers.
@@ -103,7 +103,7 @@ Provides tools such as the NVIDIA Container Runtime and NVIDIA Container Toolkit
 # This package is not distributed as part of the NVIDIA Container Toolkit RPMs.
 %package operator-extensions
 Summary: NVIDIA Container Toolkit Operator Extensions
-Requires: nvidia-container-toolkit-base == %{version}-%{release}
+Requires: xdxct-container-toolkit-base == %{version}-%{release}
 
 %description operator-extensions
 Provides tools for using the NVIDIA Container Toolkit with the GPU Operator

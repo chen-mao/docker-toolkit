@@ -120,9 +120,9 @@ function sync() {
     fi
     mkdir -p ${dst}
 
-    for f in $(ls ${src}/libxdxct-container*.${pkg_type} ${src}/nvidia-container-toolkit*.${pkg_type}); do
-        # We never release nvidia-container-toolkit-operator-extensions packages
-        if [[ "${f/"nvidia-container-toolkit-operator-extensions"/}" != "${f}" ]]; then
+    for f in $(ls ${src}/libxdxct-container*.${pkg_type} ${src}/xdxct-container-toolkit*.${pkg_type}); do
+        # We never release xdxct-container-toolkit-operator-extensions packages
+        if [[ "${f/"xdxct-container-toolkit-operator-extensions"/}" != "${f}" ]]; then
             echo "Skipping ${f}"
             continue
         fi
@@ -185,7 +185,7 @@ Add packages for NVIDIA Container Toolkit ${VERSION} release
 
 These include:
 * libxdxct-container* ${LIBNVIDIA_CONTAINER_PACKAGE_VERSION}
-* nvidia-container-toolkit ${NVIDIA_CONTAINER_TOOLKIT_PACKAGE_VERSION}
+* xdxct-container-toolkit ${NVIDIA_CONTAINER_TOOLKIT_PACKAGE_VERSION}
 * nvidia-container-runtime ${NVIDIA_CONTAINER_RUNTIME_PACKAGE_VERSION}
 * nvidia-docker ${NVIDIA_DOCKER_PACKAGE_VERSION}
 EOF
@@ -196,14 +196,14 @@ Add packages for NVIDIA Container Toolkit ${VERSION} ${REPO} release
 
 These include:
 * libxdxct-container* ${LIBNVIDIA_CONTAINER_PACKAGE_VERSION}
-* nvidia-container-toolkit ${NVIDIA_CONTAINER_TOOLKIT_PACKAGE_VERSION}
+* xdxct-container-toolkit ${NVIDIA_CONTAINER_TOOLKIT_PACKAGE_VERSION}
 EOF
 fi
 
 : ${MASTER_KEY_PATH:? Path to master key MASTER_KEY_PATH must be set}
 : ${SUB_KEY_PATH:? Path to sub key SUB_KEY_PATH must be set}
 : ${GPG_LOCAL_USER:? GPG_LOCAL_USER must be set}
-: ${GNUPG_CONF:=$(mktemp -d -t nvidia-container-toolkit-package-XXXXXXXXXX)}
+: ${GNUPG_CONF:=$(mktemp -d -t xdxct-container-toolkit-package-XXXXXXXXXX)}
 
 function sign() {
     local pkg_type=$1

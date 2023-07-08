@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LIB_NAME := nvidia-container-toolkit
+LIB_NAME := xdxct-container-toolkit
 LIB_VERSION := 1.0.0
 LIB_TAG := rc.1
 

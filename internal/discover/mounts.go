@@ -22,7 +22,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/lookup"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
 	"github.com/sirupsen/logrus"
 )
 

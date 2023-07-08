@@ -19,9 +19,9 @@ package nvcdi
 import (
 	"fmt"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/discover/csv"
-	"github.com/NVIDIA/nvidia-container-toolkit/pkg/nvcdi/spec"
-	"github.com/NVIDIA/nvidia-container-toolkit/pkg/nvcdi/transform"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover/csv"
+	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi/spec"
+	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi/transform"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/nvidia/cloud-native/go-nvlib/pkg/nvlib/device"
 	"gitlab.com/nvidia/cloud-native/go-nvlib/pkg/nvlib/info"

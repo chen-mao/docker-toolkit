@@ -21,7 +21,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/test"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/test"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 	testlog "github.com/sirupsen/logrus/hooks/test"

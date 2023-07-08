@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/info/proc/devices"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/nvcaps"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/info/proc/devices"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/nvcaps"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/nvidia/cloud-native/go-nvlib/pkg/nvpci"
 )

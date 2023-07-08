@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/config"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/config"
 )
 
 const (

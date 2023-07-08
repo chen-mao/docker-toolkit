@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/discover"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/dxcore"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/lookup"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/dxcore"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
 	"github.com/sirupsen/logrus"
 )
 

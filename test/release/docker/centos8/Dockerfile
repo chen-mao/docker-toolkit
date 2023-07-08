@@ -26,7 +26,7 @@ RUN fpm -s empty \
 
 
 RUN curl -s -L https://nvidia.github.io/libxdxct-container/centos8/libxdxct-container.repo \
-    | tee /etc/yum.repos.d/nvidia-container-toolkit.repo
+    | tee /etc/yum.repos.d/xdxct-container-toolkit.repo
 
 COPY entrypoint.sh /
 COPY install_repo.sh /

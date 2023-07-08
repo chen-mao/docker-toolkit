@@ -23,9 +23,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/system"
-	"github.com/NVIDIA/nvidia-container-toolkit/pkg/nvcdi"
-	"github.com/NVIDIA/nvidia-container-toolkit/pkg/nvcdi/transform"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/system"
+	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi"
+	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi/transform"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	toml "github.com/pelletier/go-toml"
 	log "github.com/sirupsen/logrus"
@@ -330,7 +330,7 @@ func Install(cli *cli.Context, opts *options) error {
 }
 
 // installContainerLibraries locates and installs the libraries that are part of
-// the nvidia-container-toolkit.
+// the xdxct-container-toolkit.
 // A predefined set of library candidates are considered, with the first one
 // resulting in success being installed to the toolkit folder. The install process
 // resolves the symlink for the library and copies the versioned library itself.
@@ -536,7 +536,7 @@ func installRuntimeHook(toolkitRoot string, configFilePath string) (string, erro
 		return "", fmt.Errorf("error installing NVIDIA container runtime hook: %v", err)
 	}
 
-	err = installSymlink(toolkitRoot, "nvidia-container-toolkit", installedPath)
+	err = installSymlink(toolkitRoot, "xdxct-container-toolkit", installedPath)
 	if err != nil {
 		return "", fmt.Errorf("error installing symlink to NVIDIA container runtime hook: %v", err)
 	}

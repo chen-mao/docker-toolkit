@@ -31,7 +31,7 @@ func TestGetConfigWithCustomConfig(t *testing.T) {
 	require.NoError(t, err)
 
 	// By default debug is disabled
-	contents := []byte("[nvidia-container-runtime]\ndebug = \"/nvidia-container-toolkit.log\"")
+	contents := []byte("[nvidia-container-runtime]\ndebug = \"/xdxct-container-toolkit.log\"")
 	testDir := filepath.Join(wd, "test")
 	filename := filepath.Join(testDir, configFilePath)
 
@@ -44,7 +44,7 @@ func TestGetConfigWithCustomConfig(t *testing.T) {
 
 	cfg, err := GetConfig()
 	require.NoError(t, err)
-	require.Equal(t, cfg.NVIDIAContainerRuntimeConfig.DebugFilePath, "/nvidia-container-toolkit.log")
+	require.Equal(t, cfg.NVIDIAContainerRuntimeConfig.DebugFilePath, "/xdxct-container-toolkit.log")
 }
 
 func TestGetConfig(t *testing.T) {

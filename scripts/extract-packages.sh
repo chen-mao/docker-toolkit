@@ -38,10 +38,10 @@ PACKAGE_IMAGE=$1
 
 # For release-candidates we skip certain packages.
 # For example, we don't release release candidates of nvidia-container-runtime and nvidia-docker2
-# since these only bump the nvidia-container-toolkit dependency.
+# since these only bump the xdxct-container-toolkit dependency.
 function skip-for-release-candidate() {
-    # We always skip nvidia-container-toolkit-operator-extensions packages
-    if [[ "${package_name/"nvidia-container-toolkit-operator-extensions"/}" != "${package_name}" ]]; then
+    # We always skip xdxct-container-toolkit-operator-extensions packages
+    if [[ "${package_name/"xdxct-container-toolkit-operator-extensions"/}" != "${package_name}" ]]; then
         return 0
     fi
 

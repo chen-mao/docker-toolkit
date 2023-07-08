@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/config"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/info"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/config"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/info"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 

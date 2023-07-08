@@ -27,15 +27,15 @@ FROM golang:${GOLANG_VERSION} as build
 ARG GOPATH=/artifacts
 
 # Install the experiemental nvidia-container-runtime
-# NOTE: This will be integrated into the nvidia-container-toolkit package / repo
+# NOTE: This will be integrated into the xdxct-container-toolkit package / repo
 ARG NVIDIA_CONTAINER_RUNTIME_EXPERIMENTAL_VERSION=experimental
-RUN GOPATH=/artifacts go install github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-container-runtime.experimental@${NVIDIA_CONTAINER_RUNTIME_EXPERIMENTAL_VERSION}
+RUN GOPATH=/artifacts go install github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-container-runtime.experimental@${NVIDIA_CONTAINER_RUNTIME_EXPERIMENTAL_VERSION}
 
 WORKDIR /build
 COPY . .
 
 # NOTE: Until the config utilities are properly integrated into the
-# nvidia-container-toolkit repository, these are built from the `tools` folder
+# xdxct-container-toolkit repository, these are built from the `tools` folder
 # and not `cmd`.
 RUN GOPATH=/artifacts go install -ldflags="-s -w -X 'main.Version=${VERSION}'" ./tools/...
 
@@ -69,7 +69,7 @@ RUN PACKAGE_ARCH=${PACKAGE_ARCH/amd64/x86_64} && PACKAGE_ARCH=${PACKAGE_ARCH/arm
     yum localinstall -y \
     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container1-1.*.rpm \
     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container-tools-1.*.rpm \
-    ${PACKAGE_DIST}/${PACKAGE_ARCH}/nvidia-container-toolkit*-${PACKAGE_VERSION}*.rpm
+    ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-toolkit*-${PACKAGE_VERSION}*.rpm
 
 WORKDIR /work
 

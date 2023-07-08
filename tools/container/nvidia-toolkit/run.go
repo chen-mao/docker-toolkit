@@ -52,9 +52,9 @@ func main() {
 	// Create the top-level CLI
 	c := cli.NewApp()
 	c.Name = "nvidia-toolkit"
-	c.Usage = "Install the nvidia-container-toolkit for use by a given runtime"
+	c.Usage = "Install the xdxct-container-toolkit for use by a given runtime"
 	c.UsageText = "[DESTINATION] [-n | --no-daemon] [-r | --runtime] [-u | --runtime-args]"
-	c.Description = "DESTINATION points to the host path underneath which the nvidia-container-toolkit should be installed.\nIt will be installed at ${DESTINATION}/toolkit"
+	c.Description = "DESTINATION points to the host path underneath which the xdxct-container-toolkit should be installed.\nIt will be installed at ${DESTINATION}/toolkit"
 	c.Version = Version
 	c.Action = func(ctx *cli.Context) error {
 		return Run(ctx, &options)

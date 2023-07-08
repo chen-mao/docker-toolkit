@@ -7,7 +7,7 @@ built and released as the NVIDIA Container Toolkit from a single repository. The
 * `nvidia-docker`
 are included as submodules in the `third_party` folder.
 
-The `nvidia-container-toolkit` resides in this repo directly.
+The `xdxct-container-toolkit` resides in this repo directly.
 
 ## Building
 

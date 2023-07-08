@@ -22,11 +22,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/config/image"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/info/drm"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/info/proc"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/lookup"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/lookup/cuda"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/config/image"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/info/drm"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/info/proc"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup/cuda"
 	"github.com/sirupsen/logrus"
 )
 

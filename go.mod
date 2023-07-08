@@ -1,4 +1,4 @@
-module github.com/NVIDIA/nvidia-container-toolkit
+module github.com/NVIDIA/xdxct-container-toolkit
 
 go 1.20
 

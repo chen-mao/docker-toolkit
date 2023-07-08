@@ -1,30 +1,30 @@
-Source: nvidia-container-toolkit
+Source: xdxct-container-toolkit
 Section: @SECTION@utils
 Priority: optional
 Maintainer: NVIDIA CORPORATION <cudatools@nvidia.com>
 Standards-Version: 3.9.8
-Homepage: https://github.com/NVIDIA/nvidia-container-toolkit
-Vcs-Git: https://github.com/NVIDIA/nvidia-container-toolkit
-Vcs-Browser: https://github.com/NVIDIA/nvidia-container-toolkit
+Homepage: https://github.com/NVIDIA/xdxct-container-toolkit
+Vcs-Git: https://github.com/NVIDIA/xdxct-container-toolkit
+Vcs-Browser: https://github.com/NVIDIA/xdxct-container-toolkit
 Build-Depends: debhelper (>= 9)
 
-Package: nvidia-container-toolkit
+Package: xdxct-container-toolkit
 Architecture: any
-Depends: ${misc:Depends}, nvidia-container-toolkit-base (= @VERSION@), libxdxct-container-tools (>= @LIBNVIDIA_CONTAINER_TOOLS_VERSION@), libxdxct-container-tools (<< 2.0.0), libseccomp2
+Depends: ${misc:Depends}, xdxct-container-toolkit-base (= @VERSION@), libxdxct-container-tools (>= @LIBNVIDIA_CONTAINER_TOOLS_VERSION@), libxdxct-container-tools (<< 2.0.0), libseccomp2
 Breaks: nvidia-container-runtime (<= 3.5.0-1), nvidia-container-runtime-hook
 Replaces: nvidia-container-runtime (<= 3.5.0-1), nvidia-container-runtime-hook
 Description: NVIDIA Container toolkit
  Provides tools and utilities to enable GPU support in containers.
 
-Package: nvidia-container-toolkit-base
+Package: xdxct-container-toolkit-base
 Architecture: any
 Depends: ${misc:Depends}
 Replaces: nvidia-container-runtime (<= 3.5.0-1), nvidia-container-runtime-hook
 Description: NVIDIA Container Toolkit Base
  Provides tools such as the NVIDIA Container Runtime and NVIDIA Container Toolkit CLI to enable GPU support in containers.
 
-Package: nvidia-container-toolkit-operator-extensions
+Package: xdxct-container-toolkit-operator-extensions
 Architecture: any
-Depends: ${misc:Depends}, nvidia-container-toolkit-base (= @VERSION@)
+Depends: ${misc:Depends}, xdxct-container-toolkit-base (= @VERSION@)
 Description: NVIDIA Container Toolkit Operator Extensions
  Provides tools for using the NVIDIA Container Toolkit with the GPU Operator

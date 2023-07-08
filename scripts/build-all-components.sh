@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # This script is used to build the packages for the components of the NVIDIA
-# Container Stack. These include the nvidia-container-toolkit in this repository
+# Container Stack. These include the xdxct-container-toolkit in this repository
 # as well as the components included in the third_party folder.
 # All required packages are generated in the specified dist folder.
 
@@ -61,7 +61,7 @@ if [[ -z ${SKIP_LIBNVIDIA_CONTAINER} ]]; then
 fi
 
 if [[ -z ${SKIP_NVIDIA_CONTAINER_TOOLKIT} ]]; then
-# Build nvidia-container-toolkit
+# Build xdxct-container-toolkit
 make -C "${NVIDIA_CONTAINER_TOOLKIT_ROOT}" \
     LIBNVIDIA_CONTAINER_VERSION="${LIBNVIDIA_CONTAINER_VERSION}" \
     LIBNVIDIA_CONTAINER_TAG="${LIBNVIDIA_CONTAINER_TAG}" \

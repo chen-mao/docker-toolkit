@@ -17,7 +17,7 @@
 package config
 
 import (
-	createdefault "github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/config/create-default"
+	createdefault "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/config/create-default"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

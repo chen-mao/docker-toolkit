@@ -23,10 +23,10 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/config"
-	"github.com/NVIDIA/nvidia-container-toolkit/pkg/config/engine"
-	"github.com/NVIDIA/nvidia-container-toolkit/pkg/config/engine/crio"
-	"github.com/NVIDIA/nvidia-container-toolkit/tools/container/operator"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/config"
+	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine"
+	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine/crio"
+	"github.com/NVIDIA/xdxct-container-toolkit/tools/container/operator"
 	log "github.com/sirupsen/logrus"
 	cli "github.com/urfave/cli/v2"
 )

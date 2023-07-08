@@ -28,7 +28,7 @@ image-%: DOCKERFILE = docker/$(*)/Dockerfile
 images: $(IMAGE_TARGETS)
 $(IMAGE_TARGETS): image-%: $(DOCKERFILE)
 	docker build ${PLATFORM_ARGS} \
-    -t nvidia-container-toolkit-repo-test:$(*) \
+    -t xdxct-container-toolkit-repo-test:$(*) \
     -f $(DOCKERFILE) \
     $(shell dirname $(DOCKERFILE))
 
@@ -53,7 +53,7 @@ run-%: DIST = $(*)
 $(RUN_TARGETS): run-%: image-%
 	docker run ${PLATFORM_ARGS} --rm -ti  \
     $(LOCAL_REPO_ARGS) \
-    nvidia-container-toolkit-repo-test:$(*)
+    xdxct-container-toolkit-repo-test:$(*)
 
 # Ensure that the local package root exists
 $(RELEASE_TARGETS): release-%: $(LOCAL_PACKAGE_ROOT)/$(*)/$(ARCH)

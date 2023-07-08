@@ -19,13 +19,13 @@ package main
 import (
 	"os"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/cdi"
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/config"
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/hook"
-	infoCLI "github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/info"
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/runtime"
-	"github.com/NVIDIA/nvidia-container-toolkit/cmd/nvidia-ctk/system"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/info"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/cdi"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/config"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/hook"
+	infoCLI "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/info"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/runtime"
+	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/system"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/info"
 
 	log "github.com/sirupsen/logrus"
 	cli "github.com/urfave/cli/v2"

@@ -19,10 +19,10 @@ package modifier
 import (
 	"fmt"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/config"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/config/image"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/discover"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/oci"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/config"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/config/image"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
 	"github.com/sirupsen/logrus"
 )
 

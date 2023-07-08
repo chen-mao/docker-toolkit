@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/discover"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
 	"github.com/container-orchestrated-devices/container-device-interface/specs-go"
 	"github.com/stretchr/testify/require"
 )

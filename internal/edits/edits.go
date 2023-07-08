@@ -19,8 +19,8 @@ package edits
 import (
 	"fmt"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/discover"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/oci"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/container-orchestrated-devices/container-device-interface/specs-go"
 	ociSpecs "github.com/opencontainers/runtime-spec/specs-go"

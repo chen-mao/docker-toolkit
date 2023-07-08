@@ -20,7 +20,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/lookup"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )

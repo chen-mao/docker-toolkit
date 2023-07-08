@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # This script is used to build the packages for the components of the NVIDIA
-# Container Stack. These include the nvidia-container-toolkit in this repository
+# Container Stack. These include the xdxct-container-toolkit in this repository
 # as well as the components included in the third_party folder.
 # All required packages are generated in the specified dist folder.
 

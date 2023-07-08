@@ -15,11 +15,11 @@
 # limitations under the License.
 
 # This script is used to build the packages for the components of the NVIDIA
-# Container Stack. These include the nvidia-container-toolkit in this repository
+# Container Stack. These include the xdxct-container-toolkit in this repository
 # as well as the components included in the third_party folder.
 # All required packages are generated in the specified dist folder.
 
 test_repo=$1
 echo "Setting up TEST repo: ${test_repo}"
-sed -i -e "s#nvidia\.github\.io/libxdxct-container#${test_repo}/libxdxct-container#g" /etc/yum.repos.d/nvidia-container-toolkit.repo
+sed -i -e "s#nvidia\.github\.io/libxdxct-container#${test_repo}/libxdxct-container#g" /etc/yum.repos.d/xdxct-container-toolkit.repo
 yum-config-manager --enable libxdxct-container-experimental

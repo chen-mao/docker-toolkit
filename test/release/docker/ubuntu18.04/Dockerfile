@@ -40,7 +40,7 @@ RUN fpm -s empty \
 
 
 RUN curl -s -L https://nvidia.github.io/libxdxct-container/gpgkey | apt-key add - \
-   && curl -s -L https://nvidia.github.io/libxdxct-container/ubuntu18.04/libxdxct-container.list | tee /etc/apt/sources.list.d/nvidia-container-toolkit.list \
+   && curl -s -L https://nvidia.github.io/libxdxct-container/ubuntu18.04/libxdxct-container.list | tee /etc/apt/sources.list.d/xdxct-container-toolkit.list \
    && apt-get update
 
 COPY entrypoint.sh /

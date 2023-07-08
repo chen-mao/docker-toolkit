@@ -36,7 +36,7 @@ testing::toolkit::install() {
 
 	test -e "${shared_dir}/usr/local/nvidia/toolkit/xdxct-container-cli"
 	test -e "${shared_dir}/usr/local/nvidia/toolkit/nvidia-container-runtime-hook"
-	test -L "${shared_dir}/usr/local/nvidia/toolkit/nvidia-container-toolkit"
+	test -L "${shared_dir}/usr/local/nvidia/toolkit/xdxct-container-toolkit"
 	test -e "${shared_dir}/usr/local/nvidia/toolkit/nvidia-container-runtime"
 
 	grep -q -E "nvidia driver modules are not yet loaded, invoking runc directly" "${shared_dir}/usr/local/nvidia/toolkit/nvidia-container-runtime"

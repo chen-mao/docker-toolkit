@@ -17,7 +17,7 @@
 package requirements
 
 import (
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/requirements/constraints"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/requirements/constraints"
 	"github.com/sirupsen/logrus"
 )
 

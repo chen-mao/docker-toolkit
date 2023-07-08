@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/config"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/oci"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/config"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	testlog "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
@@ -122,13 +122,13 @@ func TestCSVModifierRemovesHook(t *testing.T) {
 			},
 		},
 		{
-			description: "modification removes existing nvidia-container-toolkit",
+			description: "modification removes existing xdxct-container-toolkit",
 			spec: &specs.Spec{
 				Hooks: &specs.Hooks{
 					Prestart: []specs.Hook{
 						{
-							Path: "/path/to/nvidia-container-toolkit",
-							Args: []string{"/path/to/nvidia-container-toolkit", "prestart"},
+							Path: "/path/to/xdxct-container-toolkit",
+							Args: []string{"/path/to/xdxct-container-toolkit", "prestart"},
 						},
 					},
 				},

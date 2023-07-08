@@ -13,7 +13,7 @@ Valid values for `workflow` are:
 * `nvidia-docker`
 * `nvidia-container-runtime`
 
-This follows the instructions for setting up the [`nvidia-docker` repostitory](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#setting-up-nvidia-container-toolkit).
+This follows the instructions for setting up the [`nvidia-docker` repostitory](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#setting-up-xdxct-container-toolkit).
 
 
 ## Testing local package changes
@@ -50,7 +50,7 @@ $ yum list installed | grep nvidia
 libxdxct-container-tools.x86_64   1.5.1-1                                 @libxdxct-container
 libxdxct-container1.x86_64        1.5.1-1                                 @libxdxct-container
 nvidia-container-runtime.x86_64    3.5.0-1                                 @nvidia-container-runtime
-nvidia-container-toolkit.x86_64    1.5.1-2                                 @nvidia-container-runtime
+xdxct-container-toolkit.x86_64    1.5.1-2                                 @nvidia-container-runtime
 nvidia-docker2.noarch              2.6.0-1                                 @nvidia-docker
 ```
 Note the repositories where these packages were installed from.
@@ -76,7 +76,7 @@ Dependencies resolved.
 Upgrading:
  libxdxct-container-tools              x86_64              1.6.0-0.1.rc.1                 local-repository               48 k
  libxdxct-container1                   x86_64              1.6.0-0.1.rc.1                 local-repository               95 k
- nvidia-container-toolkit               x86_64              1.6.0-0.1.rc.1                 local-repository              1.5 M
+ xdxct-container-toolkit               x86_64              1.6.0-0.1.rc.1                 local-repository              1.5 M
      replacing  nvidia-container-runtime.x86_64 3.5.0-1
  nvidia-docker2                         noarch              2.6.1-0.1.rc.1                 local-repository               13 k
 
@@ -93,7 +93,7 @@ After installation the installed packages are shown as:
 $ yum list installed | grep nvidia
 libxdxct-container-tools.x86_64   1.6.0-0.1.rc.1                          @local-repository
 libxdxct-container1.x86_64        1.6.0-0.1.rc.1                          @local-repository
-nvidia-container-toolkit.x86_64    1.6.0-0.1.rc.1                          @local-repository
+xdxct-container-toolkit.x86_64    1.6.0-0.1.rc.1                          @local-repository
 nvidia-docker2.noarch              2.6.1-0.1.rc.1                          @local-repository
 ```
 Showing that:

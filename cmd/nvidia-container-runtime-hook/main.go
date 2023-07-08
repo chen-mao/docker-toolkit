@@ -13,8 +13,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/info"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/lookup"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/info"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
 )
 
 var (

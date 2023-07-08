@@ -19,8 +19,8 @@ package modifier
 import (
 	"path/filepath"
 
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/config"
-	"github.com/NVIDIA/nvidia-container-toolkit/internal/oci"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/config"
+	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 )
@@ -65,7 +65,7 @@ func (m nvidiaContainerRuntimeHookRemover) Modify(spec *specs.Spec) error {
 }
 
 // isNVIDIAContainerRuntimeHook checks if the provided hook is an nvidia-container-runtime-hook
-// or nvidia-container-toolkit hook. These are included, for example, by the non-experimental
+// or xdxct-container-toolkit hook. These are included, for example, by the non-experimental
 // nvidia-container-runtime or docker when specifying the --gpus flag.
 func isNVIDIAContainerRuntimeHook(hook *specs.Hook) bool {
 	bins := map[string]struct{}{
