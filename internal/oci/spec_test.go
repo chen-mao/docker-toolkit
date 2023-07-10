@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/test"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/test"
 	"github.com/stretchr/testify/require"
 )
 

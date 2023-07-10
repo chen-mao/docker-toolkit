@@ -23,7 +23,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/info/proc/devices"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/info/proc/devices"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )

@@ -19,7 +19,7 @@ package modifier
 import (
 	"path/filepath"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 )

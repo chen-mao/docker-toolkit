@@ -17,7 +17,7 @@
 package edits
 
 import (
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/container-orchestrated-devices/container-device-interface/specs-go"
 )

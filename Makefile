@@ -18,7 +18,7 @@ DIST_DIR ?= $(CURDIR)/dist
 
 include $(CURDIR)/versions.mk
 
-MODULE := github.com/NVIDIA/xdxct-container-toolkit
+MODULE := github.com/XDXCT/xdxct-container-toolkit
 
 # By default run all native docker-based targets
 docker-native:
@@ -51,7 +51,7 @@ CLI_VERSION = $(LIB_VERSION)$(if $(LIB_TAG),-$(LIB_TAG))
 else
 CLI_VERSION = $(VERSION)
 endif
-CLI_VERSION_PACKAGE = github.com/NVIDIA/xdxct-container-toolkit/internal/info
+CLI_VERSION_PACKAGE = github.com/XDXCT/xdxct-container-toolkit/internal/info
 
 GOOS ?= linux
 

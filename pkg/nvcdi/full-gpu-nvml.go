@@ -22,9 +22,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/edits"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/info/drm"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/edits"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/info/drm"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/container-orchestrated-devices/container-device-interface/specs-go"
 	"github.com/sirupsen/logrus"

@@ -21,8 +21,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi/spec"
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi/transform"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/spec"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/transform"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"

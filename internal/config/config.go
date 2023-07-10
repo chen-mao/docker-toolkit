@@ -25,7 +25,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/pelletier/go-toml"
 	"github.com/sirupsen/logrus"

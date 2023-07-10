@@ -19,8 +19,8 @@ package discover
 import (
 	"fmt"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover/csv"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover/csv"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
 	"github.com/sirupsen/logrus"
 )
 

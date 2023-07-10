@@ -19,7 +19,7 @@ package main
 import (
 	"os"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/runtime"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/runtime"
 )
 
 func main() {

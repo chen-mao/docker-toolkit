@@ -21,7 +21,7 @@ import (
 	"io"
 	"os"
 
-	nvctkConfig "github.com/NVIDIA/xdxct-container-toolkit/internal/config"
+	nvctkConfig "github.com/XDXCT/xdxct-container-toolkit/internal/config"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

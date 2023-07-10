@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/ldcache"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/ldcache"
 	log "github.com/sirupsen/logrus"
 )
 

@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: xdxct-container-toolkit
-Source: https://github.com/NVIDIA/xdxct-container-toolkit
+Source: https://github.com/XDXCT/xdxct-container-toolkit
 
 Files: *
 Copyright: 2017-2020 NVIDIA CORPORATION <cudatools@nvidia.com>

@@ -23,9 +23,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine"
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine/docker"
-	"github.com/NVIDIA/xdxct-container-toolkit/tools/container/operator"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine/docker"
+	"github.com/XDXCT/xdxct-container-toolkit/tools/container/operator"
 	log "github.com/sirupsen/logrus"
 	cli "github.com/urfave/cli/v2"
 )

@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	testlog "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"

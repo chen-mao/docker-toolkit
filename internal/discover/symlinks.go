@@ -21,9 +21,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover/csv"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup/symlinks"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover/csv"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup/symlinks"
 	"github.com/sirupsen/logrus"
 )
 

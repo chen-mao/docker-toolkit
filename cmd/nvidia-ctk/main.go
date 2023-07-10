@@ -19,13 +19,13 @@ package main
 import (
 	"os"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/cdi"
-	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/config"
-	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/hook"
-	infoCLI "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/info"
-	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/runtime"
-	"github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/system"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/info"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/cdi"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/config"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/hook"
+	infoCLI "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/info"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/runtime"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/system"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/info"
 
 	log "github.com/sirupsen/logrus"
 	cli "github.com/urfave/cli/v2"

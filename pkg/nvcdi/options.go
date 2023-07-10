@@ -17,7 +17,7 @@
 package nvcdi
 
 import (
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi/transform"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/transform"
 	"github.com/sirupsen/logrus"
 	"gitlab.com/nvidia/cloud-native/go-nvlib/pkg/nvlib/device"
 	"gitlab.com/nvidia/cloud-native/go-nvlib/pkg/nvml"

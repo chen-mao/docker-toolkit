@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine"
 )
 
 const (

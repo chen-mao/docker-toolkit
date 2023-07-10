@@ -17,10 +17,10 @@
 package hook
 
 import (
-	chmod "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/hook/chmod"
+	chmod "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/hook/chmod"
 
-	symlinks "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/hook/create-symlinks"
-	ldcache "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/hook/update-ldcache"
+	symlinks "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/hook/create-symlinks"
+	ldcache "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/hook/update-ldcache"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

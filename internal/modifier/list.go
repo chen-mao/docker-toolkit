@@ -17,7 +17,7 @@
 package modifier
 
 import (
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 

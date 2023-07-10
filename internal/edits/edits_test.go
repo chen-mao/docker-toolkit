@@ -19,7 +19,7 @@ package edits
 import (
 	"testing"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover"
 	"github.com/stretchr/testify/require"
 )
 

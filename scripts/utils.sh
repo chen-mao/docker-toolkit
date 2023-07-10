@@ -21,9 +21,10 @@ all=(
     # centos8-aarch64
     # centos8-ppc64le
     # centos8-x86_64
-    ubuntu18.04-amd64
+    # ubuntu18.04-amd64
     # ubuntu18.04-arm64
     # ubuntu18.04-ppc64le
+    ubuntu20.04-amd64
 )
 
 # package_type returns the packaging type (deb or rpm) for the specfied distribution.

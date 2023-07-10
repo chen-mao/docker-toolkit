@@ -19,8 +19,8 @@ package nvcdi
 import (
 	"fmt"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/edits"
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi/spec"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/edits"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/spec"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/container-orchestrated-devices/container-device-interface/specs-go"
 	"gitlab.com/nvidia/cloud-native/go-nvlib/pkg/nvlib/device"

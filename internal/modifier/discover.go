@@ -19,9 +19,9 @@ package modifier
 import (
 	"fmt"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/edits"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/edits"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/sirupsen/logrus"
 )

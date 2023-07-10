@@ -19,14 +19,14 @@ package modifier
 import (
 	"fmt"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/config"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/config/image"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/cuda"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover/csv"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover/tegra"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/requirements"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/config"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/config/image"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/cuda"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover/csv"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover/tegra"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/requirements"
 	"github.com/sirupsen/logrus"
 )
 

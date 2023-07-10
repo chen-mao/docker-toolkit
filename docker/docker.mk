@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Supported OSs by architecture
-AMD64_TARGETS := ubuntu18.04
+AMD64_TARGETS := ubuntu20.04
 
 # Define top-level build targets
 docker%: SHELL:=/bin/bash

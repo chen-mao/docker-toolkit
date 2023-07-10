@@ -17,9 +17,9 @@
 package system
 
 import (
-	devchar "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/system/create-dev-char-symlinks"
-	devicenodes "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/system/create-device-nodes"
-	ldcache "github.com/NVIDIA/xdxct-container-toolkit/cmd/nvidia-ctk/system/print-ldcache"
+	devchar "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/system/create-dev-char-symlinks"
+	devicenodes "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/system/create-device-nodes"
+	ldcache "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/system/print-ldcache"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

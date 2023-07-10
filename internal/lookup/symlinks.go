@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup/symlinks"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup/symlinks"
 	"github.com/sirupsen/logrus"
 )
 

@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine"
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine/containerd"
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine/crio"
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine/docker"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine/containerd"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine/crio"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine/docker"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -32,10 +32,10 @@ const (
 	defaultRuntime = "docker"
 
 	// defaultNVIDIARuntimeName is the default name to use in configs for the NVIDIA Container Runtime
-	defaultNVIDIARuntimeName = "nvidia"
+	defaultNVIDIARuntimeName = "xdxct"
 	// defaultNVIDIARuntimeExecutable is the default NVIDIA Container Runtime executable file name
-	defaultNVIDIARuntimeExecutable      = "nvidia-container-runtime"
-	defailtNVIDIARuntimeExpecutablePath = "/usr/bin/nvidia-container-runtime"
+	defaultNVIDIARuntimeExecutable      = "xdxct-container-runtime"
+	defailtNVIDIARuntimeExpecutablePath = "/usr/bin/xdxct-container-runtime"
 
 	defaultContainerdConfigFilePath = "/etc/containerd/config.toml"
 	defaultCrioConfigFilePath       = "/etc/crio/crio.conf"

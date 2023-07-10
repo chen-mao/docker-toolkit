@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/discover/csv"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/lookup"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/discover/csv"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
 	testlog "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
 )

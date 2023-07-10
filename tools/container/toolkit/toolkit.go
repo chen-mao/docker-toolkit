@@ -23,9 +23,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/system"
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi"
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/nvcdi/transform"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/system"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/transform"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	toml "github.com/pelletier/go-toml"
 	log "github.com/sirupsen/logrus"

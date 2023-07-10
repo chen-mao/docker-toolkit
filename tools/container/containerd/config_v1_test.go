@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine/containerd"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine/containerd"
 	"github.com/pelletier/go-toml"
 	"github.com/stretchr/testify/require"
 )

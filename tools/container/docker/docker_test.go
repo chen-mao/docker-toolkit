@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/pkg/config/engine/docker"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine/docker"
 	"github.com/stretchr/testify/require"
 )
 

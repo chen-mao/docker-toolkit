@@ -19,10 +19,10 @@ package runtime
 import (
 	"fmt"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/config"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/info"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/modifier"
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/oci"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/config"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/info"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/modifier"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
 	"github.com/sirupsen/logrus"
 )
 

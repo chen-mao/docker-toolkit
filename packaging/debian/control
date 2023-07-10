@@ -3,9 +3,9 @@ Section: @SECTION@utils
 Priority: optional
 Maintainer: NVIDIA CORPORATION <cudatools@nvidia.com>
 Standards-Version: 3.9.8
-Homepage: https://github.com/NVIDIA/xdxct-container-toolkit
-Vcs-Git: https://github.com/NVIDIA/xdxct-container-toolkit
-Vcs-Browser: https://github.com/NVIDIA/xdxct-container-toolkit
+Homepage: https://github.com/XDXCT/xdxct-container-toolkit
+Vcs-Git: https://github.com/XDXCT/xdxct-container-toolkit
+Vcs-Browser: https://github.com/XDXCT/xdxct-container-toolkit
 Build-Depends: debhelper (>= 9)
 
 Package: xdxct-container-toolkit

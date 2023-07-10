@@ -1,6 +1,6 @@
 # NVIDIA Container Toolkit
 
-[![GitHub license](https://img.shields.io/github/license/NVIDIA/xdxct-container-toolkit?style=flat-square)](https://raw.githubusercontent.com/NVIDIA/xdxct-container-toolkit/main/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/XDXCT/xdxct-container-toolkit?style=flat-square)](https://raw.githubusercontent.com/XDXCT/xdxct-container-toolkit/main/LICENSE)
 [![Documentation](https://img.shields.io/badge/documentation-wiki-blue.svg?style=flat-square)](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/overview.html)
 [![Package repository](https://img.shields.io/badge/packages-repository-b956e8.svg?style=flat-square)](https://nvidia.github.io/libxdxct-container)
 
@@ -27,5 +27,5 @@ The [user guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolk
 
 [Checkout the Contributing document!](CONTRIBUTING.md)
 
-* Please let us know by [filing a new issue](https://github.com/NVIDIA/xdxct-container-toolkit/issues/new)
+* Please let us know by [filing a new issue](https://github.com/XDXCT/xdxct-container-toolkit/issues/new)
 * You can contribute by creating a [merge request](https://gitlab.com/nvidia/container-toolkit/container-toolkit/-/merge_requests/new) to our public GitLab repository

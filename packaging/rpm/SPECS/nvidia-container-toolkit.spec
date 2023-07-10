@@ -7,7 +7,7 @@ Vendor: NVIDIA CORPORATION
 Packager: NVIDIA CORPORATION <cudatools@nvidia.com>
 
 Summary: NVIDIA Container Toolkit
-URL: https://github.com/NVIDIA/xdxct-container-toolkit
+URL: https://github.com/XDXCT/xdxct-container-toolkit
 License: Apache-2.0
 
 Source0: nvidia-container-runtime-hook

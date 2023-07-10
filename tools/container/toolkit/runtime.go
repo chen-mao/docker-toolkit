@@ -21,7 +21,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/tools/container/operator"
+	"github.com/XDXCT/xdxct-container-toolkit/tools/container/operator"
 	log "github.com/sirupsen/logrus"
 )
 

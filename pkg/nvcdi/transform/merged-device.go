@@ -19,7 +19,7 @@ package transform
 import (
 	"fmt"
 
-	"github.com/NVIDIA/xdxct-container-toolkit/internal/edits"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/edits"
 	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
 	"github.com/container-orchestrated-devices/container-device-interface/specs-go"
 )
