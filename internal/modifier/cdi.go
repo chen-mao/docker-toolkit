@@ -103,7 +103,7 @@ func getDevicesFromSpec(logger *logrus.Logger, ociSpec oci.Spec, cfg *config.Con
 		return devices, nil
 	}
 
-	logger.Warningf("Ignoring devices specified in NVIDIA_VISIBLE_DEVICES: %v", devices)
+	logger.Warningf("Ignoring devices specified in XDXCT_VISIBLE_DEVICES: %v", devices)
 
 	return nil, nil
 }

@@ -19,10 +19,10 @@ const (
 	envNVRequirePrefix      = "NVIDIA_REQUIRE_"
 	envNVRequireCUDA        = envNVRequirePrefix + "CUDA"
 	envNVDisableRequire     = "NVIDIA_DISABLE_REQUIRE"
-	envNVVisibleDevices     = "NVIDIA_VISIBLE_DEVICES"
+	envNVVisibleDevices     = "XDXCT_VISIBLE_DEVICES"
 	envNVMigConfigDevices   = "NVIDIA_MIG_CONFIG_DEVICES"
 	envNVMigMonitorDevices  = "NVIDIA_MIG_MONITOR_DEVICES"
-	envNVDriverCapabilities = "NVIDIA_DRIVER_CAPABILITIES"
+	envNVDriverCapabilities = "XDXCT_DRIVER_CAPABILITIES"
 )
 
 const (

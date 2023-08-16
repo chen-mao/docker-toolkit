@@ -6,9 +6,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN  sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
 RUN  apt-get clean
 
-ENV http_proxy "http://10.211.102.110:8820"
-ENV https_proxy "http://10.211.102.110:8820"
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
         wget \
         ca-certificates \

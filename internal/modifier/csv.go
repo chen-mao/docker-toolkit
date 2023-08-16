@@ -37,7 +37,7 @@ type csvMode struct {
 }
 
 const (
-	visibleDevicesEnvvar = "NVIDIA_VISIBLE_DEVICES"
+	visibleDevicesEnvvar = "XDXCT_VISIBLE_DEVICES"
 	visibleDevicesVoid   = "void"
 
 	nvidiaRequireJetpackEnvvar = "NVIDIA_REQUIRE_JETPACK"
