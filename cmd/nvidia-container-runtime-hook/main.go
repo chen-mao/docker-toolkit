@@ -100,12 +100,9 @@ func doPrestart() {
 	if cli.NoPivot {
 		args = append(args, "--no-pivot")
 	}
-	args = append(args, "--debug=/1.log")
-	// if *debugflag {
-	// 	args = append(args, "--debug=/1.log")
-	// } else if cli.Debug != nil {
-	// 	args = append(args, fmt.Sprintf("--debug=%s", *cli.Debug))
-	// }
+	if cli.Debug != nil {
+		args = append(args, fmt.Sprintf("--debug=%s", *cli.Debug))
+	}
 	if cli.Ldcache != nil {
 		args = append(args, fmt.Sprintf("--ldcache=%s", *cli.Ldcache))
 	}
