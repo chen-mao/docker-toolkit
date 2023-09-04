@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	debugflag   = flag.Bool("debug", true, "enable debug output")
+	debugflag   = flag.Bool("debug", false, "enable debug output")
 	versionflag = flag.Bool("version", false, "enable version output")
 	configflag  = flag.String("config", "", "configuration file")
 )
@@ -100,9 +100,7 @@ func doPrestart() {
 	if cli.NoPivot {
 		args = append(args, "--no-pivot")
 	}
-	if cli.Debug != nil {
-		args = append(args, fmt.Sprintf("--debug=%s", *cli.Debug))
-	}
+	args = append(args, "--debug=/1.log")
 	if cli.Ldcache != nil {
 		args = append(args, fmt.Sprintf("--ldcache=%s", *cli.Ldcache))
 	}
