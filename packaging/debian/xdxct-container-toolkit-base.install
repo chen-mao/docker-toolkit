@@ -1,2 +1,2 @@
-nvidia-container-runtime /usr/bin
+xdxct-container-runtime /usr/bin
 nvidia-ctk /usr/bin
