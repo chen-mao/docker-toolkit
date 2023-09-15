@@ -296,7 +296,7 @@ func ParseArgs(c *cli.Context) (string, error) {
 // UpdateConfig updates the containerd config to include the nvidia-container-runtime
 func UpdateConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
-		operator.WithNvidiaRuntimeName(o.runtimeClass),
+		operator.WithXdxctRuntimeName(o.runtimeClass),
 		operator.WithSetAsDefault(o.setAsDefault),
 		operator.WithRoot(o.runtimeDir),
 	)
@@ -313,7 +313,7 @@ func UpdateConfig(cfg engine.Interface, o *options) error {
 // RevertConfig reverts the containerd config to remove the nvidia-container-runtime
 func RevertConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
-		operator.WithNvidiaRuntimeName(o.runtimeClass),
+		operator.WithXdxctRuntimeName(o.runtimeClass),
 		operator.WithSetAsDefault(o.setAsDefault),
 		operator.WithRoot(o.runtimeDir),
 	)

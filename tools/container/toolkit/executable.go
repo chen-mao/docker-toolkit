@@ -42,6 +42,7 @@ type executable struct {
 
 // install installs an executable component of the NVIDIA container toolkit. The source executable
 // is copied to a `.real` file and a wapper is created to set up the environment as required.
+// destFolder: /usr/local/nvidia/toolkit
 func (e executable) install(destFolder string) (string, error) {
 	log.Infof("Installing executable '%v' to %v", e.source, destFolder)
 
@@ -58,7 +59,8 @@ func (e executable) install(destFolder string) (string, error) {
 		return "", fmt.Errorf("error wrapping '%v': %v", installedDotfileName, err)
 	}
 	log.Infof("Installed wrapper '%v'", wrapperFilename)
-
+	// Installed '/usr/local/nvidia/toolkit/nvidia-container-runtime.real'
+	// Installed wrapper '/usr/local/nvidia/toolkit/nvidia-container-runtime'
 	return wrapperFilename, nil
 }
 

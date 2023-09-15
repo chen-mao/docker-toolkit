@@ -1,17 +1,3 @@
-# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 BUILD_MULTI_ARCH_IMAGES ?= false
 DOCKER ?= docker
 REGCTL ?= regctl
@@ -28,7 +14,7 @@ DIST_DIR ?= $(CURDIR)/dist
 include $(CURDIR)/versions.mk
 
 ifeq ($(IMAGE_NAME),)
-REGISTRY ?= nvidia
+REGISTRY ?= xdxct
 IMAGE_NAME := $(REGISTRY)/container-toolkit
 endif
 
@@ -99,7 +85,7 @@ $(BUILD_TARGETS): build-%: $(ARTIFACTS_ROOT)
 		--build-arg BASE_DIST="$(BASE_DIST)" \
 		--build-arg CUDA_VERSION="$(CUDA_VERSION)" \
 		--build-arg GOLANG_VERSION="$(GOLANG_VERSION)" \
-		--build-arg LIBNVIDIA_CONTAINER0_VERSION="$(LIBNVIDIA_CONTAINER0_DEPENDENCY)" \
+		--build-arg LIBXDXCT_CONTAINER0_VERSION="$(LIBXDXCT_CONTAINER0_DEPENDENCY)" \
 		--build-arg PACKAGE_DIST="$(PACKAGE_DIST)" \
 		--build-arg PACKAGE_VERSION="$(PACKAGE_VERSION)" \
 		--build-arg VERSION="$(VERSION)" \
@@ -113,8 +99,8 @@ $(BUILD_TARGETS): build-%: $(ARTIFACTS_ROOT)
 
 build-ubuntu%: BASE_DIST = $(*)
 build-ubuntu%: DOCKERFILE_SUFFIX := ubuntu
-build-ubuntu%: PACKAGE_DIST = ubuntu18.04
-build-ubuntu%: LIBNVIDIA_CONTAINER0_DEPENDENCY=$(LIBNVIDIA_CONTAINER0_VERSION)
+build-ubuntu%: PACKAGE_DIST = ubuntu20.04
+build-ubuntu%: LIBXDXCT_CONTAINER0_DEPENDENCY=$(LIBXDXCT_CONTAINER0_VERSION)
 
 build-ubi8: BASE_DIST := ubi8
 build-ubi8: DOCKERFILE_SUFFIX := centos

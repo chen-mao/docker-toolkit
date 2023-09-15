@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	runDir         = "/run/nvidia"
+	runDir         = "/run/xdxct"
 	pidFile        = runDir + "/toolkit.pid"
 	toolkitCommand = "toolkit"
 	toolkitSubDir  = "toolkit"
@@ -51,11 +51,12 @@ func main() {
 	options := options{}
 	// Create the top-level CLI
 	c := cli.NewApp()
-	c.Name = "nvidia-toolkit"
+	c.Name = "xdxct-toolkit"
 	c.Usage = "Install the xdxct-container-toolkit for use by a given runtime"
 	c.UsageText = "[DESTINATION] [-n | --no-daemon] [-r | --runtime] [-u | --runtime-args]"
 	c.Description = "DESTINATION points to the host path underneath which the xdxct-container-toolkit should be installed.\nIt will be installed at ${DESTINATION}/toolkit"
 	c.Version = Version
+	// run: 安装的流程
 	c.Action = func(ctx *cli.Context) error {
 		return Run(ctx, &options)
 	}
@@ -67,7 +68,8 @@ func main() {
 			Aliases:     []string{"n"},
 			Usage:       "terminate immediatly after setting up the runtime. Note that no cleanup will be performed",
 			Destination: &options.noDaemon,
-			EnvVars:     []string{"NO_DAEMON"},
+			// 环境变量名NO_DAEMON
+			EnvVars: []string{"NO_DAEMON"},
 		},
 		&cli.StringFlag{
 			Name:        "runtime",
@@ -88,7 +90,7 @@ func main() {
 		&cli.StringFlag{
 			Name:        "root",
 			Value:       root,
-			Usage:       "the folder where the NVIDIA Container Toolkit is to be installed. It will be installed to `ROOT`/toolkit",
+			Usage:       "the folder where the XDXCT Container Toolkit is to be installed. It will be installed to `ROOT`/toolkit",
 			Destination: &options.root,
 			EnvVars:     []string{"ROOT"},
 		},
@@ -97,7 +99,7 @@ func main() {
 	// Run the CLI
 	log.Infof("Starting %v", c.Name)
 	if err := c.Run(remainingArgs); err != nil {
-		log.Errorf("error running nvidia-toolkit: %v", err)
+		log.Errorf("error running xdxct-toolkit: %v", err)
 		os.Exit(1)
 	}
 
@@ -106,28 +108,30 @@ func main() {
 
 // Run runs the core logic of the CLI
 func Run(c *cli.Context, o *options) error {
+	// 检查 root and runtime 是否为 docker crio containerd
 	err := verifyFlags(o)
 	if err != nil {
 		return fmt.Errorf("unable to verify flags: %v", err)
 	}
-
+	//  将自身进程id 写入到/run/xdxct/toolkit.pid并且捕捉信号容器是否退出
 	err = initialize()
 	if err != nil {
 		return fmt.Errorf("unable to initialize: %v", err)
 	}
 	defer shutdown()
-
+	// 调用toolkit install 的 cli
 	err = installToolkit(o)
 	if err != nil {
 		return fmt.Errorf("unable to install toolkit: %v", err)
 	}
-
+	// 调用 docker setup /user/local/xdxct/toolkit cli
 	err = setupRuntime(o)
 	if err != nil {
 		return fmt.Errorf("unable to setup runtime: %v", err)
 	}
 
 	if !o.noDaemon {
+		fmt.Println("<-- hello Daemon -->")
 		err = waitForSignal()
 		if err != nil {
 			return fmt.Errorf("unable to wait for signal: %v", err)
@@ -146,11 +150,12 @@ func Run(c *cli.Context, o *options) error {
 // If no positional arguments are defined, the it is assumed that the root is specified as a flag.
 func ParseArgs(args []string) ([]string, string, error) {
 	log.Infof("Parsing arguments")
-
+	// cli: /work/xdxct-toolkit
 	if len(args) < 2 {
 		return args, "", nil
 	}
-
+	// 判定: /work/xdxct-toolkit root options，则返回root参数
+	// 若: /work/xdxct-toolkit -n xx 则跳出循环
 	var lastPositionalArg int
 	for i, arg := range args {
 		if strings.HasPrefix(arg, "-") {
@@ -189,11 +194,11 @@ func initialize() error {
 	if err != nil {
 		return fmt.Errorf("unable to create pidfile: %v", err)
 	}
-
+	// 将自身进程id 写入到/run/xdxct/toolkit.pid，使用建议性锁打开文件
 	err = unix.Flock(int(f.Fd()), unix.LOCK_EX|unix.LOCK_NB)
 	if err != nil {
 		log.Warnf("Unable to get exclusive lock on '%v'", pidFile)
-		log.Warnf("This normally means an instance of the NVIDIA toolkit Container is already running, aborting")
+		log.Warnf("This normally means an instance of the XDXCT toolkit Container is already running, aborting")
 		return fmt.Errorf("unable to get flock on pidfile: %v", err)
 	}
 
@@ -201,15 +206,17 @@ func initialize() error {
 	if err != nil {
 		return fmt.Errorf("unable to write PID to pidfile: %v", err)
 	}
-
+	// 启动goroutine捕捉系统信号，当容器删除时，则删除pid文件。
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGHUP, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGPIPE, syscall.SIGTERM)
 	go func() {
 		<-sigs
 		select {
 		case <-waitingForSignal:
+			log.Infof("Signal received, waitForSignal")
 			signalReceived <- true
 		default:
+			log.Infof("sigs is ------->: %v", sigs)
 			log.Infof("Signal received, exiting early")
 			shutdown()
 			os.Exit(0)
@@ -219,6 +226,7 @@ func initialize() error {
 	return nil
 }
 
+// 调用toolkit cli
 func installToolkit(o *options) error {
 	log.Infof("Installing toolkit")
 
@@ -228,13 +236,13 @@ func installToolkit(o *options) error {
 		"--toolkit-root",
 		filepath.Join(o.root, toolkitSubDir),
 	}
-
+	// Command returns the Cmd struct to execute the named program with the given arguments.
 	cmd := exec.Command("sh", "-c", strings.Join(cmdline, " "))
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("error running %v command: %v", cmdline, err)
+		return fmt.Errorf("error running %v install command: %v", cmdline, err)
 	}
 
 	return nil
@@ -244,7 +252,7 @@ func setupRuntime(o *options) error {
 	toolkitDir := filepath.Join(o.root, toolkitSubDir)
 
 	log.Infof("Setting up runtime")
-
+	// docker setup /user/local/xdxct/toolkit
 	cmdline := fmt.Sprintf("%v setup %v %v\n", o.runtime, o.runtimeArgs, toolkitDir)
 
 	cmd := exec.Command("sh", "-c", cmdline)
@@ -252,7 +260,7 @@ func setupRuntime(o *options) error {
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("error running %v command: %v", o.runtime, err)
+		return fmt.Errorf("error running %v setup command: %v", o.runtime, err)
 	}
 
 	return nil
@@ -277,7 +285,7 @@ func cleanupRuntime(o *options) error {
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("error running %v command: %v", o.runtime, err)
+		return fmt.Errorf("error running %v clean command: %v", o.runtime, err)
 	}
 
 	return nil

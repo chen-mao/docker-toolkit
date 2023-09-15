@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-*/
-
 package main
 
 import (
@@ -34,16 +18,16 @@ const (
 	restartModeSignal = "signal"
 	restartModeNone   = "none"
 
-	nvidiaRuntimeName               = "nvidia"
-	nvidiaRuntimeBinary             = "nvidia-container-runtime"
-	nvidiaExperimentalRuntimeName   = "nvidia-experimental"
-	nvidiaExperimentalRuntimeBinary = "nvidia-container-runtime.experimental"
+	xdxctRuntimeName   = "xdxct"
+	xdxctRuntimeBinary = "xdxct-container-runtime"
+	// xdxctExperimentalRuntimeName   = "xdxct-experimental"
+	// xdxctExperimentalRuntimeBinary = "xdxct-container-runtime.experimental"
 
 	defaultConfig       = "/etc/docker/daemon.json"
 	defaultSocket       = "/var/run/docker.sock"
 	defaultSetAsDefault = true
-	// defaultRuntimeName specifies the NVIDIA runtime to be use as the default runtime if setting the default runtime is enabled
-	defaultRuntimeName = nvidiaRuntimeName
+	// defaultRuntimeName specifies the xdxct runtime to be use as the default runtime if setting the default runtime is enabled
+	defaultRuntimeName = xdxctRuntimeName
 	defaultRestartMode = restartModeSignal
 
 	reloadBackoff     = 5 * time.Second
@@ -53,10 +37,10 @@ const (
 	socketMessageToGetPID = "GET /info HTTP/1.0\r\n\r\n"
 )
 
-// nvidiaRuntimeBinaries defines a map of runtime names to binary names
-var nvidiaRuntimeBinaries = map[string]string{
-	nvidiaRuntimeName:             nvidiaRuntimeBinary,
-	nvidiaExperimentalRuntimeName: nvidiaExperimentalRuntimeBinary,
+// xdxctRuntimeBinaries defines a map of runtime names to binary names
+var xdxctRuntimeBinaries = map[string]string{
+	xdxctRuntimeName: xdxctRuntimeBinary,
+	// xdxctExperimentalRuntimeName: xdxctExperimentalRuntimeBinary,
 }
 
 // options stores the configuration from the command line or environment variables
@@ -75,13 +59,14 @@ func main() {
 	// Create the top-level CLI
 	c := cli.NewApp()
 	c.Name = "docker"
-	c.Usage = "Update docker config with the nvidia runtime"
+	c.Usage = "Update docker config with the xdxct runtime"
 	c.Version = "0.1.0"
 
 	// Create the 'setup' subcommand
 	setup := cli.Command{}
 	setup.Name = "setup"
 	setup.Usage = "Trigger docker config to be updated"
+	// 必选参数 <runtime_dirname>: /usr/local/xdxct/toolkit
 	setup.ArgsUsage = "<runtime_dirname>"
 	setup.Action = func(c *cli.Context) error {
 		return Setup(c, &options)
@@ -127,7 +112,7 @@ func main() {
 		&cli.StringFlag{
 			Name:        "runtime-name",
 			Aliases:     []string{"r"},
-			Usage:       "Specify the name of the `nvidia` runtime. If set-as-default is selected, the runtime is used as the default runtime.",
+			Usage:       "Specify the name of the `xdxct` runtime. If set-as-default is selected, the runtime is used as the default runtime.",
 			Value:       defaultRuntimeName,
 			Destination: &options.runtimeName,
 			EnvVars:     []string{"DOCKER_RUNTIME_NAME"},
@@ -135,7 +120,7 @@ func main() {
 		&cli.BoolFlag{
 			Name:        "set-as-default",
 			Aliases:     []string{"d"},
-			Usage:       "Set the `nvidia` runtime as the default runtime. If --runtime-name is specified as `nvidia-experimental` the experimental runtime is set as the default runtime instead",
+			Usage:       "Set the `xdxct` runtime as the default runtime. If --runtime-name is specified as `xdxct-experimental` the experimental runtime is set as the default runtime instead",
 			Value:       defaultSetAsDefault,
 			Destination: &options.setAsDefault,
 			EnvVars:     []string{"DOCKER_SET_AS_DEFAULT"},
@@ -161,7 +146,8 @@ func main() {
 	}
 }
 
-// Setup updates docker configuration to include the nvidia runtime and reloads it
+// Setup updates docker configuration to include the xdxct runtime and reloads it
+// /etc/docker/daemon.json
 func Setup(c *cli.Context, o *options) error {
 	log.Infof("Starting 'setup' for %v", c.App.Name)
 
@@ -182,7 +168,7 @@ func Setup(c *cli.Context, o *options) error {
 	if err != nil {
 		return fmt.Errorf("unable to update config: %v", err)
 	}
-
+	// /etc/docker/daemon.json
 	log.Infof("Flushing docker config to %v", o.config)
 	_, err = cfg.Save(o.config)
 	if err != nil {
@@ -199,7 +185,7 @@ func Setup(c *cli.Context, o *options) error {
 	return nil
 }
 
-// Cleanup reverts docker configuration to remove the nvidia runtime and reloads it
+// Cleanup reverts docker configuration to remove the xdxct runtime and reloads it
 func Cleanup(c *cli.Context, o *options) error {
 	log.Infof("Starting 'cleanup' for %v", c.App.Name)
 
@@ -253,10 +239,10 @@ func ParseArgs(c *cli.Context) (string, error) {
 	return runtimeDir, nil
 }
 
-// UpdateConfig updates the docker config to include the nvidia runtimes
+// UpdateConfig updates the docker config to include the xdxct runtimes
 func UpdateConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
-		operator.WithNvidiaRuntimeName(o.runtimeName),
+		operator.WithXdxctRuntimeName(o.runtimeName),
 		operator.WithSetAsDefault(o.setAsDefault),
 		operator.WithRoot(o.runtimeDir),
 	)
@@ -270,10 +256,10 @@ func UpdateConfig(cfg engine.Interface, o *options) error {
 	return nil
 }
 
-// RevertConfig reverts the docker config to remove the nvidia runtime
+// RevertConfig reverts the docker config to remove the xdxct runtime
 func RevertConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
-		operator.WithNvidiaRuntimeName(o.runtimeName),
+		operator.WithXdxctRuntimeName(o.runtimeName),
 		operator.WithSetAsDefault(o.setAsDefault),
 		operator.WithRoot(o.runtimeDir),
 	)
