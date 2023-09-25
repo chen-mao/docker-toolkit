@@ -14,8 +14,9 @@ DIST_DIR ?= $(CURDIR)/dist
 include $(CURDIR)/versions.mk
 
 ifeq ($(IMAGE_NAME),)
-REGISTRY ?= xdxct
-IMAGE_NAME := $(REGISTRY)/container-toolkit
+REGISTRY ?= hub.xdxct.com
+PROJECT ?= xdxct-docker
+IMAGE_NAME := $(REGISTRY)/$(PROJECT)/container-toolkit
 endif
 
 VERSION ?= $(LIB_VERSION)$(if $(LIB_TAG),-$(LIB_TAG))
@@ -75,15 +76,16 @@ build-%: DOCKERFILE = $(CURDIR)/build/container/Dockerfile.$(DOCKERFILE_SUFFIX)
 ARTIFACTS_ROOT ?= $(shell realpath --relative-to=$(CURDIR) $(DIST_DIR))
 
 # Use a generic build target to build the relevant images
+# TODO: DOCKER_BUILDKIT=1 buildx构建授权不通过
 $(BUILD_TARGETS): build-%: $(ARTIFACTS_ROOT)
-	DOCKER_BUILDKIT=1 \
+# DOCKER_BUILDKIT=1
 		$(DOCKER) $(BUILDX) build --pull \
 		$(DOCKER_BUILD_OPTIONS) \
 		$(DOCKER_BUILD_PLATFORM_OPTIONS) \
 		--tag $(IMAGE) \
 		--build-arg ARTIFACTS_ROOT="$(ARTIFACTS_ROOT)" \
+		--build-arg BASE_REG="$(REGISTRY)/$(PROJECT)" \
 		--build-arg BASE_DIST="$(BASE_DIST)" \
-		--build-arg CUDA_VERSION="$(CUDA_VERSION)" \
 		--build-arg GOLANG_VERSION="$(GOLANG_VERSION)" \
 		--build-arg LIBXDXCT_CONTAINER0_VERSION="$(LIBXDXCT_CONTAINER0_DEPENDENCY)" \
 		--build-arg PACKAGE_DIST="$(PACKAGE_DIST)" \

@@ -1,5 +1,5 @@
+ARG BASE_REG
 ARG BASE_DIST
-ARG CUDA_VERSION
 ARG GOLANG_VERSION=x.x.x
 ARG VERSION="N/A"
 
@@ -32,10 +32,7 @@ COPY . .
 # 编译安装的包
 RUN GOPATH=/artifacts go install -ldflags="-s -w -X 'main.Version=${VERSION}'" ./tools/...
 
-FROM nvcr.io/nvidia/cuda:${CUDA_VERSION}-base-${BASE_DIST}
-
-# Remove the CUDA repository configurations to avoid issues with rotated GPG keys
-RUN rm -f /etc/apt/sources.list.d/cuda.list
+FROM ${BASE_REG}/ubuntu:base-${BASE_DIST}
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -44,9 +41,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         && \
     rm -rf /var/lib/apt/lists/*
 
-ENV NVIDIA_DISABLE_REQUIRE="true"
-ENV NVIDIA_VISIBLE_DEVICES=all
-ENV NVIDIA_DRIVER_CAPABILITIES=utility
+ENV XDXCT_DISABLE_REQUIRE="true"
+ENV XDXCT_VISIBLE_DEVICES=all
+ENV XDXCT_DRIVER_CAPABILITIES=utility
 
 ARG ARTIFACTS_ROOT
 ARG PACKAGE_DIST
@@ -56,17 +53,19 @@ COPY ${ARTIFACTS_ROOT}/${PACKAGE_DIST} /artifacts/packages/${PACKAGE_DIST}
 WORKDIR /artifacts/packages
 
 ARG PACKAGE_VERSION
-ARG TARGETARCH
-ENV PACKAGE_ARCH ${TARGETARCH}
+# TODO DOCKER_BUILDKIT=1 
+# ARG TARGETARCH
+ENV PACKAGE_ARCH "amd64"
 
-ARG LIBNVIDIA_CONTAINER_REPO="https://nvidia.github.io/libnvidia-container"
-ARG LIBNVIDIA_CONTAINER0_VERSION
-RUN if [ "${PACKAGE_ARCH}" = "arm64" ]; then \
-        curl -L ${LIBNVIDIA_CONTAINER_REPO}/${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container0_${LIBNVIDIA_CONTAINER0_VERSION}_${PACKAGE_ARCH}.deb \
-            --output ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container0_${LIBNVIDIA_CONTAINER0_VERSION}_${PACKAGE_ARCH}.deb && \
-        dpkg -i ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container0_${LIBNVIDIA_CONTAINER0_VERSION}_${PACKAGE_ARCH}.deb; \
-    fi
-# 在容器安装了libxdxct-container.etc,在容器已经有so,bin.
+# ARG LIBNVIDIA_CONTAINER_REPO="https://nvidia.github.io/libnvidia-container"
+# ARG LIBXDXCT_CONTAINER0_VERSION
+# RUN if [ "${PACKAGE_ARCH}" = "arm64" ]; then \
+#         curl -L ${LIBNVIDIA_CONTAINER_REPO}/${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container0_${LIBXDXCT_CONTAINER0_VERSION}_${PACKAGE_ARCH}.deb \
+#             --output ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container0_${LIBXDXCT_CONTAINER0_VERSION}_${PACKAGE_ARCH}.deb && \
+#         dpkg -i ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container0_${LIBXDXCT_CONTAINER0_VERSION}_${PACKAGE_ARCH}.deb; \
+#     fi
+
+# 在容器安装了xdxct-container.,在容器已经有so,bin.
 RUN dpkg -i \
     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container1_1.*.deb \
     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container-tools_1.*.deb \
@@ -87,6 +86,4 @@ LABEL release="N/A"
 LABEL summary="Automatically Configure your Container Runtime for GPU support."
 LABEL description="See summary"
 
-RUN mkdir /licenses && mv /NGC-DL-CONTAINER-LICENSE /licenses/NGC-DL-CONTAINER-LICENSE
-
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["/bin/bash"]
