@@ -1,26 +1,10 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package operator
 
 import "path/filepath"
 
 const (
-	defaultRuntimeName      = "nvidia"
-	experimentalRuntimeName = "nvidia-experimental"
+	defaultRuntimeName = "xdxct"
+	// experimentalRuntimeName = "xdxct-experimental"
 
 	defaultRoot = "/usr/bin"
 )
@@ -37,9 +21,9 @@ type Runtime struct {
 type Runtimes map[string]Runtime
 
 type config struct {
-	root              string
-	nvidiaRuntimeName string
-	setAsDefault      bool
+	root             string
+	xdxctRuntimeName string
+	setAsDefault     bool
 }
 
 // GetRuntimes returns the set of runtimes to be configured for use with the GPU Operator.
@@ -52,17 +36,17 @@ func GetRuntimes(opts ...Option) Runtimes {
 	if c.root == "" {
 		c.root = defaultRoot
 	}
-	if c.nvidiaRuntimeName == "" {
-		c.nvidiaRuntimeName = defaultRuntimeName
+	if c.xdxctRuntimeName == "" {
+		c.xdxctRuntimeName = defaultRuntimeName
 	}
 
 	runtimes := make(Runtimes)
-	runtimes.add(c.nvidiaRuntime())
+	runtimes.add(c.xdxctRuntime())
 
-	modes := []string{"experimental", "cdi", "legacy"}
-	for _, mode := range modes {
-		runtimes.add(c.modeRuntime(mode))
-	}
+	// modes := []string{"experimental", "cdi", "legacy"}
+	// for _, mode := range modes {
+	// 	runtimes.add(c.modeRuntime(mode))
+	// }
 	return runtimes
 }
 
@@ -81,24 +65,24 @@ func (r *Runtimes) add(runtime Runtime) {
 	(*r)[runtime.name] = runtime
 }
 
-// nvidiaRuntime creates a runtime that corresponds to the nvidia runtime.
-// If name is equal to one of the predefined runtimes, `nvidia` is used as the runtime name instead.
-func (c config) nvidiaRuntime() Runtime {
-	predefinedRuntimes := map[string]struct{}{
-		"nvidia-experimental": {},
-		"nvidia-cdi":          {},
-		"nvidia-legacy":       {},
-	}
-	name := c.nvidiaRuntimeName
-	if _, isPredefinedRuntime := predefinedRuntimes[name]; isPredefinedRuntime {
-		name = defaultRuntimeName
-	}
-	return c.newRuntime(name, "nvidia-container-runtime")
+// xdxctRuntime creates a runtime that corresponds to the xdxct runtime.
+// If name is equal to one of the predefined runtimes, `xdxct` is used as the runtime name instead.
+func (c config) xdxctRuntime() Runtime {
+	// predefinedRuntimes := map[string]struct{}{
+	// 	"xdxct-experimental": {},
+	// 	"xdxct-cdi":          {},
+	// 	"xdxct-legacy":       {},
+	// }
+	name := c.xdxctRuntimeName
+	// if _, isPredefinedRuntime := predefinedRuntimes[name]; isPredefinedRuntime {
+	// 	name = defaultRuntimeName
+	// }
+	return c.newRuntime(name, "xdxct-container-runtime")
 }
 
 // modeRuntime creates a runtime for the specified mode.
 func (c config) modeRuntime(mode string) Runtime {
-	return c.newRuntime("nvidia-"+mode, "nvidia-container-runtime."+mode)
+	return c.newRuntime("xdxct-"+mode, "xdxct-container-runtime."+mode)
 }
 
 // newRuntime creates a runtime based on the configuration
@@ -106,7 +90,7 @@ func (c config) newRuntime(name string, binary string) Runtime {
 	return Runtime{
 		name:         name,
 		Path:         filepath.Join(c.root, binary),
-		SetAsDefault: c.setAsDefault && name == c.nvidiaRuntimeName,
+		SetAsDefault: c.setAsDefault && name == c.xdxctRuntimeName,
 	}
 }
 
@@ -120,14 +104,14 @@ func WithRoot(root string) Option {
 	}
 }
 
-// WithNvidiaRuntimeName sets the name of the nvidia runtime.
-func WithNvidiaRuntimeName(name string) Option {
+// WithXdxctRuntimeName sets the name of the xdxct runtime.
+func WithXdxctRuntimeName(name string) Option {
 	return func(c *config) {
-		c.nvidiaRuntimeName = name
+		c.xdxctRuntimeName = name
 	}
 }
 
-// WithSetAsDefault sets the default runtime to the nvidia runtime.
+// WithSetAsDefault sets the default runtime to the xdxct runtime.
 func WithSetAsDefault(set bool) Option {
 	return func(c *config) {
 		c.setAsDefault = set

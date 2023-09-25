@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-*/
-
 package main
 
 import (
@@ -33,10 +17,11 @@ import (
 )
 
 const (
-	// DefaultNvidiaDriverRoot specifies the default NVIDIA driver run directory
-	DefaultNvidiaDriverRoot = "/run/nvidia/driver"
+	// TODO: DefaultXdxctDriverRoot specifies the default XDXCT driver run directory
+	// DefaultXdxctDriverRoot = "/run/xdxct/driver"
+	DefaultXdxctDriverRoot = "/"
 
-	nvidiaContainerCliSource         = "/usr/bin/xdxct-container-cli"
+	xdxctContainerCliSource          = "/usr/bin/xdxct-container-cli"
 	nvidiaContainerRuntimeHookSource = "/usr/bin/nvidia-container-runtime-hook"
 
 	nvidiaContainerToolkitConfigSource = "/etc/nvidia-container-runtime/config.toml"
@@ -67,8 +52,8 @@ type options struct {
 	cdiVendor    string
 	cdiClass     string
 
-	acceptNVIDIAVisibleDevicesWhenUnprivileged bool
-	acceptNVIDIAVisibleDevicesAsVolumeMounts   bool
+	acceptXDXCTVisibleDevicesWhenUnprivileged bool
+	acceptXDXCTVisibleDevicesAsVolumeMounts   bool
 
 	ignoreErrors bool
 }
@@ -80,13 +65,13 @@ func main() {
 	// Create the top-level CLI
 	c := cli.NewApp()
 	c.Name = "toolkit"
-	c.Usage = "Manage the NVIDIA container toolkit"
+	c.Usage = "Manage the XDXCT container toolkit"
 	c.Version = "0.1.0"
 
 	// Create the 'install' subcommand
 	install := cli.Command{}
 	install.Name = "install"
-	install.Usage = "Install the components of the NVIDIA container toolkit"
+	install.Usage = "Install the components of the XDXCT container toolkit"
 	install.ArgsUsage = "<toolkit_directory>"
 	install.Before = func(c *cli.Context) error {
 		return validateOptions(c, &opts)
@@ -98,7 +83,7 @@ func main() {
 	// Create the 'delete' command
 	delete := cli.Command{}
 	delete.Name = "delete"
-	delete.Usage = "Delete the NVIDIA container toolkit"
+	delete.Usage = "Delete the XDXCT container toolkit"
 	delete.ArgsUsage = "<toolkit_directory>"
 	delete.Before = func(c *cli.Context) error {
 		return validateOptions(c, &opts)
@@ -115,80 +100,80 @@ func main() {
 
 	flags := []cli.Flag{
 		&cli.StringFlag{
-			Name:        "nvidia-driver-root",
-			Value:       DefaultNvidiaDriverRoot,
+			Name:        "xdxct-driver-root",
+			Value:       DefaultXdxctDriverRoot,
 			Destination: &opts.DriverRoot,
-			EnvVars:     []string{"NVIDIA_DRIVER_ROOT"},
+			EnvVars:     []string{"XDXCT_DRIVER_ROOT"},
 		},
 		&cli.StringFlag{
 			Name:        "driver-root-ctr-path",
-			Value:       DefaultNvidiaDriverRoot,
+			Value:       DefaultXdxctDriverRoot,
 			Destination: &opts.DriverRootCtrPath,
 			EnvVars:     []string{"DRIVER_ROOT_CTR_PATH"},
 		},
 		&cli.StringFlag{
-			Name:        "nvidia-container-runtime.debug",
-			Aliases:     []string{"nvidia-container-runtime-debug"},
-			Usage:       "Specify the location of the debug log file for the NVIDIA Container Runtime",
+			Name:        "xdxct-container-runtime.debug",
+			Aliases:     []string{"xdxct-container-runtime-debug"},
+			Usage:       "Specify the location of the debug log file for the XDXCT Container Runtime",
 			Destination: &opts.ContainerRuntimeDebug,
-			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_DEBUG"},
+			EnvVars:     []string{"XDXCT_CONTAINER_RUNTIME_DEBUG"},
 		},
 		&cli.StringFlag{
-			Name:        "nvidia-container-runtime.log-level",
-			Aliases:     []string{"nvidia-container-runtime-debug-log-level"},
+			Name:        "xdxct-container-runtime.log-level",
+			Aliases:     []string{"xdxct-container-runtime-debug-log-level"},
 			Destination: &opts.ContainerRuntimeLogLevel,
-			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_LOG_LEVEL"},
+			EnvVars:     []string{"XDXCT_CONTAINER_RUNTIME_LOG_LEVEL"},
 		},
 		&cli.StringFlag{
-			Name:        "nvidia-container-runtime.mode",
-			Aliases:     []string{"nvidia-container-runtime-mode"},
+			Name:        "xdxct-container-runtime.mode",
+			Aliases:     []string{"xdxct-container-runtime-mode"},
 			Destination: &opts.ContainerRuntimeMode,
-			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_MODE"},
+			EnvVars:     []string{"XDXCT_CONTAINER_RUNTIME_MODE"},
 		},
 		&cli.StringFlag{
-			Name:        "nvidia-container-runtime.modes.cdi.default-kind",
+			Name:        "xdxct-container-runtime.modes.cdi.default-kind",
 			Destination: &opts.ContainerRuntimeModesCdiDefaultKind,
-			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_MODES_CDI_DEFAULT_KIND"},
+			EnvVars:     []string{"XDXCT_CONTAINER_RUNTIME_MODES_CDI_DEFAULT_KIND"},
 		},
 		&cli.StringSliceFlag{
-			Name:        "nvidia-container-runtime.modes.cdi.annotation-prefixes",
+			Name:        "xdxct-container-runtime.modes.cdi.annotation-prefixes",
 			Destination: &opts.ContainerRuntimeModesCDIAnnotationPrefixes,
-			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_MODES_CDI_ANNOTATION_PREFIXES"},
+			EnvVars:     []string{"XDXCT_CONTAINER_RUNTIME_MODES_CDI_ANNOTATION_PREFIXES"},
 		},
 		&cli.StringSliceFlag{
-			Name:        "nvidia-container-runtime.runtimes",
+			Name:        "xdxct-container-runtime.runtimes",
 			Destination: &opts.ContainerRuntimeRuntimes,
-			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_RUNTIMES"},
+			EnvVars:     []string{"XDXCT_CONTAINER_RUNTIME_RUNTIMES"},
 		},
 		&cli.BoolFlag{
-			Name:        "nvidia-container-runtime-hook.skip-mode-detection",
+			Name:        "xdxct-container-runtime-hook.skip-mode-detection",
 			Value:       true,
 			Destination: &opts.ContainerRuntimeHookSkipModeDetection,
-			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_HOOK_SKIP_MODE_DETECTION"},
+			EnvVars:     []string{"XDXCT_CONTAINER_RUNTIME_HOOK_SKIP_MODE_DETECTION"},
 		},
 		&cli.StringFlag{
 			Name:        "xdxct-container-cli.debug",
 			Aliases:     []string{"xdxct-container-cli-debug"},
-			Usage:       "Specify the location of the debug log file for the NVIDIA Container CLI",
+			Usage:       "Specify the location of the debug log file for the XDXCT Container CLI",
 			Destination: &opts.ContainerCLIDebug,
-			EnvVars:     []string{"NVIDIA_CONTAINER_CLI_DEBUG"},
+			EnvVars:     []string{"XDXCT_CONTAINER_CLI_DEBUG"},
 		},
 		&cli.BoolFlag{
-			Name:        "accept-nvidia-visible-devices-envvar-when-unprivileged",
-			Usage:       "Set the accept-nvidia-visible-devices-envvar-when-unprivileged config option",
+			Name:        "accept-xdxct-visible-devices-envvar-when-unprivileged",
+			Usage:       "Set the accept-xdxct-visible-devices-envvar-when-unprivileged config option",
 			Value:       true,
-			Destination: &opts.acceptNVIDIAVisibleDevicesWhenUnprivileged,
-			EnvVars:     []string{"ACCEPT_NVIDIA_VISIBLE_DEVICES_ENVVAR_WHEN_UNPRIVILEGED"},
+			Destination: &opts.acceptXDXCTVisibleDevicesWhenUnprivileged,
+			EnvVars:     []string{"ACCEPT_XDXCT_VISIBLE_DEVICES_ENVVAR_WHEN_UNPRIVILEGED"},
 		},
 		&cli.BoolFlag{
-			Name:        "accept-nvidia-visible-devices-as-volume-mounts",
-			Usage:       "Set the accept-nvidia-visible-devices-as-volume-mounts config option",
-			Destination: &opts.acceptNVIDIAVisibleDevicesAsVolumeMounts,
-			EnvVars:     []string{"ACCEPT_NVIDIA_VISIBLE_DEVICES_AS_VOLUME_MOUNTS"},
+			Name:        "accept-xdxct-visible-devices-as-volume-mounts",
+			Usage:       "Set the accept-xdxct-visible-devices-as-volume-mounts config option",
+			Destination: &opts.acceptXDXCTVisibleDevicesAsVolumeMounts,
+			EnvVars:     []string{"ACCEPT_XDXCT_VISIBLE_DEVICES_AS_VOLUME_MOUNTS"},
 		},
 		&cli.StringFlag{
 			Name:        "toolkit-root",
-			Usage:       "The directory where the NVIDIA Container toolkit is to be installed",
+			Usage:       "The directory where the XDXCT Container toolkit is to be installed",
 			Required:    true,
 			Destination: &opts.toolkitRoot,
 			EnvVars:     []string{"TOOLKIT_ROOT"},
@@ -210,13 +195,13 @@ func main() {
 		&cli.StringFlag{
 			Name:        "cdi-kind",
 			Usage:       "the vendor string to use for the generated CDI specification",
-			Value:       "management.nvidia.com/gpu",
+			Value:       "management.xdxct.com/gpu",
 			Destination: &opts.cdiKind,
 			EnvVars:     []string{"CDI_KIND"},
 		},
 		&cli.BoolFlag{
 			Name:        "ignore-errors",
-			Usage:       "ignore errors when installing the NVIDIA Container toolkit. This is used for testing purposes only.",
+			Usage:       "ignore errors when installing the XDXCT Container toolkit. This is used for testing purposes only.",
 			Hidden:      true,
 			Destination: &opts.ignoreErrors,
 		},
@@ -251,9 +236,9 @@ func validateOptions(c *cli.Context, opts *options) error {
 	return nil
 }
 
-// Delete removes the NVIDIA container toolkit
+// Delete removes the XDXCT container toolkit
 func Delete(cli *cli.Context, opts *options) error {
-	log.Infof("Deleting NVIDIA container toolkit from '%v'", opts.toolkitRoot)
+	log.Infof("Deleting XDXCT container toolkit from '%v'", opts.toolkitRoot)
 	err := os.RemoveAll(opts.toolkitRoot)
 	if err != nil {
 		return fmt.Errorf("error deleting toolkit directory: %v", err)
@@ -261,12 +246,12 @@ func Delete(cli *cli.Context, opts *options) error {
 	return nil
 }
 
-// Install installs the components of the NVIDIA container toolkit.
+// Install installs the components of the XDXCT container toolkit.
 // Any existing installation is removed.
 func Install(cli *cli.Context, opts *options) error {
-	log.Infof("Installing NVIDIA container toolkit to '%v'", opts.toolkitRoot)
+	log.Infof("Installing XDXCT container toolkit to '%v'", opts.toolkitRoot)
 
-	log.Infof("Removing existing NVIDIA container toolkit installation")
+	log.Infof("Removing existing XDXCT container toolkit installation")
 	err := os.RemoveAll(opts.toolkitRoot)
 	if err != nil && !opts.ignoreErrors {
 		return fmt.Errorf("error removing toolkit directory: %v", err)
@@ -274,9 +259,10 @@ func Install(cli *cli.Context, opts *options) error {
 		log.Errorf("Ignoring error: %v", fmt.Errorf("error removing toolkit directory: %v", err))
 	}
 
-	toolkitConfigDir := filepath.Join(opts.toolkitRoot, ".config", "nvidia-container-runtime")
+	toolkitConfigDir := filepath.Join(opts.toolkitRoot, ".config", "xdxct-container-runtime")
 	toolkitConfigPath := filepath.Join(toolkitConfigDir, configFilename)
 
+	// 创建:/usr/local/xdxct/toolkit/.config/xdxct-container-runtime 目录
 	err = createDirectories(opts.toolkitRoot, toolkitConfigDir)
 	if err != nil && !opts.ignoreErrors {
 		return fmt.Errorf("could not create required directories: %v", err)
@@ -284,48 +270,49 @@ func Install(cli *cli.Context, opts *options) error {
 		log.Errorf("Ignoring error: %v", fmt.Errorf("could not create required directories: %v", err))
 	}
 
+	// 安装 libxdxct-container-go.so.1.14.0
 	err = installContainerLibraries(opts.toolkitRoot)
 	if err != nil && !opts.ignoreErrors {
-		return fmt.Errorf("error installing NVIDIA container library: %v", err)
+		return fmt.Errorf("error installing XDXCT container library: %v", err)
 	} else if err != nil {
-		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing NVIDIA container library: %v", err))
+		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT container library: %v", err))
 	}
-
+	// 安装 runtimes
 	err = installContainerRuntimes(opts.toolkitRoot, opts.DriverRoot)
 	if err != nil && !opts.ignoreErrors {
-		return fmt.Errorf("error installing NVIDIA container runtime: %v", err)
+		return fmt.Errorf("error installing XDXCT container runtime: %v", err)
 	} else if err != nil {
-		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing NVIDIA container runtime: %v", err))
+		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT container runtime: %v", err))
 	}
-
-	nvidiaContainerCliExecutable, err := installContainerCLI(opts.toolkitRoot)
+	// 安装 xdxct-container-cli
+	xdxctContainerCliExecutable, err := installContainerCLI(opts.toolkitRoot)
 	if err != nil && !opts.ignoreErrors {
-		return fmt.Errorf("error installing NVIDIA container CLI: %v", err)
+		return fmt.Errorf("error installing XDXCT container CLI: %v", err)
 	} else if err != nil {
-		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing NVIDIA container CLI: %v", err))
+		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT container CLI: %v", err))
 	}
-
+	// 安装 xdxct-container-hook,创建link nvidia-container-toolkit -> nvidia-container-runtime-hook
 	nvidiaContainerRuntimeHookPath, err := installRuntimeHook(opts.toolkitRoot, toolkitConfigPath)
 	if err != nil && !opts.ignoreErrors {
-		return fmt.Errorf("error installing NVIDIA container runtime hook: %v", err)
+		return fmt.Errorf("error installing XDXCT container runtime hook: %v", err)
 	} else if err != nil {
-		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing NVIDIA container runtime hook: %v", err))
+		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT container runtime hook: %v", err))
 	}
-
+	// 安装 nvidia-ctk
 	nvidiaCTKPath, err := installContainerToolkitCLI(opts.toolkitRoot)
 	if err != nil && !opts.ignoreErrors {
-		return fmt.Errorf("error installing NVIDIA Container Toolkit CLI: %v", err)
+		return fmt.Errorf("error installing XDXCT Container Toolkit CLI: %v", err)
 	} else if err != nil {
-		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing NVIDIA Container Toolkit CLI: %v", err))
+		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT Container Toolkit CLI: %v", err))
 	}
-
-	err = installToolkitConfig(cli, toolkitConfigPath, nvidiaContainerCliExecutable, nvidiaCTKPath, nvidiaContainerRuntimeHookPath, opts)
+	// 安装 config.toml配置文件
+	err = installToolkitConfig(cli, toolkitConfigPath, xdxctContainerCliExecutable, nvidiaCTKPath, nvidiaContainerRuntimeHookPath, opts)
 	if err != nil && !opts.ignoreErrors {
-		return fmt.Errorf("error installing NVIDIA container toolkit config: %v", err)
+		return fmt.Errorf("error installing XDXCT container toolkit config: %v", err)
 	} else if err != nil {
-		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing NVIDIA container toolkit config: %v", err))
+		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT container toolkit config: %v", err))
 	}
-
+	// 生成cdi spec, return nil
 	return generateCDISpec(opts, nvidiaCTKPath)
 }
 
@@ -335,7 +322,7 @@ func Install(cli *cli.Context, opts *options) error {
 // resulting in success being installed to the toolkit folder. The install process
 // resolves the symlink for the library and copies the versioned library itself.
 func installContainerLibraries(toolkitRoot string) error {
-	log.Infof("Installing NVIDIA container library to '%v'", toolkitRoot)
+	log.Infof("Installing XDXCT container library to '%v'", toolkitRoot)
 
 	libs := []string{
 		"libxdxct-container.so.1",
@@ -354,11 +341,13 @@ func installContainerLibraries(toolkitRoot string) error {
 
 // installLibrary installs the specified library to the toolkit directory.
 func installLibrary(libName string, toolkitRoot string) error {
+	// 在容器中locate /usr/lib/x86_64-linux-gnu/libxdxct-container.so.1
+	// 然后解析出 libraryPath = libxdxct-container.so.1.14.0
 	libraryPath, err := findLibrary("", libName)
 	if err != nil {
-		return fmt.Errorf("error locating NVIDIA container library: %v", err)
+		return fmt.Errorf("error locating XDXCT container library: %v", err)
 	}
-
+	// 相当于cp libraryPath toolkitRoot
 	installedLibPath, err := installFileToFolder(toolkitRoot, libraryPath)
 	if err != nil {
 		return fmt.Errorf("error installing %v to %v: %v", libraryPath, toolkitRoot, err)
@@ -368,19 +357,20 @@ func installLibrary(libName string, toolkitRoot string) error {
 	if filepath.Base(installedLibPath) == libName {
 		return nil
 	}
-
+	// 给libxdxct-container.so.1.14.0 创建 libxdxct-container.so.1软链接
 	err = installSymlink(toolkitRoot, libName, installedLibPath)
 	if err != nil {
-		return fmt.Errorf("error installing symlink for NVIDIA container library: %v", err)
+		return fmt.Errorf("error installing symlink for XDXCT container library: %v", err)
 	}
 
 	return nil
 }
 
-// installToolkitConfig installs the config file for the NVIDIA container toolkit ensuring
-// that the settings are updated to match the desired install and nvidia driver directories.
-func installToolkitConfig(c *cli.Context, toolkitConfigPath string, nvidiaContainerCliExecutablePath string, nvidiaCTKPath string, nvidaContainerRuntimeHookPath string, opts *options) error {
-	log.Infof("Installing NVIDIA container toolkit config '%v'", toolkitConfigPath)
+// installToolkitConfig installs the config file for the XDXCT container toolkit ensuring
+// that the settings are updated to match the desired install and xdxct driver directories.
+// toolkitConfigPath： /usr/local/xdxct/toolkit/.config/xdxct-container-runtime/config.toml
+func installToolkitConfig(c *cli.Context, toolkitConfigPath string, xdxctContainerCliExecutablePath string, nvidiaCTKPath string, nvidaContainerRuntimeHookPath string, opts *options) error {
+	log.Infof("Installing XDXCT container toolkit config '%v'", toolkitConfigPath)
 
 	config, err := loadConfig(nvidiaContainerToolkitConfigSource)
 	if err != nil {
@@ -401,11 +391,11 @@ func installToolkitConfig(c *cli.Context, toolkitConfigPath string, nvidiaContai
 
 	configValues := map[string]interface{}{
 		// Set the options in the root toml table
-		"accept-nvidia-visible-devices-envvar-when-unprivileged": opts.acceptNVIDIAVisibleDevicesWhenUnprivileged,
-		"accept-nvidia-visible-devices-as-volume-mounts":         opts.acceptNVIDIAVisibleDevicesAsVolumeMounts,
+		"accept-xdxct-visible-devices-envvar-when-unprivileged": opts.acceptXDXCTVisibleDevicesWhenUnprivileged,
+		"accept-xdxct-visible-devices-as-volume-mounts":         opts.acceptXDXCTVisibleDevicesAsVolumeMounts,
 		// Set the xdxct-container-cli options
 		"xdxct-container-cli.root":     opts.DriverRoot,
-		"xdxct-container-cli.path":     nvidiaContainerCliExecutablePath,
+		"xdxct-container-cli.path":     xdxctContainerCliExecutablePath,
 		"xdxct-container-cli.ldconfig": driverLdconfigPath,
 		// Set nvidia-ctk options
 		"nvidia-ctk.path": nvidiaCTKPath,
@@ -419,12 +409,12 @@ func installToolkitConfig(c *cli.Context, toolkitConfigPath string, nvidiaContai
 
 	// Set the optional config options
 	optionalConfigValues := map[string]interface{}{
-		"nvidia-container-runtime.debug":                         opts.ContainerRuntimeDebug,
-		"nvidia-container-runtime.log-level":                     opts.ContainerRuntimeLogLevel,
-		"nvidia-container-runtime.mode":                          opts.ContainerRuntimeMode,
-		"nvidia-container-runtime.modes.cdi.annotation-prefixes": opts.ContainerRuntimeModesCDIAnnotationPrefixes,
-		"nvidia-container-runtime.modes.cdi.default-kind":        opts.ContainerRuntimeModesCdiDefaultKind,
-		"nvidia-container-runtime.runtimes":                      opts.ContainerRuntimeRuntimes,
+		"xdxct-container-runtime.debug":                         opts.ContainerRuntimeDebug,
+		"xdxct-container-runtime.log-level":                     opts.ContainerRuntimeLogLevel,
+		"xdxct-container-runtime.mode":                          opts.ContainerRuntimeMode,
+		"xdxct-container-runtime.modes.cdi.annotation-prefixes": opts.ContainerRuntimeModesCDIAnnotationPrefixes,
+		"xdxct-container-runtime.modes.cdi.default-kind":        opts.ContainerRuntimeModesCdiDefaultKind,
+		"xdxct-container-runtime.runtimes":                      opts.ContainerRuntimeRuntimes,
 		"xdxct-container-cli.debug":                             opts.ContainerCLIDebug,
 	}
 	for key, value := range optionalConfigValues {
@@ -491,14 +481,14 @@ func installContainerToolkitCLI(toolkitDir string) (string, error) {
 // installContainerCLI sets up the NVIDIA container CLI executable, copying the executable
 // and implementing the required wrapper
 func installContainerCLI(toolkitRoot string) (string, error) {
-	log.Infof("Installing NVIDIA container CLI from '%v'", nvidiaContainerCliSource)
+	log.Infof("Installing XDXCT container CLI from '%v'", xdxctContainerCliSource)
 
 	env := map[string]string{
 		"LD_LIBRARY_PATH": toolkitRoot,
 	}
 
 	e := executable{
-		source: nvidiaContainerCliSource,
+		source: xdxctContainerCliSource,
 		target: executableTarget{
 			dotfileName: "xdxct-container-cli.real",
 			wrapperName: "xdxct-container-cli",
@@ -508,15 +498,16 @@ func installContainerCLI(toolkitRoot string) (string, error) {
 
 	installedPath, err := e.install(toolkitRoot)
 	if err != nil {
-		return "", fmt.Errorf("error installing NVIDIA container CLI: %v", err)
+		return "", fmt.Errorf("error installing XDXCT container CLI: %v", err)
 	}
 	return installedPath, nil
 }
 
-// installRuntimeHook sets up the NVIDIA runtime hook, copying the executable
+// installRuntimeHook sets up the XDXCT runtime hook, copying the executable
 // and implementing the required wrapper
+// /etc/.config/xdxct-container-runtime/config.toml
 func installRuntimeHook(toolkitRoot string, configFilePath string) (string, error) {
-	log.Infof("Installing NVIDIA container runtime hook from '%v'", nvidiaContainerRuntimeHookSource)
+	log.Infof("Installing XDXCT container runtime hook from '%v'", nvidiaContainerRuntimeHookSource)
 
 	argLines := []string{
 		fmt.Sprintf("-config \"%s\"", configFilePath),
@@ -533,12 +524,12 @@ func installRuntimeHook(toolkitRoot string, configFilePath string) (string, erro
 
 	installedPath, err := e.install(toolkitRoot)
 	if err != nil {
-		return "", fmt.Errorf("error installing NVIDIA container runtime hook: %v", err)
+		return "", fmt.Errorf("error installing XDXCT container runtime hook: %v", err)
 	}
-
+	// 创建软连接xdxct-container-toolkit --> nvidia-container-runtime-hook
 	err = installSymlink(toolkitRoot, "xdxct-container-toolkit", installedPath)
 	if err != nil {
-		return "", fmt.Errorf("error installing symlink to NVIDIA container runtime hook: %v", err)
+		return "", fmt.Errorf("error installing symlink to XDXCT container runtime hook: %v", err)
 	}
 
 	return installedPath, nil
@@ -567,7 +558,7 @@ func installFileToFolder(destFolder string, src string) (string, error) {
 	return installFileToFolderWithName(destFolder, name, src)
 }
 
-// cp src destFolder/name
+// cp src destFolder/name: cp libxdxct-container.so.1.14.0 /usr/local/xdxct/toolkit
 func installFileToFolderWithName(destFolder string, name, src string) (string, error) {
 	dest := filepath.Join(destFolder, name)
 	err := installFile(dest, src)

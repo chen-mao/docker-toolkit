@@ -360,7 +360,7 @@ func generateOciHook(toolkitDir string) podmanHook {
 // UpdateConfig updates the cri-o config to include the NVIDIA Container Runtime
 func UpdateConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
-		operator.WithNvidiaRuntimeName(o.runtimeClass),
+		operator.WithXdxctRuntimeName(o.runtimeClass),
 		operator.WithSetAsDefault(o.setAsDefault),
 		operator.WithRoot(o.runtimeDir),
 	)
@@ -377,7 +377,7 @@ func UpdateConfig(cfg engine.Interface, o *options) error {
 // RevertConfig reverts the cri-o config to remove the NVIDIA Container Runtime
 func RevertConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
-		operator.WithNvidiaRuntimeName(o.runtimeClass),
+		operator.WithXdxctRuntimeName(o.runtimeClass),
 		operator.WithSetAsDefault(o.setAsDefault),
 		operator.WithRoot(o.runtimeDir),
 	)
