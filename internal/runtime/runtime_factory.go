@@ -28,7 +28,7 @@ import (
 
 // newNVIDIAContainerRuntime is a factory method that constructs a runtime based on the selected configuration and specified logger
 func newNVIDIAContainerRuntime(logger *logrus.Logger, cfg *config.Config, argv []string) (oci.Runtime, error) {
-	lowLevelRuntime, err := oci.NewLowLevelRuntime(logger, cfg.NVIDIAContainerRuntimeConfig.Runtimes)
+	lowLevelRuntime, err := oci.NewLowLevelRuntime(logger, cfg.XDXCTContainerRuntimeConfig.Runtimes)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing low-level runtime: %v", err)
 	}
@@ -61,7 +61,7 @@ func newNVIDIAContainerRuntime(logger *logrus.Logger, cfg *config.Config, argv [
 
 // newSpecModifier is a factory method that creates constructs an OCI spec modifer based on the provided config.
 func newSpecModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec, argv []string) (oci.SpecModifier, error) {
-	mode := info.ResolveAutoMode(logger, cfg.NVIDIAContainerRuntimeConfig.Mode)
+	mode := info.ResolveAutoMode(logger, cfg.XDXCTContainerRuntimeConfig.Mode)
 	modeModifier, err := newModeModifier(logger, mode, cfg, ociSpec, argv)
 	if err != nil {
 		return nil, err
@@ -98,12 +98,12 @@ func newSpecModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec
 func newModeModifier(logger *logrus.Logger, mode string, cfg *config.Config, ociSpec oci.Spec, argv []string) (oci.SpecModifier, error) {
 	switch mode {
 	case "legacy":
-		return modifier.NewStableRuntimeModifier(logger, cfg.NVIDIAContainerRuntimeHookConfig.Path), nil
+		return modifier.NewStableRuntimeModifier(logger, cfg.XDXCTContainerRuntimeHookConfig.Path), nil
 	case "csv":
 		return modifier.NewCSVModifier(logger, cfg, ociSpec)
 	case "cdi":
 		return modifier.NewCDIModifier(logger, cfg, ociSpec)
 	}
 
-	return nil, fmt.Errorf("invalid runtime mode: %v", cfg.NVIDIAContainerRuntimeConfig.Mode)
+	return nil, fmt.Errorf("invalid runtime mode: %v", cfg.XDXCTContainerRuntimeConfig.Mode)
 }

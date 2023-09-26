@@ -29,7 +29,7 @@ ARG GOPATH=/artifacts
 # Install the experiemental nvidia-container-runtime
 # NOTE: This will be integrated into the xdxct-container-toolkit package / repo
 ARG NVIDIA_CONTAINER_RUNTIME_EXPERIMENTAL_VERSION=experimental
-RUN GOPATH=/artifacts go install github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-container-runtime.experimental@${NVIDIA_CONTAINER_RUNTIME_EXPERIMENTAL_VERSION}
+RUN GOPATH=/artifacts go install github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-container-runtime.experimental@${NVIDIA_CONTAINER_RUNTIME_EXPERIMENTAL_VERSION}
 
 WORKDIR /build
 COPY . .

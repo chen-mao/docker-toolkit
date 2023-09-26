@@ -1,19 +1,3 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package runtime
 
 import (
@@ -37,7 +21,7 @@ func (r rt) Run(argv []string) (rerr error) {
 
 	printVersion := hasVersionFlag(argv)
 	if printVersion {
-		fmt.Printf("%v version %v\n", "NVIDIA Container Runtime", info.GetVersionString(fmt.Sprintf("spec: %v", specs.Version)))
+		fmt.Printf("%v version %v\n", "XDXCT Container Runtime", info.GetVersionString(fmt.Sprintf("spec: %v", specs.Version)))
 	}
 
 	cfg, err := config.GetConfig()
@@ -45,8 +29,8 @@ func (r rt) Run(argv []string) (rerr error) {
 		return fmt.Errorf("error loading config: %v", err)
 	}
 	r.logger.Update(
-		cfg.NVIDIAContainerRuntimeConfig.DebugFilePath,
-		cfg.NVIDIAContainerRuntimeConfig.LogLevel,
+		cfg.XDXCTContainerRuntimeConfig.DebugFilePath,
+		cfg.XDXCTContainerRuntimeConfig.LogLevel,
 		argv,
 	)
 	defer func() {
@@ -59,10 +43,10 @@ func (r rt) Run(argv []string) (rerr error) {
 	// We apply some config updates here to ensure that the config is valid in
 	// all cases.
 	if r.modeOverride != "" {
-		cfg.NVIDIAContainerRuntimeConfig.Mode = r.modeOverride
+		cfg.XDXCTContainerRuntimeConfig.Mode = r.modeOverride
 	}
-	cfg.NVIDIACTKConfig.Path = config.ResolveNVIDIACTKPath(r.logger.Logger, cfg.NVIDIACTKConfig.Path)
-	cfg.NVIDIAContainerRuntimeHookConfig.Path = config.ResolveNVIDIAContainerRuntimeHookPath(r.logger.Logger, cfg.NVIDIAContainerRuntimeHookConfig.Path)
+	cfg.XDXCTCTKConfig.Path = config.ResolveXDXCTCTKPath(r.logger.Logger, cfg.XDXCTCTKConfig.Path)
+	cfg.XDXCTContainerRuntimeHookConfig.Path = config.ResolveXDXCTContainerRuntimeHookPath(r.logger.Logger, cfg.XDXCTContainerRuntimeHookConfig.Path)
 
 	// Print the config to the output.
 	configJSON, err := json.MarshalIndent(cfg, "", "  ")

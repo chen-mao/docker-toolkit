@@ -19,12 +19,12 @@ package main
 import (
 	"os"
 
-	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/cdi"
-	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/config"
-	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/hook"
-	infoCLI "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/info"
-	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/runtime"
-	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/system"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/cdi"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/config"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/hook"
+	infoCLI "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/info"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/runtime"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/info"
 
 	log "github.com/sirupsen/logrus"

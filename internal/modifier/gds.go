@@ -52,7 +52,7 @@ func NewGDSModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec)
 		return nil, nil
 	}
 
-	d, err := discover.NewGDSDiscoverer(logger, cfg.NVIDIAContainerCLIConfig.Root)
+	d, err := discover.NewGDSDiscoverer(logger, cfg.XDXCTContainerCLIConfig.Root)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct discoverer for GDS devices: %v", err)
 	}

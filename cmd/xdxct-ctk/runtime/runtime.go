@@ -17,7 +17,7 @@
 package runtime
 
 import (
-	"github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/runtime/configure"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/runtime/configure"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )

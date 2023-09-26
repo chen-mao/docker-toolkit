@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package modifier
 
 import (
@@ -49,8 +33,8 @@ func NewCDIModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec)
 	logger.Debugf("Creating CDI modifier for devices: %v", devices)
 
 	specDirs := cdi.DefaultSpecDirs
-	if len(cfg.NVIDIAContainerRuntimeConfig.Modes.CDI.SpecDirs) > 0 {
-		specDirs = cfg.NVIDIAContainerRuntimeConfig.Modes.CDI.SpecDirs
+	if len(cfg.XDXCTContainerRuntimeConfig.Modes.CDI.SpecDirs) > 0 {
+		specDirs = cfg.XDXCTContainerRuntimeConfig.Modes.CDI.SpecDirs
 	}
 
 	m := cdiModifier{
@@ -68,7 +52,7 @@ func getDevicesFromSpec(logger *logrus.Logger, ociSpec oci.Spec, cfg *config.Con
 		return nil, fmt.Errorf("failed to load OCI spec: %v", err)
 	}
 
-	annotationDevices, err := getAnnotationDevices(cfg.NVIDIAContainerRuntimeConfig.Modes.CDI.AnnotationPrefixes, rawSpec.Annotations)
+	annotationDevices, err := getAnnotationDevices(cfg.XDXCTContainerRuntimeConfig.Modes.CDI.AnnotationPrefixes, rawSpec.Annotations)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse container annotations: %v", err)
 	}
@@ -86,7 +70,7 @@ func getDevicesFromSpec(logger *logrus.Logger, ociSpec oci.Spec, cfg *config.Con
 	seen := make(map[string]bool)
 	for _, name := range envDevices.List() {
 		if !cdi.IsQualifiedName(name) {
-			name = fmt.Sprintf("%s=%s", cfg.NVIDIAContainerRuntimeConfig.Modes.CDI.DefaultKind, name)
+			name = fmt.Sprintf("%s=%s", cfg.XDXCTContainerRuntimeConfig.Modes.CDI.DefaultKind, name)
 		}
 		if seen[name] {
 			logger.Debugf("Ignoring duplicate device %q", name)

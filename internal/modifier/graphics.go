@@ -47,8 +47,8 @@ func NewGraphicsModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.
 	d, err := discover.NewGraphicsDiscoverer(
 		logger,
 		image.DevicesFromEnvvars(visibleDevicesEnvvar),
-		cfg.NVIDIAContainerCLIConfig.Root,
-		cfg.NVIDIACTKConfig.Path,
+		cfg.XDXCTContainerCLIConfig.Root,
+		cfg.XDXCTCTKConfig.Path,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct discoverer: %v", err)

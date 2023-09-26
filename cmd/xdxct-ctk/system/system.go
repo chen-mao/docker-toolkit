@@ -1,5 +1,5 @@
 /**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
+# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
 # limitations under the License.
 **/
 
-package config
+package system
 
 import (
-	createdefault "github.com/XDXCT/xdxct-container-toolkit/cmd/nvidia-ctk/config/create-default"
+	devchar "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/create-dev-char-symlinks"
+	devicenodes "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/create-device-nodes"
+	ldcache "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/print-ldcache"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -26,7 +28,7 @@ type command struct {
 	logger *logrus.Logger
 }
 
-// NewCommand constructs an config command with the specified logger
+// NewCommand constructs a runtime command with the specified logger
 func NewCommand(logger *logrus.Logger) *cli.Command {
 	c := command{
 		logger: logger,
@@ -34,17 +36,18 @@ func NewCommand(logger *logrus.Logger) *cli.Command {
 	return c.build()
 }
 
-// build
 func (m command) build() *cli.Command {
-	// Create the 'config' command
-	c := cli.Command{
-		Name:  "config",
-		Usage: "Interact with the NVIDIA Container Toolkit configuration",
+	// Create the 'system' command
+	system := cli.Command{
+		Name:  "system",
+		Usage: "A collection of system-related utilities for the NVIDIA Container Toolkit",
 	}
 
-	c.Subcommands = []*cli.Command{
-		createdefault.NewCommand(m.logger),
+	system.Subcommands = []*cli.Command{
+		devchar.NewCommand(m.logger),
+		devicenodes.NewCommand(m.logger),
+		ldcache.NewCommand(m.logger),
 	}
 
-	return &c
+	return &system
 }
