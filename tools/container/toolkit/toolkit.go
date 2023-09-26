@@ -21,11 +21,11 @@ const (
 	// DefaultXdxctDriverRoot = "/run/xdxct/driver"
 	DefaultXdxctDriverRoot = "/"
 
-	xdxctContainerCliSource          = "/usr/bin/xdxct-container-cli"
-	nvidiaContainerRuntimeHookSource = "/usr/bin/nvidia-container-runtime-hook"
+	xdxctContainerCliSource         = "/usr/bin/xdxct-container-cli"
+	xdxctContainerRuntimeHookSource = "/usr/bin/xdxct-container-runtime-hook"
 
-	nvidiaContainerToolkitConfigSource = "/etc/nvidia-container-runtime/config.toml"
-	configFilename                     = "config.toml"
+	xdxctContainerToolkitConfigSource = "/etc/xdxct-container-runtime/config.toml"
+	configFilename                    = "config.toml"
 )
 
 type options struct {
@@ -291,29 +291,29 @@ func Install(cli *cli.Context, opts *options) error {
 	} else if err != nil {
 		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT container CLI: %v", err))
 	}
-	// 安装 xdxct-container-hook,创建link nvidia-container-toolkit -> nvidia-container-runtime-hook
-	nvidiaContainerRuntimeHookPath, err := installRuntimeHook(opts.toolkitRoot, toolkitConfigPath)
+	// 安装 xdxct-container-hook,创建link xdxct-container-toolkit -> xdxct-container-runtime-hook
+	xdxctContainerRuntimeHookPath, err := installRuntimeHook(opts.toolkitRoot, toolkitConfigPath)
 	if err != nil && !opts.ignoreErrors {
 		return fmt.Errorf("error installing XDXCT container runtime hook: %v", err)
 	} else if err != nil {
 		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT container runtime hook: %v", err))
 	}
-	// 安装 nvidia-ctk
-	nvidiaCTKPath, err := installContainerToolkitCLI(opts.toolkitRoot)
+	// 安装 xdxct-ctk
+	xdxctCTKPath, err := installContainerToolkitCLI(opts.toolkitRoot)
 	if err != nil && !opts.ignoreErrors {
 		return fmt.Errorf("error installing XDXCT Container Toolkit CLI: %v", err)
 	} else if err != nil {
 		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT Container Toolkit CLI: %v", err))
 	}
 	// 安装 config.toml配置文件
-	err = installToolkitConfig(cli, toolkitConfigPath, xdxctContainerCliExecutable, nvidiaCTKPath, nvidiaContainerRuntimeHookPath, opts)
+	err = installToolkitConfig(cli, toolkitConfigPath, xdxctContainerCliExecutable, xdxctCTKPath, xdxctContainerRuntimeHookPath, opts)
 	if err != nil && !opts.ignoreErrors {
 		return fmt.Errorf("error installing XDXCT container toolkit config: %v", err)
 	} else if err != nil {
 		log.Errorf("Ignoring error: %v", fmt.Errorf("error installing XDXCT container toolkit config: %v", err))
 	}
 	// 生成cdi spec, return nil
-	return generateCDISpec(opts, nvidiaCTKPath)
+	return generateCDISpec(opts, xdxctCTKPath)
 }
 
 // installContainerLibraries locates and installs the libraries that are part of
@@ -369,10 +369,10 @@ func installLibrary(libName string, toolkitRoot string) error {
 // installToolkitConfig installs the config file for the XDXCT container toolkit ensuring
 // that the settings are updated to match the desired install and xdxct driver directories.
 // toolkitConfigPath： /usr/local/xdxct/toolkit/.config/xdxct-container-runtime/config.toml
-func installToolkitConfig(c *cli.Context, toolkitConfigPath string, xdxctContainerCliExecutablePath string, nvidiaCTKPath string, nvidaContainerRuntimeHookPath string, opts *options) error {
+func installToolkitConfig(c *cli.Context, toolkitConfigPath string, xdxctContainerCliExecutablePath string, xdxctCTKPath string, xdxctContainerRuntimeHookPath string, opts *options) error {
 	log.Infof("Installing XDXCT container toolkit config '%v'", toolkitConfigPath)
 
-	config, err := loadConfig(nvidiaContainerToolkitConfigSource)
+	config, err := loadConfig(xdxctContainerToolkitConfigSource)
 	if err != nil {
 		return fmt.Errorf("could not open source config file: %v", err)
 	}
@@ -397,11 +397,11 @@ func installToolkitConfig(c *cli.Context, toolkitConfigPath string, xdxctContain
 		"xdxct-container-cli.root":     opts.DriverRoot,
 		"xdxct-container-cli.path":     xdxctContainerCliExecutablePath,
 		"xdxct-container-cli.ldconfig": driverLdconfigPath,
-		// Set nvidia-ctk options
-		"nvidia-ctk.path": nvidiaCTKPath,
-		// Set the nvidia-container-runtime-hook options
-		"nvidia-container-runtime-hook.path":                nvidaContainerRuntimeHookPath,
-		"nvidia-container-runtime-hook.skip-mode-detection": opts.ContainerRuntimeHookSkipModeDetection,
+		// Set xdxct-ctk options
+		"xdxct-ctk.path": xdxctCTKPath,
+		// Set the xdxct-container-runtime-hook options
+		"xdxct-container-runtime-hook.path":                xdxctContainerRuntimeHookPath,
+		"xdxct-container-runtime-hook.skip-mode-detection": opts.ContainerRuntimeHookSkipModeDetection,
 	}
 	for key, value := range configValues {
 		config.Set(key, value)
@@ -465,20 +465,20 @@ func loadConfig(path string) (*toml.Tree, error) {
 	return nil, err
 }
 
-// installContainerToolkitCLI installs the nvidia-ctk CLI executable and wrapper.
+// installContainerToolkitCLI installs the xdxct-ctk CLI executable and wrapper.
 func installContainerToolkitCLI(toolkitDir string) (string, error) {
 	e := executable{
-		source: "/usr/bin/nvidia-ctk",
+		source: "/usr/bin/xdxct-ctk",
 		target: executableTarget{
-			dotfileName: "nvidia-ctk.real",
-			wrapperName: "nvidia-ctk",
+			dotfileName: "xdxct-ctk.real",
+			wrapperName: "xdxct-ctk",
 		},
 	}
 
 	return e.install(toolkitDir)
 }
 
-// installContainerCLI sets up the NVIDIA container CLI executable, copying the executable
+// installContainerCLI sets up the XDXCT container CLI executable, copying the executable
 // and implementing the required wrapper
 func installContainerCLI(toolkitRoot string) (string, error) {
 	log.Infof("Installing XDXCT container CLI from '%v'", xdxctContainerCliSource)
@@ -507,17 +507,17 @@ func installContainerCLI(toolkitRoot string) (string, error) {
 // and implementing the required wrapper
 // /etc/.config/xdxct-container-runtime/config.toml
 func installRuntimeHook(toolkitRoot string, configFilePath string) (string, error) {
-	log.Infof("Installing XDXCT container runtime hook from '%v'", nvidiaContainerRuntimeHookSource)
+	log.Infof("Installing XDXCT container runtime hook from '%v'", xdxctContainerRuntimeHookSource)
 
 	argLines := []string{
 		fmt.Sprintf("-config \"%s\"", configFilePath),
 	}
 
 	e := executable{
-		source: nvidiaContainerRuntimeHookSource,
+		source: xdxctContainerRuntimeHookSource,
 		target: executableTarget{
-			dotfileName: "nvidia-container-runtime-hook.real",
-			wrapperName: "nvidia-container-runtime-hook",
+			dotfileName: "xdxct-container-runtime-hook.real",
+			wrapperName: "xdxct-container-runtime-hook",
 		},
 		argLines: argLines,
 	}
@@ -526,7 +526,7 @@ func installRuntimeHook(toolkitRoot string, configFilePath string) (string, erro
 	if err != nil {
 		return "", fmt.Errorf("error installing XDXCT container runtime hook: %v", err)
 	}
-	// 创建软连接xdxct-container-toolkit --> nvidia-container-runtime-hook
+	// 创建软连接xdxct-container-toolkit --> xdxct-container-runtime-hook
 	err = installSymlink(toolkitRoot, "xdxct-container-toolkit", installedPath)
 	if err != nil {
 		return "", fmt.Errorf("error installing symlink to XDXCT container runtime hook: %v", err)
@@ -664,7 +664,7 @@ func createDirectories(dir ...string) error {
 }
 
 // generateCDISpec generates a CDI spec for use in managemnt containers
-func generateCDISpec(opts *options, nvidiaCTKPath string) error {
+func generateCDISpec(opts *options, xdxctCTKPath string) error {
 	if !opts.cdiEnabled {
 		return nil
 	}
@@ -686,7 +686,7 @@ func generateCDISpec(opts *options, nvidiaCTKPath string) error {
 	cdilib, err := nvcdi.New(
 		nvcdi.WithMode(nvcdi.ModeManagement),
 		nvcdi.WithDriverRoot(opts.DriverRootCtrPath),
-		nvcdi.WithNVIDIACTKPath(nvidiaCTKPath),
+		nvcdi.WithNVIDIACTKPath(xdxctCTKPath),
 		nvcdi.WithVendor(opts.cdiVendor),
 		nvcdi.WithClass(opts.cdiClass),
 	)
