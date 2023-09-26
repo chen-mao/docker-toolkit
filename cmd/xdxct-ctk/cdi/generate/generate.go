@@ -164,7 +164,7 @@ func (m command) validateFlags(c *cli.Context, opts *options) error {
 		return err
 	}
 
-	opts.nvidiaCTKPath = config.ResolveNVIDIACTKPath(m.logger, opts.nvidiaCTKPath)
+	opts.nvidiaCTKPath = config.ResolveXDXCTCTKPath(m.logger, opts.nvidiaCTKPath)
 
 	if outputFileFormat := formatFromFilename(opts.output); outputFileFormat != "" {
 		m.logger.Debugf("Inferred output format as %q from output file name", outputFileFormat)

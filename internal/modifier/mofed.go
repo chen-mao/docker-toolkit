@@ -52,7 +52,7 @@ func NewMOFEDModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spe
 		return nil, nil
 	}
 
-	d, err := discover.NewMOFEDDiscoverer(logger, cfg.NVIDIAContainerCLIConfig.Root)
+	d, err := discover.NewMOFEDDiscoverer(logger, cfg.XDXCTContainerCLIConfig.Root)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct discoverer for MOFED devices: %v", err)
 	}

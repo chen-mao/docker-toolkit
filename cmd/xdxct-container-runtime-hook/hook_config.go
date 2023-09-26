@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	configPath = "/etc/nvidia-container-runtime/config.toml"
+	configPath = "/etc/xdxct-container-runtime/config.toml"
 	driverPath = "/run/nvidia/driver"
 )
 
@@ -36,7 +36,7 @@ type CLIConfig struct {
 	Ldconfig    *string  `toml:"ldconfig"`
 }
 
-// HookConfig : options for the nvidia-container-runtime-hook.
+// HookConfig : options for the xdxct-container-runtime-hook.
 type HookConfig struct {
 	DisableRequire                 bool               `toml:"disable-require"`
 	SwarmResource                  *string            `toml:"swarm-resource"`
@@ -44,9 +44,9 @@ type HookConfig struct {
 	AcceptDeviceListAsVolumeMounts bool               `toml:"accept-nvidia-visible-devices-as-volume-mounts"`
 	SupportedDriverCapabilities    DriverCapabilities `toml:"supported-driver-capabilities"`
 
-	NvidiaContainerCLI         CLIConfig                `toml:"xdxct-container-cli"`
-	NVIDIAContainerRuntime     config.RuntimeConfig     `toml:"nvidia-container-runtime"`
-	NVIDIAContainerRuntimeHook config.RuntimeHookConfig `toml:"nvidia-container-runtime-hook"`
+	NvidiaContainerCLI        CLIConfig                `toml:"xdxct-container-cli"`
+	NVIDIAContainerRuntime    config.RuntimeConfig     `toml:"xdxct-container-runtime"`
+	XDXCTContainerRuntimeHook config.RuntimeHookConfig `toml:"xdxct-container-runtime-hook"`
 }
 
 func getDefaultHookConfig() (HookConfig, error) {
@@ -78,8 +78,8 @@ func getDefaultHookConfig() (HookConfig, error) {
 			User:        nil,
 			Ldconfig:    nil,
 		},
-		NVIDIAContainerRuntime:     *rtConfig,
-		NVIDIAContainerRuntimeHook: *rtHookConfig,
+		NVIDIAContainerRuntime:    *rtConfig,
+		XDXCTContainerRuntimeHook: *rtHookConfig,
 	}
 
 	return c, nil

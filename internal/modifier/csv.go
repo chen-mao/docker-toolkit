@@ -66,7 +66,7 @@ func NewCSVModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec)
 		return nil, fmt.Errorf("requirements not met: %v", err)
 	}
 
-	csvFiles, err := csv.GetFileList(cfg.NVIDIAContainerRuntimeConfig.Modes.CSV.MountSpecPath)
+	csvFiles, err := csv.GetFileList(cfg.XDXCTContainerRuntimeConfig.Modes.CSV.MountSpecPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get list of CSV files: %v", err)
 	}
@@ -77,8 +77,8 @@ func NewCSVModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec)
 
 	d, err := tegra.New(
 		tegra.WithLogger(logger),
-		tegra.WithDriverRoot(cfg.NVIDIAContainerCLIConfig.Root),
-		tegra.WithNVIDIACTKPath(cfg.NVIDIACTKConfig.Path),
+		tegra.WithDriverRoot(cfg.XDXCTContainerCLIConfig.Root),
+		tegra.WithNVIDIACTKPath(cfg.XDXCTCTKConfig.Path),
 		tegra.WithCSVFiles(csvFiles),
 	)
 	if err != nil {

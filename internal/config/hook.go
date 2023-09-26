@@ -32,5 +32,5 @@ func GetDefaultRuntimeHookConfig() (*RuntimeHookConfig, error) {
 		return nil, err
 	}
 
-	return &cfg.NVIDIAContainerRuntimeHookConfig, nil
+	return &cfg.XDXCTContainerRuntimeHookConfig, nil
 }

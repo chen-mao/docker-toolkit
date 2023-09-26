@@ -1,7 +1,7 @@
 Source: xdxct-container-toolkit
 Section: @SECTION@utils
 Priority: optional
-Maintainer: NVIDIA CORPORATION <cudatools@nvidia.com>
+Maintainer: XDXCT CORPORATION
 Standards-Version: 3.9.8
 Homepage: https://github.com/XDXCT/xdxct-container-toolkit
 Vcs-Git: https://github.com/XDXCT/xdxct-container-toolkit
@@ -11,20 +11,20 @@ Build-Depends: debhelper (>= 9)
 Package: xdxct-container-toolkit
 Architecture: any
 Depends: ${misc:Depends}, xdxct-container-toolkit-base (= @VERSION@), libxdxct-container-tools (>= @LIBNVIDIA_CONTAINER_TOOLS_VERSION@), libxdxct-container-tools (<< 2.0.0), libseccomp2
-Breaks: xdxct-container-runtime (<= 3.5.0-1), nvidia-container-runtime-hook
-Replaces: xdxct-container-runtime (<= 3.5.0-1), nvidia-container-runtime-hook
-Description: NVIDIA Container toolkit
+Breaks: xdxct-container-runtime (<= 3.5.0-1), xdxct-container-runtime-hook
+Replaces: xdxct-container-runtime (<= 3.5.0-1), xdxct-container-runtime-hook
+Description: XDXCT Container toolkit
  Provides tools and utilities to enable GPU support in containers.
 
 Package: xdxct-container-toolkit-base
 Architecture: any
 Depends: ${misc:Depends}
-Replaces: xdxct-container-runtime (<= 3.5.0-1), nvidia-container-runtime-hook
-Description: NVIDIA Container Toolkit Base
- Provides tools such as the NVIDIA Container Runtime and NVIDIA Container Toolkit CLI to enable GPU support in containers.
+Replaces: xdxct-container-runtime (<= 3.5.0-1), xdxct-container-runtime-hook
+Description: XDXCT Container Toolkit Base
+ Provides tools such as the XDXCT Container Runtime and XDXCT Container Toolkit CLI to enable GPU support in containers.
 
 Package: xdxct-container-toolkit-operator-extensions
 Architecture: any
 Depends: ${misc:Depends}, xdxct-container-toolkit-base (= @VERSION@)
-Description: NVIDIA Container Toolkit Operator Extensions
- Provides tools for using the NVIDIA Container Toolkit with the GPU Operator
+Description: XDXCT Container Toolkit Operator Extensions
+ Provides tools for using the XDXCT Container Toolkit with the GPU Operator

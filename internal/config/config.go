@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package config
 
 import (
@@ -33,36 +17,36 @@ import (
 
 const (
 	configOverride = "XDG_CONFIG_HOME"
-	configFilePath = "nvidia-container-runtime/config.toml"
+	configFilePath = "xdxct-container-runtime/config.toml"
 
-	nvidiaCTKExecutable      = "nvidia-ctk"
-	nvidiaCTKDefaultFilePath = "/usr/bin/nvidia-ctk"
+	xdxctCTKExecutable      = "xdxct-ctk"
+	xdxctCTKDefaultFilePath = "/usr/bin/xdxct-ctk"
 
-	nvidiaContainerRuntimeHookExecutable  = "nvidia-container-runtime-hook"
-	nvidiaContainerRuntimeHookDefaultPath = "/usr/bin/nvidia-container-runtime-hook"
+	xdxctContainerRuntimeHookExecutable  = "xdxct-container-runtime-hook"
+	xdxctContainerRuntimeHookDefaultPath = "/usr/bin/xdxct-container-runtime-hook"
 )
 
 var (
 	// DefaultExecutableDir specifies the default path to use for executables if they cannot be located in the path.
 	DefaultExecutableDir = "/usr/bin"
 
-	// NVIDIAContainerRuntimeHookExecutable is the executable name for the NVIDIA Container Runtime Hook
-	NVIDIAContainerRuntimeHookExecutable = "nvidia-container-runtime-hook"
-	// NVIDIAContainerToolkitExecutable is the executable name for the NVIDIA Container Toolkit (an alias for the NVIDIA Container Runtime Hook)
-	NVIDIAContainerToolkitExecutable = "xdxct-container-toolkit"
+	// XDXCTContainerRuntimeHookExecutable is the executable name for the XDXCT Container Runtime Hook
+	XDXCTContainerRuntimeHookExecutable = "xdxct-container-runtime-hook"
+	// XDXCTContainerToolkitExecutable is the executable name for the XDXCT Container Toolkit (an alias for the XDXCT Container Runtime Hook)
+	XDXCTContainerToolkitExecutable = "xdxct-container-toolkit"
 
 	configDir = "/etc/"
 )
 
-// Config represents the contents of the config.toml file for the NVIDIA Container Toolkit
+// Config represents the contents of the config.toml file for the XDXCT Container Toolkit
 // Note: This is currently duplicated by the HookConfig in cmd/xdxct-container-toolkit/hook_config.go
 type Config struct {
-	AcceptEnvvarUnprivileged bool `toml:"accept-nvidia-visible-devices-envvar-when-unprivileged"`
+	AcceptEnvvarUnprivileged bool `toml:"accept-xdxct-visible-devices-envvar-when-unprivileged"`
 
-	NVIDIAContainerCLIConfig         ContainerCLIConfig `toml:"xdxct-container-cli"`
-	NVIDIACTKConfig                  CTKConfig          `toml:"nvidia-ctk"`
-	NVIDIAContainerRuntimeConfig     RuntimeConfig      `toml:"nvidia-container-runtime"`
-	NVIDIAContainerRuntimeHookConfig RuntimeHookConfig  `toml:"nvidia-container-runtime-hook"`
+	XDXCTContainerCLIConfig         ContainerCLIConfig `toml:"xdxct-container-cli"`
+	XDXCTCTKConfig                  CTKConfig          `toml:"xdxct-ctk"`
+	XDXCTContainerRuntimeConfig     RuntimeConfig      `toml:"xdxct-container-runtime"`
+	XDXCTContainerRuntimeHookConfig RuntimeHookConfig  `toml:"xdxct-container-runtime-hook"`
 }
 
 // GetConfig sets up the config struct. Values are read from a toml file
@@ -98,7 +82,7 @@ func loadConfigFrom(reader io.Reader) (*Config, error) {
 	return getConfigFrom(toml)
 }
 
-// getConfigFrom reads the nvidia container runtime config from the specified toml Tree.
+// getConfigFrom reads the xdxct container runtime config from the specified toml Tree.
 func getConfigFrom(toml *toml.Tree) (*Config, error) {
 	cfg, err := getDefaultConfig()
 	if err != nil {
@@ -136,15 +120,15 @@ func getDefaultConfig() (*Config, error) {
 		return nil, fmt.Errorf("failed to unmarshal config: %v", err)
 	}
 
-	// The default value for the accept-nvidia-visible-devices-envvar-when-unprivileged is non-standard.
+	// The default value for the accept-xdxct-visible-devices-envvar-when-unprivileged is non-standard.
 	// As such we explicitly handle it being set here.
-	if reloaded.Get("accept-nvidia-visible-devices-envvar-when-unprivileged") == nil {
+	if reloaded.Get("accept-xdxct-visible-devices-envvar-when-unprivileged") == nil {
 		d.AcceptEnvvarUnprivileged = true
 	}
-	// The default value for the nvidia-container-runtime.debug is non-standard.
+	// The default value for the xdxct-container-runtime.debug is non-standard.
 	// As such we explicitly handle it being set here.
-	if reloaded.Get("nvidia-container-runtime.debug") == nil {
-		d.NVIDIAContainerRuntimeConfig.DebugFilePath = "/dev/null"
+	if reloaded.Get("xdxct-container-runtime.debug") == nil {
+		d.XDXCTContainerRuntimeConfig.DebugFilePath = "/dev/null"
 	}
 	return &d, nil
 }
@@ -158,11 +142,11 @@ func GetDefaultConfigToml() (*toml.Tree, error) {
 
 	tree.Set("disable-require", false)
 	tree.SetWithComment("swarm-resource", "", true, "DOCKER_RESOURCE_GPU")
-	tree.SetWithComment("accept-nvidia-visible-devices-envvar-when-unprivileged", "", true, true)
-	tree.SetWithComment("accept-nvidia-visible-devices-as-volume-mounts", "", true, false)
+	tree.SetWithComment("accept-xdxct-visible-devices-envvar-when-unprivileged", "", true, true)
+	tree.SetWithComment("accept-xdxct-visible-devices-as-volume-mounts", "", true, false)
 
 	// xdxct-container-cli
-	tree.SetWithComment("xdxct-container-cli.root", "", true, "/run/nvidia/driver")
+	tree.SetWithComment("xdxct-container-cli.root", "", true, "/run/xdxct/driver")
 	tree.SetWithComment("xdxct-container-cli.path", "", true, "/usr/bin/xdxct-container-cli")
 	tree.Set("xdxct-container-cli.environment", []string{})
 	tree.SetWithComment("xdxct-container-cli.debug", "", true, "/var/log/xdxct-container-toolkit.log")
@@ -173,27 +157,27 @@ func GetDefaultConfigToml() (*toml.Tree, error) {
 	tree.SetWithComment("xdxct-container-cli.user", "", getCommentedUserGroup(), getUserGroup())
 	tree.Set("xdxct-container-cli.ldconfig", getLdConfigPath())
 
-	// nvidia-container-runtime
-	tree.SetWithComment("nvidia-container-runtime.debug", "", true, "/var/log/nvidia-container-runtime.log")
-	tree.Set("nvidia-container-runtime.log-level", "info")
+	// xdxct-container-runtime
+	tree.SetWithComment("xdxct-container-runtime.debug", "", true, "/var/log/xdxct-container-runtime.log")
+	tree.Set("xdxct-container-runtime.log-level", "info")
 
 	commentLines := []string{
 		"Specify the runtimes to consider. This list is processed in order and the PATH",
 		"searched for matching executables unless the entry is an absolute path.",
 	}
-	tree.SetWithComment("nvidia-container-runtime.runtimes", strings.Join(commentLines, "\n "), false, []string{"docker-runc", "runc"})
+	tree.SetWithComment("xdxct-container-runtime.runtimes", strings.Join(commentLines, "\n "), false, []string{"docker-runc", "runc"})
 
-	tree.Set("nvidia-container-runtime.mode", "auto")
+	tree.Set("xdxct-container-runtime.mode", "auto")
 
-	tree.Set("nvidia-container-runtime.modes.csv.mount-spec-path", "/etc/nvidia-container-runtime/host-files-for-container.d")
-	tree.Set("nvidia-container-runtime.modes.cdi.default-kind", "nvidia.com/gpu")
-	tree.Set("nvidia-container-runtime.modes.cdi.annotation-prefixes", []string{cdi.AnnotationPrefix})
+	tree.Set("xdxct-container-runtime.modes.csv.mount-spec-path", "/etc/xdxct-container-runtime/host-files-for-container.d")
+	tree.Set("xdxct-container-runtime.modes.cdi.default-kind", "xdxct.com/gpu")
+	tree.Set("xdxct-container-runtime.modes.cdi.annotation-prefixes", []string{cdi.AnnotationPrefix})
 
-	// nvidia-ctk
-	tree.Set("nvidia-ctk.path", nvidiaCTKExecutable)
+	// xdxct-ctk
+	tree.Set("xdxct-ctk.path", xdxctCTKExecutable)
 
-	// nvidia-container-runtime-hook
-	tree.Set("nvidia-container-runtime-hook.path", nvidiaContainerRuntimeHookExecutable)
+	// xdxct-container-runtime-hook
+	tree.Set("xdxct-container-runtime-hook.path", xdxctContainerRuntimeHookExecutable)
 
 	return tree, nil
 }
@@ -245,26 +229,26 @@ func getDistIDLike() []string {
 	return nil
 }
 
-// ResolveNVIDIACTKPath resolves the path to the nvidia-ctk binary.
+// ResolveXDXCTCTKPath resolves the path to the xdxct-ctk binary.
 // This executable is used in hooks and needs to be an absolute path.
 // If the path is specified as an absolute path, it is used directly
 // without checking for existence of an executable at that path.
-func ResolveNVIDIACTKPath(logger *logrus.Logger, nvidiaCTKPath string) string {
+func ResolveXDXCTCTKPath(logger *logrus.Logger, xdxctCTKPath string) string {
 	return resolveWithDefault(
 		logger,
-		"NVIDIA Container Toolkit CLI",
-		nvidiaCTKPath,
-		nvidiaCTKDefaultFilePath,
+		"XDXCT Container Toolkit CLI",
+		xdxctCTKPath,
+		xdxctCTKDefaultFilePath,
 	)
 }
 
-// ResolveNVIDIAContainerRuntimeHookPath resolves the path the nvidia-container-runtime-hook binary.
-func ResolveNVIDIAContainerRuntimeHookPath(logger *logrus.Logger, nvidiaContainerRuntimeHookPath string) string {
+// ResolveXDXCTContainerRuntimeHookPath resolves the path the xdxct-container-runtime-hook binary.
+func ResolveXDXCTContainerRuntimeHookPath(logger *logrus.Logger, xdxctContainerRuntimeHookPath string) string {
 	return resolveWithDefault(
 		logger,
-		"NVIDIA Container Runtime Hook",
-		nvidiaContainerRuntimeHookPath,
-		nvidiaContainerRuntimeHookDefaultPath,
+		"XDXCT Container Runtime Hook",
+		xdxctContainerRuntimeHookPath,
+		xdxctContainerRuntimeHookDefaultPath,
 	)
 }
 
