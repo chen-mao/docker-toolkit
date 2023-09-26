@@ -337,7 +337,7 @@ func getHookPath(hooksDir string, hookFilename string) string {
 }
 
 func generateOciHook(toolkitDir string) podmanHook {
-	hookPath := filepath.Join(toolkitDir, config.NVIDIAContainerRuntimeHookExecutable)
+	hookPath := filepath.Join(toolkitDir, config.XDXCTContainerRuntimeHookExecutable)
 	envPath := "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:" + toolkitDir
 	always := true
 
@@ -346,7 +346,7 @@ func generateOciHook(toolkitDir string) podmanHook {
 		Stages:  []string{"prestart"},
 		Hook: specHook{
 			Path: hookPath,
-			Args: []string{filepath.Base(config.NVIDIAContainerRuntimeHookExecutable), "prestart"},
+			Args: []string{filepath.Base(config.XDXCTContainerRuntimeHookExecutable), "prestart"},
 			Env:  []string{envPath},
 		},
 		When: When{
