@@ -35,7 +35,7 @@ func installContainerRuntimes(toolkitDir string, driverRoot string) error {
 		if filepath.Base(runtime.Path) == xdxctExperimentalContainerRuntimeSource {
 			continue
 		}
-		// 主要收集材料
+
 		r := newXdxctContainerRuntimeInstaller(runtime.Path)
 		// 拷贝/usr/bin 到 /usr/local/xdxct/toolkit 目录
 		_, err := r.install(toolkitDir)

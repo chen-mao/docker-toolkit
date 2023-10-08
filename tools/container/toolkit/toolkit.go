@@ -385,7 +385,7 @@ func installToolkitConfig(c *cli.Context, toolkitConfigPath string, xdxctContain
 
 	// Read the ldconfig path from the config as this may differ per platform
 	// On ubuntu-based systems this ends in `.real`
-	ldconfigPath := fmt.Sprintf("%s", config.GetDefault("xdxct-container-cli.ldconfig", "/sbin/ldconfig"))
+	ldconfigPath := fmt.Sprintf("%s", config.GetDefault("xdxct-container-cli.ldconfig", "/sbin/ldconfig.real"))
 	// Use the driver run root as the root:
 	driverLdconfigPath := "@" + filepath.Join(opts.DriverRoot, strings.TrimPrefix(ldconfigPath, "@/"))
 
