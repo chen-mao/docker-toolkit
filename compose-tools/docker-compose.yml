@@ -1,0 +1,7 @@
+version: '3'
+services:
+  cbuild:
+    image: hub.xdxct.com/xdxct-docker/container-toolkit:1.0.0-rc.1-centos7 
+    container_name: toolkit-docker-install
+    restart: always
+    # command: ["/bin/bash"]

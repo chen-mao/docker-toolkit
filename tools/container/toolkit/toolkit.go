@@ -262,6 +262,8 @@ func Install(cli *cli.Context, opts *options) error {
 	toolkitConfigDir := filepath.Join(opts.toolkitRoot, ".config", "xdxct-container-runtime")
 	toolkitConfigPath := filepath.Join(toolkitConfigDir, configFilename)
 
+	log.Infof("toolkitConfigDir: %v, toolkitConfigPath: %v", toolkitConfigDir, toolkitConfigPath)
+
 	// 创建:/usr/local/xdxct/toolkit/.config/xdxct-container-runtime 目录
 	err = createDirectories(opts.toolkitRoot, toolkitConfigDir)
 	if err != nil && !opts.ignoreErrors {
