@@ -14,6 +14,7 @@
 
 # Supported OSs by architecture
 AMD64_TARGETS := ubuntu20.04
+X86_64_TARGETS := centos7
 
 # Define top-level build targets
 docker%: SHELL:=/bin/bash

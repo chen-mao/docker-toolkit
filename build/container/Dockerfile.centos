@@ -1,4 +1,4 @@
-# Copyright (c) 2019-2021, NVIDIA CORPORATION.  All rights reserved.
+# Copyright (c) 2019-2021, NVIDIA CORPORATION and XDXCT CORPORATION.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ARG BASE_REG
 ARG BASE_DIST
-ARG CUDA_VERSION
 ARG GOLANG_VERSION=x.x.x
 ARG VERSION="N/A"
 
@@ -26,35 +26,21 @@ FROM golang:${GOLANG_VERSION} as build
 # /artifacts/bin
 ARG GOPATH=/artifacts
 
-# Install the experiemental nvidia-container-runtime
-# NOTE: This will be integrated into the xdxct-container-toolkit package / repo
-ARG NVIDIA_CONTAINER_RUNTIME_EXPERIMENTAL_VERSION=experimental
-RUN GOPATH=/artifacts go install github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-container-runtime.experimental@${NVIDIA_CONTAINER_RUNTIME_EXPERIMENTAL_VERSION}
-
 WORKDIR /build
 COPY . .
 
-# NOTE: Until the config utilities are properly integrated into the
-# xdxct-container-toolkit repository, these are built from the `tools` folder
-# and not `cmd`.
+# 在构建过程中向 Go 编译器传递链接器标志
+# -s: 这个标志告诉链接器从二进制文件中去除调试信息，从而减小二进制文件的大小。
+# -w: 这个标志告诉链接器从二进制文件中去除 DWARF 符号信息，进一步减小二进制文件的大小。
+# -X 'main.Version=${VERSION}': 这个标志将一个名为 main.Version 的字符串变量设置为 ${VERSION} 指定的值。这在构建过程中将版本信息嵌入到二进制文件中。
+# ... 是一个通配符，递归地匹配任意深度的子目录。tools 目录及其子目录下的所有 Go 包
 RUN GOPATH=/artifacts go install -ldflags="-s -w -X 'main.Version=${VERSION}'" ./tools/...
 
+FROM ${BASE_REG}/centos:base-${BASE_DIST}
 
-FROM nvidia/cuda:${CUDA_VERSION}-base-${BASE_DIST}
-
-ARG BASE_DIST
-# See https://www.centos.org/centos-linux-eol/
-# and https://stackoverflow.com/a/70930049 for move to vault.centos.org
-# and https://serverfault.com/questions/1093922/failing-to-run-yum-update-in-centos-8 for move to vault.epel.cloud
-RUN [[ "${BASE_DIST}" != "centos8" ]] || \
-    ( \
-      sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-Linux-* && \
-      sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.epel.cloud|g' /etc/yum.repos.d/CentOS-Linux-* \
-    )
-
-ENV NVIDIA_DISABLE_REQUIRE="true"
-ENV NVIDIA_VISIBLE_DEVICES=all
-ENV NVIDIA_DRIVER_CAPABILITIES=utility
+ENV XDXCT_DISABLE_REQUIRE="true"
+ENV XDXCT_VISIBLE_DEVICES=all
+ENV XDXCT_DRIVER_CAPABILITIES=utility
 
 ARG ARTIFACTS_ROOT
 ARG PACKAGE_DIST
@@ -63,13 +49,19 @@ COPY ${ARTIFACTS_ROOT}/${PACKAGE_DIST} /artifacts/packages/${PACKAGE_DIST}
 WORKDIR /artifacts/packages
 
 ARG PACKAGE_VERSION
-ARG TARGETARCH
-ENV PACKAGE_ARCH ${TARGETARCH}
-RUN PACKAGE_ARCH=${PACKAGE_ARCH/amd64/x86_64} && PACKAGE_ARCH=${PACKAGE_ARCH/arm64/aarch64} && \
-    yum localinstall -y \
-    ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container1-1.*.rpm \
-    ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container-tools-1.*.rpm \
-    ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-toolkit*-${PACKAGE_VERSION}*.rpm
+# ARG TARGETARCH
+ENV PACKAGE_ARCH "x86_64"
+RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+    -e 's|^#baseurl=http://mirror.centos.org/centos|baseurl=https://mirrors.tuna.tsinghua.edu.cn/centos|g' \
+    -i.bak \
+    /etc/yum.repos.d/CentOS-*.repo
+# RUN PACKAGE_ARCH=${PACKAGE_ARCH/amd64/x86_64} && PACKAGE_ARCH=${PACKAGE_ARCH/arm64/aarch64} && \
+#     yum localinstall -y \
+#     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container1-1.*.rpm \
+#     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container-tools-1.*.rpm \
+#     ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-toolkit*-${PACKAGE_VERSION}*.rpm
+RUN yum localinstall -y ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-modules-1.0.0~rc.1-0.x86_64.rpm
+# RUN yum localinstall -y xdxct-container-modules-1.0.0~rc.1-0.x86_64.rpm
 
 WORKDIR /work
 
@@ -77,14 +69,14 @@ COPY --from=build /artifacts/bin /work
 
 ENV PATH=/work:$PATH
 
-LABEL io.k8s.display-name="NVIDIA Container Runtime Config"
-LABEL name="NVIDIA Container Runtime Config"
-LABEL vendor="NVIDIA"
+LABEL io.k8s.display-name="XDXCT Container Runtime Config"
+LABEL name="XDXCT Container Runtime Config"
+LABEL vendor="XDXCT"
 LABEL version="${VERSION}"
 LABEL release="N/A"
 LABEL summary="Automatically Configure your Container Runtime for GPU support."
 LABEL description="See summary"
 
-RUN mkdir /licenses && mv /NGC-DL-CONTAINER-LICENSE /licenses/NGC-DL-CONTAINER-LICENSE
+# RUN mkdir /licenses && mv /NGC-DL-CONTAINER-LICENSE /licenses/NGC-DL-CONTAINER-LICENSE
 
-ENTRYPOINT ["/work/nvidia-toolkit"]
+ENTRYPOINT ["/bin/bash"]
