@@ -56,7 +56,6 @@ ENV PACKAGE_ARCH ${TARGETARCH}
 #     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container1-1.*.rpm \
 #     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container-tools-1.*.rpm \
 #     ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-toolkit*-${PACKAGE_VERSION}*.rpm
-# COPY build/container/xdxct-container-runtime-1.0.0~rc.1-0.x86_64.rpm .
 RUN yum localinstall -y ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-runtime-1.0.0~rc.1-0.x86_64.rpm
 
 # RUN yum localinstall -y xdxct-container-runtime-1.0.0~rc.1-0.x86_64.rpm
