@@ -17,6 +17,11 @@
 ARG BASEIMAGE
 FROM ${BASEIMAGE}
 
+RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+    -e 's|^#baseurl=http://mirror.centos.org/centos|baseurl=https://mirrors.tuna.tsinghua.edu.cn/centos|g' \
+    -i.bak \
+    /etc/yum.repos.d/CentOS-*.repo
+
 RUN yum install -y \
         ca-certificates \
         gcc \
@@ -63,10 +68,10 @@ ENV GIT_COMMIT ${GIT_COMMIT}
 RUN make PREFIX=${DIST_DIR} cmds
 
 # Hook for Project Atomic's fork of Docker: https://github.com/projectatomic/docker/tree/docker-1.13.1-rhel#add-dockerhooks-exec-custom-hooks-for-prestartpoststop-containerspatch
-COPY oci-nvidia-hook $DIST_DIR/oci-nvidia-hook
+# COPY oci-nvidia-hook $DIST_DIR/oci-nvidia-hook
 
 # Hook for libpod/CRI-O: https://github.com/containers/libpod/blob/v0.8.5/pkg/hooks/docs/oci-hooks.5.md
-COPY oci-nvidia-hook.json $DIST_DIR/oci-nvidia-hook.json
+# COPY oci-nvidia-hook.json $DIST_DIR/oci-nvidia-hook.json
 
 WORKDIR $DIST_DIR/..
 COPY packaging/rpm .
