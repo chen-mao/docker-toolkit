@@ -46,10 +46,10 @@ func main() {
 
 	// Create the top-level CLI
 	c := cli.NewApp()
-	c.Name = "NVIDIA Container Toolkit CLI"
+	c.Name = "XDXCT Container Toolkit CLI"
 	c.UseShortOptionHandling = true
 	c.EnableBashCompletion = true
-	c.Usage = "Tools to configure the NVIDIA Container Toolkit"
+	c.Usage = "Tools to configure the XDXCT Container Toolkit"
 	c.Version = info.GetVersionString()
 
 	// Setup the flags for this command
@@ -59,7 +59,7 @@ func main() {
 			Aliases:     []string{"d"},
 			Usage:       "Enable debug-level logging",
 			Destination: &opts.Debug,
-			EnvVars:     []string{"NVIDIA_CTK_DEBUG"},
+			EnvVars:     []string{"XDXCT_CTK_DEBUG"},
 		},
 	}
 

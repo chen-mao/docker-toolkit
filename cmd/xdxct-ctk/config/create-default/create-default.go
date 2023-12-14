@@ -51,7 +51,7 @@ func (m command) build() *cli.Command {
 	c := cli.Command{
 		Name:    "generate-default",
 		Aliases: []string{"default"},
-		Usage:   "Generate the default NVIDIA Container Toolkit configuration file",
+		Usage:   "Generate the default XDXCT Container Toolkit configuration file",
 		Before: func(c *cli.Context) error {
 			return m.validateFlags(c, &opts)
 		},

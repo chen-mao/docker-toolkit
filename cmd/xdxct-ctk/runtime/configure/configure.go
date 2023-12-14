@@ -31,11 +31,11 @@ import (
 const (
 	defaultRuntime = "docker"
 
-	// defaultNVIDIARuntimeName is the default name to use in configs for the NVIDIA Container Runtime
-	defaultNVIDIARuntimeName = "xdxct"
-	// defaultNVIDIARuntimeExecutable is the default NVIDIA Container Runtime executable file name
-	defaultNVIDIARuntimeExecutable      = "xdxct-container-runtime"
-	defailtNVIDIARuntimeExpecutablePath = "/usr/bin/xdxct-container-runtime"
+	// defaultXDXCTRuntimeName is the default name to use in configs for the NVIDIA Container Runtime
+	defaultXDXCTRuntimeName = "xdxct"
+	// defaultXDXCTRuntimeExecutable is the default NVIDIA Container Runtime executable file name
+	defaultXDXCTRuntimeExecutable      = "xdxct-container-runtime"
+	defailtXDXCTRuntimeExpecutablePath = "/usr/bin/xdxct-container-runtime"
 
 	defaultContainerdConfigFilePath = "/etc/containerd/config.toml"
 	defaultCrioConfigFilePath       = "/etc/crio/crio.conf"
@@ -61,7 +61,7 @@ type config struct {
 	runtime        string
 	configFilePath string
 
-	nvidiaRuntime struct {
+	xdxctRuntime struct {
 		name         string
 		path         string
 		setAsDefault bool
@@ -102,23 +102,23 @@ func (m command) build() *cli.Command {
 			Destination: &config.configFilePath,
 		},
 		&cli.StringFlag{
-			Name:        "nvidia-runtime-name",
-			Usage:       "specify the name of the NVIDIA runtime that will be added",
-			Value:       defaultNVIDIARuntimeName,
-			Destination: &config.nvidiaRuntime.name,
+			Name:        "xdxct-runtime-name",
+			Usage:       "specify the name of the XDXCT runtime that will be added",
+			Value:       defaultXDXCTRuntimeName,
+			Destination: &config.xdxctRuntime.name,
 		},
 		&cli.StringFlag{
-			Name:        "nvidia-runtime-path",
+			Name:        "xdxct-runtime-path",
 			Aliases:     []string{"runtime-path"},
-			Usage:       "specify the path to the NVIDIA runtime executable",
-			Value:       defaultNVIDIARuntimeExecutable,
-			Destination: &config.nvidiaRuntime.path,
+			Usage:       "specify the path to the XDXCT runtime executable",
+			Value:       defaultXDXCTRuntimeExecutable,
+			Destination: &config.xdxctRuntime.path,
 		},
 		&cli.BoolFlag{
-			Name:        "nvidia-set-as-default",
+			Name:        "xdxct-set-as-default",
 			Aliases:     []string{"set-as-default"},
-			Usage:       "set the NVIDIA runtime as the default runtime",
-			Destination: &config.nvidiaRuntime.setAsDefault,
+			Usage:       "set the XDXCT runtime as the default runtime",
+			Destination: &config.xdxctRuntime.setAsDefault,
 		},
 	}
 
@@ -135,11 +135,11 @@ func validateFlags(c *cli.Context, config *config) error {
 
 	switch config.runtime {
 	case "containerd", "crio":
-		if config.nvidiaRuntime.path == defaultNVIDIARuntimeExecutable {
-			config.nvidiaRuntime.path = defailtNVIDIARuntimeExpecutablePath
+		if config.xdxctRuntime.path == defaultXDXCTRuntimeExecutable {
+			config.xdxctRuntime.path = defailtXDXCTRuntimeExpecutablePath
 		}
-		if !filepath.IsAbs(config.nvidiaRuntime.path) {
-			return fmt.Errorf("the NVIDIA runtime path %q is not an absolute path", config.nvidiaRuntime.path)
+		if !filepath.IsAbs(config.xdxctRuntime.path) {
+			return fmt.Errorf("the XDXCT runtime path %q is not an absolute path", config.xdxctRuntime.path)
 		}
 	}
 
@@ -173,9 +173,9 @@ func (m command) configureWrapper(c *cli.Context, config *config) error {
 	}
 
 	err = cfg.AddRuntime(
-		config.nvidiaRuntime.name,
-		config.nvidiaRuntime.path,
-		config.nvidiaRuntime.setAsDefault,
+		config.xdxctRuntime.name,
+		config.xdxctRuntime.path,
+		config.xdxctRuntime.setAsDefault,
 	)
 	if err != nil {
 		return fmt.Errorf("unable to update config: %v", err)
