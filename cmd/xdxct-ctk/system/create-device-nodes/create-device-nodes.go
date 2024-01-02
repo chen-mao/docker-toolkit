@@ -19,13 +19,13 @@ package createdevicenodes
 import (
 	"fmt"
 
-	"github.com/XDXCT/xdxct-container-toolkit/internal/system"
-	"github.com/sirupsen/logrus"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/system/modules"
 	"github.com/urfave/cli/v2"
 )
 
 type command struct {
-	logger *logrus.Logger
+	logger logger.Interface
 }
 
 type options struct {
@@ -39,7 +39,7 @@ type options struct {
 }
 
 // NewCommand constructs a command sub-command with the specified logger
-func NewCommand(logger *logrus.Logger) *cli.Command {
+func NewCommand(logger logger.Interface) *cli.Command {
 	c := command{
 		logger: logger,
 	}
@@ -96,20 +96,16 @@ func (m command) validateFlags(r *cli.Context, opts *options) error {
 }
 
 func (m command) run(c *cli.Context, opts *options) error {
-	s, err := system.New(
-		system.WithLogger(m.logger),
-		system.WithDryRun(opts.dryRun),
-		system.WithLoadKernelModules(opts.loadKernelModules),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to create library: %v", err)
-	}
-
-	if opts.control {
-		m.logger.Infof("Creating control device nodes at %s", opts.driverRoot)
-		if err := s.CreateNVIDIAControlDeviceNodesAt(opts.driverRoot); err != nil {
-			return fmt.Errorf("failed to create control device nodes: %v", err)
+	if opts.loadKernelModules {
+		modules := modules.New(
+			modules.WithLogger(m.logger),
+			modules.WithDryRun(opts.dryRun),
+			modules.WithRoot(opts.driverRoot),
+		)
+		if err := modules.LoadAll(); err != nil {
+			return fmt.Errorf("failed to load NVIDIA kernel modules: %v", err)
 		}
 	}
+
 	return nil
 }

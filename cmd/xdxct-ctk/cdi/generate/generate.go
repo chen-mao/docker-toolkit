@@ -22,13 +22,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	cdi "tags.cncf.io/container-device-interface/pkg/parser"
+
 	"github.com/XDXCT/xdxct-container-toolkit/internal/config"
-	"github.com/XDXCT/xdxct-container-toolkit/internal/discover/csv"
-	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi"
-	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/spec"
-	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/transform"
-	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
-	"github.com/sirupsen/logrus"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi/spec"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi/transform"
 	"github.com/urfave/cli/v2"
 )
 
@@ -37,7 +37,7 @@ const (
 )
 
 type command struct {
-	logger *logrus.Logger
+	logger logger.Interface
 }
 
 type options struct {
@@ -45,18 +45,22 @@ type options struct {
 	format             string
 	deviceNameStrategy string
 	driverRoot         string
-	nvidiaCTKPath      string
+	devRoot            string
+	xdxctCTKPath       string
 	mode               string
 	vendor             string
 	class              string
 
+	librarySearchPaths cli.StringSlice
+
 	csv struct {
-		files cli.StringSlice
+		files          cli.StringSlice
+		ignorePatterns cli.StringSlice
 	}
 }
 
 // NewCommand constructs a generate-cdi command with the specified logger
-func NewCommand(logger *logrus.Logger) *cli.Command {
+func NewCommand(logger logger.Interface) *cli.Command {
 	c := command{
 		logger: logger,
 	}
@@ -95,30 +99,35 @@ func (m command) build() *cli.Command {
 			Name:        "mode",
 			Aliases:     []string{"discovery-mode"},
 			Usage:       "The mode to use when discovering the available entities. One of [auto | nvml | wsl]. If mode is set to 'auto' the mode will be determined based on the system configuration.",
-			Value:       nvcdi.ModeAuto,
+			Value:       xdxcdi.ModeAuto,
 			Destination: &opts.mode,
 		},
 		&cli.StringFlag{
-			Name:        "device-name-strategy",
-			Usage:       "Specify the strategy for generating device names. One of [index | uuid | type-index]",
-			Value:       nvcdi.DeviceNameStrategyIndex,
-			Destination: &opts.deviceNameStrategy,
+			Name:        "dev-root",
+			Usage:       "Specify the root where `/dev` is located. If this is not specified, the driver-root is assumed.",
+			Destination: &opts.devRoot,
 		},
+
 		&cli.StringFlag{
 			Name:        "driver-root",
-			Usage:       "Specify the NVIDIA GPU driver root to use when discovering the entities that should be included in the CDI specification.",
+			Usage:       "Specify the XDXCT GPU driver root to use when discovering the entities that should be included in the CDI specification.",
 			Destination: &opts.driverRoot,
 		},
+		&cli.StringSliceFlag{
+			Name:        "library-search-path",
+			Usage:       "Specify the path to search for libraries when discovering the entities that should be included in the CDI specification.\n\tNote: This option only applies to CSV mode.",
+			Destination: &opts.librarySearchPaths,
+		},
 		&cli.StringFlag{
-			Name:        "nvidia-ctk-path",
+			Name:        "xdxct-ctk-path",
 			Usage:       "Specify the path to use for the nvidia-ctk in the generated CDI specification. If this is left empty, the path will be searched.",
-			Destination: &opts.nvidiaCTKPath,
+			Destination: &opts.xdxctCTKPath,
 		},
 		&cli.StringFlag{
 			Name:        "vendor",
 			Aliases:     []string{"cdi-vendor"},
 			Usage:       "the vendor string to use for the generated CDI specification.",
-			Value:       "nvidia.com",
+			Value:       "xdxct.com",
 			Destination: &opts.vendor,
 		},
 		&cli.StringFlag{
@@ -128,12 +137,19 @@ func (m command) build() *cli.Command {
 			Value:       "gpu",
 			Destination: &opts.class,
 		},
-		&cli.StringSliceFlag{
-			Name:        "csv.file",
-			Usage:       "The path to the list of CSV files to use when generating the CDI specification in CDI mode.",
-			Value:       cli.NewStringSlice(csv.DefaultFileList()...),
-			Destination: &opts.csv.files,
-		},
+
+		// The CSV format file is used to support tegra series chips
+		// &cli.StringSliceFlag{
+		// 	Name:        "csv.file",
+		// 	Usage:       "The path to the list of CSV files to use when generating the CDI specification in CSV mode.",
+		// 	Value:       cli.NewStringSlice(csv.DefaultFileList()...),
+		// 	Destination: &opts.csv.files,
+		// },
+		// &cli.StringSliceFlag{
+		// 	Name:        "csv.ignore-pattern",
+		// 	Usage:       "Specify a pattern the CSV mount specifications.",
+		// 	Destination: &opts.csv.ignorePatterns,
+		// },
 	}
 
 	return &c
@@ -150,21 +166,16 @@ func (m command) validateFlags(c *cli.Context, opts *options) error {
 
 	opts.mode = strings.ToLower(opts.mode)
 	switch opts.mode {
-	case nvcdi.ModeAuto:
-	case nvcdi.ModeCSV:
-	case nvcdi.ModeNvml:
-	case nvcdi.ModeWsl:
-	case nvcdi.ModeManagement:
+	case xdxcdi.ModeAuto:
+	case xdxcdi.ModeCSV:
+	case xdxcdi.ModeXdxml:
+	case xdxcdi.ModeWsl:
+	case xdxcdi.ModeManagement:
 	default:
 		return fmt.Errorf("invalid discovery mode: %v", opts.mode)
 	}
 
-	_, err := nvcdi.NewDeviceNamer(opts.deviceNameStrategy)
-	if err != nil {
-		return err
-	}
-
-	opts.nvidiaCTKPath = config.ResolveXDXCTCTKPath(m.logger, opts.nvidiaCTKPath)
+	opts.xdxctCTKPath = config.ResolveXDXCTCTKPath(m.logger, opts.xdxctCTKPath)
 
 	if outputFileFormat := formatFromFilename(opts.output); outputFileFormat != "" {
 		m.logger.Debugf("Inferred output format as %q from output file name", outputFileFormat)
@@ -215,18 +226,16 @@ func formatFromFilename(filename string) string {
 }
 
 func (m command) generateSpec(opts *options) (spec.Interface, error) {
-	deviceNamer, err := nvcdi.NewDeviceNamer(opts.deviceNameStrategy)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create device namer: %v", err)
-	}
-
-	cdilib, err := nvcdi.New(
-		nvcdi.WithLogger(m.logger),
-		nvcdi.WithDriverRoot(opts.driverRoot),
-		nvcdi.WithNVIDIACTKPath(opts.nvidiaCTKPath),
-		nvcdi.WithDeviceNamer(deviceNamer),
-		nvcdi.WithMode(string(opts.mode)),
-		nvcdi.WithCSVFiles(opts.csv.files.Value()),
+	cdilib, err := xdxcdi.New(
+		xdxcdi.WithLogger(m.logger),
+		xdxcdi.WithDriverRoot(opts.driverRoot),
+		xdxcdi.WithDevRoot(opts.devRoot),
+		xdxcdi.WithXDXCTCTKPath(opts.xdxctCTKPath),
+		xdxcdi.WithMode(opts.mode),
+		// To csv mode
+		xdxcdi.WithLibrarySearchPaths(opts.librarySearchPaths.Value()),
+		xdxcdi.WithCSVFiles(opts.csv.files.Value()),
+		xdxcdi.WithCSVIgnorePatterns(opts.csv.ignorePatterns.Value()),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create CDI library: %v", err)

@@ -24,9 +24,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/XDXCT/xdxct-container-toolkit/internal/system"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/system/modules"
 	"github.com/fsnotify/fsnotify"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -35,7 +35,7 @@ const (
 )
 
 type command struct {
-	logger *logrus.Logger
+	logger logger.Interface
 }
 
 type config struct {
@@ -49,7 +49,7 @@ type config struct {
 }
 
 // NewCommand constructs a command sub-command with the specified logger
-func NewCommand(logger *logrus.Logger) *cli.Command {
+func NewCommand(logger logger.Interface) *cli.Command {
 	c := command{
 		logger: logger,
 	}
@@ -130,12 +130,12 @@ func (m command) validateFlags(r *cli.Context, cfg *config) error {
 	}
 
 	if cfg.loadKernelModules && !cfg.createAll {
-		m.logger.Warn("load-kernel-modules is only applicable when create-all is set; ignoring")
+		m.logger.Warning("load-kernel-modules is only applicable when create-all is set; ignoring")
 		cfg.loadKernelModules = false
 	}
 
 	if cfg.createDeviceNodes && !cfg.createAll {
-		m.logger.Warn("create-device-nodes is only applicable when create-all is set; ignoring")
+		m.logger.Warning("create-device-nodes is only applicable when create-all is set; ignoring")
 		cfg.createDeviceNodes = false
 	}
 
@@ -213,9 +213,10 @@ create:
 }
 
 type linkCreator struct {
-	logger            *logrus.Logger
+	logger            logger.Interface
 	lister            nodeLister
 	driverRoot        string
+	devRoot           string
 	devCharPath       string
 	dryRun            bool
 	createAll         bool
@@ -238,10 +239,13 @@ func NewSymlinkCreator(opts ...Option) (Creator, error) {
 		opt(&c)
 	}
 	if c.logger == nil {
-		c.logger = logrus.StandardLogger()
+		c.logger = logger.New()
 	}
 	if c.driverRoot == "" {
 		c.driverRoot = "/"
+	}
+	if c.devRoot == "" {
+		c.devRoot = "/"
 	}
 	if c.devCharPath == "" {
 		c.devCharPath = defaultDevCharPath
@@ -252,13 +256,13 @@ func NewSymlinkCreator(opts ...Option) (Creator, error) {
 	}
 
 	if c.createAll {
-		lister, err := newAllPossible(c.logger, c.driverRoot)
+		lister, err := newAllPossible(c.logger, c.devRoot)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create all possible device lister: %v", err)
 		}
 		c.lister = lister
 	} else {
-		c.lister = existing{c.logger, c.driverRoot}
+		c.lister = existing{c.logger, c.devRoot}
 	}
 	return c, nil
 }
@@ -268,26 +272,16 @@ func (m linkCreator) setup() error {
 		return nil
 	}
 
-	s, err := system.New(
-		system.WithLogger(m.logger),
-		system.WithDryRun(m.dryRun),
-	)
-	if err != nil {
-		return err
-	}
-
 	if m.loadKernelModules {
-		if err := s.LoadNVIDIAKernelModules(); err != nil {
+		modules := modules.New(
+			modules.WithLogger(m.logger),
+			modules.WithDryRun(m.dryRun),
+			modules.WithRoot(m.driverRoot),
+		)
+		if err := modules.LoadAll(); err != nil {
 			return fmt.Errorf("failed to load NVIDIA kernel modules: %v", err)
 		}
 	}
-
-	if m.createDeviceNodes {
-		if err := s.CreateNVIDIAControlDeviceNodesAt(m.driverRoot); err != nil {
-			return fmt.Errorf("failed to create NVIDIA device nodes: %v", err)
-		}
-	}
-
 	return nil
 }
 
@@ -313,7 +307,7 @@ func WithDryRun(dryRun bool) Option {
 }
 
 // WithLogger sets the logger.
-func WithLogger(logger *logrus.Logger) Option {
+func WithLogger(logger logger.Interface) Option {
 	return func(c *linkCreator) {
 		c.logger = logger
 	}
@@ -365,7 +359,7 @@ func (m linkCreator) CreateLinks() error {
 
 		err = os.Symlink(target, linkPath)
 		if err != nil {
-			m.logger.Warnf("Could not create symlink: %v", err)
+			m.logger.Warningf("Could not create symlink: %v", err)
 		}
 	}
 

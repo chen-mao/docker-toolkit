@@ -14,7 +14,7 @@ import (
 
 const (
 	configPath = "/etc/xdxct-container-runtime/config.toml"
-	driverPath = "/run/nvidia/driver"
+	driverPath = "/run/xdxct/driver"
 )
 
 var defaultPaths = [...]string{
@@ -40,12 +40,12 @@ type CLIConfig struct {
 type HookConfig struct {
 	DisableRequire                 bool               `toml:"disable-require"`
 	SwarmResource                  *string            `toml:"swarm-resource"`
-	AcceptEnvvarUnprivileged       bool               `toml:"accept-nvidia-visible-devices-envvar-when-unprivileged"`
-	AcceptDeviceListAsVolumeMounts bool               `toml:"accept-nvidia-visible-devices-as-volume-mounts"`
+	AcceptEnvvarUnprivileged       bool               `toml:"accept-xdxct-visible-devices-envvar-when-unprivileged"`
+	AcceptDeviceListAsVolumeMounts bool               `toml:"accept-xdxct-visible-devices-as-volume-mounts"`
 	SupportedDriverCapabilities    DriverCapabilities `toml:"supported-driver-capabilities"`
 
-	NvidiaContainerCLI        CLIConfig                `toml:"xdxct-container-cli"`
-	NVIDIAContainerRuntime    config.RuntimeConfig     `toml:"xdxct-container-runtime"`
+	XdxctContainerCLI        CLIConfig                `toml:"xdxct-container-cli"`
+	XDXCTContainerRuntime    config.RuntimeConfig     `toml:"xdxct-container-runtime"`
 	XDXCTContainerRuntimeHook config.RuntimeHookConfig `toml:"xdxct-container-runtime-hook"`
 }
 
@@ -66,7 +66,7 @@ func getDefaultHookConfig() (HookConfig, error) {
 		AcceptEnvvarUnprivileged:       true,
 		AcceptDeviceListAsVolumeMounts: false,
 		SupportedDriverCapabilities:    allDriverCapabilities,
-		NvidiaContainerCLI: CLIConfig{
+		XdxctContainerCLI: CLIConfig{
 			Root:        nil,
 			Path:        nil,
 			Environment: []string{},
@@ -78,7 +78,7 @@ func getDefaultHookConfig() (HookConfig, error) {
 			User:        nil,
 			Ldconfig:    nil,
 		},
-		NVIDIAContainerRuntime:    *rtConfig,
+		XDXCTContainerRuntime:    *rtConfig,
 		XDXCTContainerRuntimeHook: *rtHookConfig,
 	}
 

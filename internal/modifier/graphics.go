@@ -22,38 +22,48 @@ import (
 	"github.com/XDXCT/xdxct-container-toolkit/internal/config"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/config/image"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/discover"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup/root"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
-	"github.com/sirupsen/logrus"
 )
 
 // NewGraphicsModifier constructs a modifier that injects graphics-related modifications into an OCI runtime specification.
 // The value of the NVIDIA_DRIVER_CAPABILITIES environment variable is checked to determine if this modification should be made.
-func NewGraphicsModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec) (oci.SpecModifier, error) {
-	rawSpec, err := ociSpec.Load()
-	if err != nil {
-		return nil, fmt.Errorf("failed to load OCI spec: %v", err)
-	}
-
-	image, err := image.NewCUDAImageFromSpec(rawSpec)
-	if err != nil {
-		return nil, err
-	}
-
+func NewGraphicsModifier(logger logger.Interface, cfg *config.Config, image image.CUDA) (oci.SpecModifier, error) {
 	if required, reason := requiresGraphicsModifier(image); !required {
 		logger.Infof("No graphics modifier required: %v", reason)
 		return nil, nil
 	}
 
-	d, err := discover.NewGraphicsDiscoverer(
+	// TODO: We should not just pass `nil` as the search path here.
+	driver := root.New(logger, cfg.XDXCTContainerCLIConfig.Root, nil)
+	nvidiaCTKPath := cfg.XDXCTCTKConfig.Path
+
+	mounts, err := discover.NewGraphicsMountsDiscoverer(
+		logger,
+		driver,
+		nvidiaCTKPath,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create mounts discoverer: %v", err)
+	}
+
+	// In standard usage, the devRoot is the same as the driver.Root.
+	devRoot := driver.Root
+	drmNodes, err := discover.NewDRMNodesDiscoverer(
 		logger,
 		image.DevicesFromEnvvars(visibleDevicesEnvvar),
-		cfg.XDXCTContainerCLIConfig.Root,
-		cfg.XDXCTCTKConfig.Path,
+		devRoot,
+		nvidiaCTKPath,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct discoverer: %v", err)
 	}
 
+	d := discover.Merge(
+		drmNodes,
+		mounts,
+	)
 	return NewModifierFromDiscoverer(logger, d)
 }
 

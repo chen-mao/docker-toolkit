@@ -19,17 +19,16 @@ package lookup
 import (
 	"fmt"
 	"os"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // NewDirectoryLocator creates a Locator that can be used to find directories at the specified root. A logger
 // is also specified.
-func NewDirectoryLocator(logger *log.Logger, root string) Locator {
+func NewDirectoryLocator(opts ...Option) Locator {
 	return NewFileLocator(
-		WithLogger(logger),
-		WithRoot(root),
-		WithFilter(assertDirectory),
+		append(
+			opts,
+			WithFilter(assertDirectory),
+		)...,
 	)
 }
 

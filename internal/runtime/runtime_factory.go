@@ -20,14 +20,14 @@ import (
 	"fmt"
 
 	"github.com/XDXCT/xdxct-container-toolkit/internal/config"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/config/image"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/info"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/modifier"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
-	"github.com/sirupsen/logrus"
 )
 
-// newNVIDIAContainerRuntime is a factory method that constructs a runtime based on the selected configuration and specified logger
-func newNVIDIAContainerRuntime(logger *logrus.Logger, cfg *config.Config, argv []string) (oci.Runtime, error) {
+func newNVIDIAContainerRuntime(logger logger.Interface, cfg *config.Config, argv []string) (oci.Runtime, error) {
 	lowLevelRuntime, err := oci.NewLowLevelRuntime(logger, cfg.XDXCTContainerRuntimeConfig.Runtimes)
 	if err != nil {
 		return nil, fmt.Errorf("error constructing low-level runtime: %v", err)
@@ -43,7 +43,7 @@ func newNVIDIAContainerRuntime(logger *logrus.Logger, cfg *config.Config, argv [
 		return nil, fmt.Errorf("error constructing OCI specification: %v", err)
 	}
 
-	specModifier, err := newSpecModifier(logger, cfg, ociSpec, argv)
+	specModifier, err := newSpecModifier(logger, cfg, ociSpec)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct OCI spec modifier: %v", err)
 	}
@@ -60,9 +60,19 @@ func newNVIDIAContainerRuntime(logger *logrus.Logger, cfg *config.Config, argv [
 }
 
 // newSpecModifier is a factory method that creates constructs an OCI spec modifer based on the provided config.
-func newSpecModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec, argv []string) (oci.SpecModifier, error) {
-	mode := info.ResolveAutoMode(logger, cfg.XDXCTContainerRuntimeConfig.Mode)
-	modeModifier, err := newModeModifier(logger, mode, cfg, ociSpec, argv)
+func newSpecModifier(logger logger.Interface, cfg *config.Config, ociSpec oci.Spec) (oci.SpecModifier, error) {
+	rawSpec, err := ociSpec.Load()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load OCI spec: %v", err)
+	}
+
+	image, err := image.NewCUDAImageFromSpec(rawSpec)
+	if err != nil {
+		return nil, err
+	}
+
+	mode := info.ResolveAutoMode(logger, cfg.XDXCTContainerRuntimeConfig.Mode, image)
+	modeModifier, err := newModeModifier(logger, mode, cfg, ociSpec, image)
 	if err != nil {
 		return nil, err
 	}
@@ -71,17 +81,12 @@ func newSpecModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec
 		return modeModifier, nil
 	}
 
-	graphicsModifier, err := modifier.NewGraphicsModifier(logger, cfg, ociSpec)
+	graphicsModifier, err := modifier.NewGraphicsModifier(logger, cfg, image)
 	if err != nil {
 		return nil, err
 	}
 
-	gdsModifier, err := modifier.NewGDSModifier(logger, cfg, ociSpec)
-	if err != nil {
-		return nil, err
-	}
-
-	mofedModifier, err := modifier.NewMOFEDModifier(logger, cfg, ociSpec)
+	featureModifier, err := modifier.NewFeatureGatedModifier(logger, cfg, image)
 	if err != nil {
 		return nil, err
 	}
@@ -89,18 +94,18 @@ func newSpecModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec
 	modifiers := modifier.Merge(
 		modeModifier,
 		graphicsModifier,
-		gdsModifier,
-		mofedModifier,
+		featureModifier,
 	)
 	return modifiers, nil
 }
 
-func newModeModifier(logger *logrus.Logger, mode string, cfg *config.Config, ociSpec oci.Spec, argv []string) (oci.SpecModifier, error) {
+func newModeModifier(logger logger.Interface, mode string, cfg *config.Config, ociSpec oci.Spec, image image.CUDA) (oci.SpecModifier, error) {
 	switch mode {
 	case "legacy":
 		return modifier.NewStableRuntimeModifier(logger, cfg.XDXCTContainerRuntimeHookConfig.Path), nil
-	case "csv":
-		return modifier.NewCSVModifier(logger, cfg, ociSpec)
+	// CSV mode is to supports tegra device.
+	// case "csv":
+	// 	return modifier.NewCSVModifier(logger, cfg, image)
 	case "cdi":
 		return modifier.NewCDIModifier(logger, cfg, ociSpec)
 	}

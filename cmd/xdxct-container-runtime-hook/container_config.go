@@ -16,12 +16,10 @@ import (
 
 const (
 	envCUDAVersion          = "CUDA_VERSION"
-	envNVRequirePrefix      = "NVIDIA_REQUIRE_"
+	envNVRequirePrefix      = "XDXCT_REQUIRE_"
 	envNVRequireCUDA        = envNVRequirePrefix + "CUDA"
-	envNVDisableRequire     = "NVIDIA_DISABLE_REQUIRE"
+	envNVDisableRequire     = "XDXCT_DISABLE_REQUIRE"
 	envNVVisibleDevices     = "XDXCT_VISIBLE_DEVICES"
-	envNVMigConfigDevices   = "NVIDIA_MIG_CONFIG_DEVICES"
-	envNVMigMonitorDevices  = "NVIDIA_MIG_MONITOR_DEVICES"
 	envNVDriverCapabilities = "XDXCT_DRIVER_CAPABILITIES"
 )
 
@@ -30,13 +28,11 @@ const (
 )
 
 const (
-	deviceListAsVolumeMountsRoot = "/var/run/nvidia-container-devices"
+	deviceListAsVolumeMountsRoot = "/var/run/xdxct-container-devices"
 )
 
-type nvidiaConfig struct {
+type xdxctConfig struct {
 	Devices            string
-	MigConfigDevices   string
-	MigMonitorDevices  string
 	DriverCapabilities string
 	Requirements       []string
 	DisableRequire     bool
@@ -45,8 +41,8 @@ type nvidiaConfig struct {
 type containerConfig struct {
 	Pid    int
 	Rootfs string
-	Env    map[string]string
-	Nvidia *nvidiaConfig
+	Image  image.CUDA
+	Xdxct  *xdxctConfig
 }
 
 // Root from OCI runtime spec
@@ -172,7 +168,7 @@ func getDevicesFromEnvvar(image image.CUDA, swarmResourceEnvvars []string) *stri
 	// if specified.
 	var hasSwarmEnvvar bool
 	for _, envvar := range swarmResourceEnvvars {
-		if _, exists := image[envvar]; exists {
+		if image.HasEnvvar(envvar) {
 			hasSwarmEnvvar = true
 			break
 		}
@@ -250,31 +246,28 @@ func getDevices(hookConfig *HookConfig, image image.CUDA, mounts []Mount, privil
 	}
 
 	configName := hookConfig.getConfigOption("AcceptEnvvarUnprivileged")
-	log.Printf("Ignoring devices specified in NVIDIA_VISIBLE_DEVICES (privileged=%v, %v=%v) ", privileged, configName, hookConfig.AcceptEnvvarUnprivileged)
+	log.Printf("Ignoring devices specified in XDXCT_VISIBLE_DEVICES (privileged=%v, %v=%v) ", privileged, configName, hookConfig.AcceptEnvvarUnprivileged)
 
 	return nil
 }
 
-func getMigConfigDevices(env map[string]string) *string {
-	if devices, ok := env[envNVMigConfigDevices]; ok {
-		return &devices
+func getMigDevices(image image.CUDA, envvar string) *string {
+	if !image.HasEnvvar(envvar) {
+		return nil
 	}
-	return nil
+	devices := image.Getenv(envvar)
+	return &devices
 }
 
-func getMigMonitorDevices(env map[string]string) *string {
-	if devices, ok := env[envNVMigMonitorDevices]; ok {
-		return &devices
-	}
-	return nil
-}
-
-func getDriverCapabilities(env map[string]string, supportedDriverCapabilities DriverCapabilities, legacyImage bool) DriverCapabilities {
+func (c *HookConfig) getDriverCapabilities(cudaImage image.CUDA, legacyImage bool) image.DriverCapabilities {
 	// We use the default driver capabilities by default. This is filtered to only include the
 	// supported capabilities
-	capabilities := supportedDriverCapabilities.Intersection(defaultDriverCapabilities)
+	supportedDriverCapabilities := image.NewDriverCapabilities(c.SupportedDriverCapabilities.String())
 
-	capsEnv, capsEnvSpecified := env[envNVDriverCapabilities]
+	capabilities := supportedDriverCapabilities.Intersection(image.DefaultDriverCapabilities)
+
+	capsEnvSpecified := cudaImage.HasEnvvar(envNVDriverCapabilities)
+	capsEnv := cudaImage.Getenv(envNVDriverCapabilities)
 
 	if !capsEnvSpecified && legacyImage {
 		// Environment variable unset with legacy image: set all capabilities.
@@ -283,9 +276,9 @@ func getDriverCapabilities(env map[string]string, supportedDriverCapabilities Dr
 
 	if capsEnvSpecified && len(capsEnv) > 0 {
 		// If the envvironment variable is specified and is non-empty, use the capabilities value
-		envCapabilities := DriverCapabilities(capsEnv)
+		envCapabilities := image.NewDriverCapabilities(capsEnv)
 		capabilities = supportedDriverCapabilities.Intersection(envCapabilities)
-		if envCapabilities != all && capabilities != envCapabilities {
+		if !envCapabilities.IsAll() && len(capabilities) != len(envCapabilities) {
 			log.Panicln(fmt.Errorf("unsupported capabilities found in '%v' (allowed '%v')", envCapabilities, capabilities))
 		}
 	}
@@ -293,7 +286,7 @@ func getDriverCapabilities(env map[string]string, supportedDriverCapabilities Dr
 	return capabilities
 }
 
-func getNvidiaConfig(hookConfig *HookConfig, image image.CUDA, mounts []Mount, privileged bool) *nvidiaConfig {
+func getXdxctConfig(hookConfig *HookConfig, image image.CUDA, mounts []Mount, privileged bool) *xdxctConfig {
 	legacyImage := image.IsLegacy()
 
 	var devices string
@@ -304,38 +297,17 @@ func getNvidiaConfig(hookConfig *HookConfig, image image.CUDA, mounts []Mount, p
 		return nil
 	}
 
-	var migConfigDevices string
-	if d := getMigConfigDevices(image); d != nil {
-		migConfigDevices = *d
-	}
-	if !privileged && migConfigDevices != "" {
-		log.Panicln("cannot set MIG_CONFIG_DEVICES in non privileged container")
-	}
-
-	var migMonitorDevices string
-	if d := getMigMonitorDevices(image); d != nil {
-		migMonitorDevices = *d
-	}
-	if !privileged && migMonitorDevices != "" {
-		log.Panicln("cannot set MIG_MONITOR_DEVICES in non privileged container")
-	}
-
-	driverCapabilities := getDriverCapabilities(image, hookConfig.SupportedDriverCapabilities, legacyImage).String()
+	driverCapabilities := hookConfig.getDriverCapabilities(image, legacyImage).String()
 
 	requirements, err := image.GetRequirements()
 	if err != nil {
 		log.Panicln("failed to get requirements", err)
 	}
 
-	disableRequire := image.HasDisableRequire()
-
-	return &nvidiaConfig{
+	return &xdxctConfig{
 		Devices:            devices,
-		MigConfigDevices:   migConfigDevices,
-		MigMonitorDevices:  migMonitorDevices,
 		DriverCapabilities: driverCapabilities,
 		Requirements:       requirements,
-		DisableRequire:     disableRequire,
 	}
 }
 
@@ -353,7 +325,10 @@ func getContainerConfig(hook HookConfig) (config containerConfig) {
 
 	s := loadSpec(path.Join(b, "config.json"))
 
-	image, err := image.NewCUDAImageFromEnv(s.Process.Env)
+	image, err := image.New(
+		image.WithEnv(s.Process.Env),
+		image.WithDisableRequire(hook.DisableRequire),
+	)
 	if err != nil {
 		log.Panicln(err)
 	}
@@ -362,7 +337,7 @@ func getContainerConfig(hook HookConfig) (config containerConfig) {
 	return containerConfig{
 		Pid:    h.Pid,
 		Rootfs: s.Root.Path,
-		Env:    image,
-		Nvidia: getNvidiaConfig(&hook, image, s.Mounts, privileged),
+		Image:  image,
+		Xdxct:  getXdxctConfig(&hook, image, s.Mounts, privileged),
 	}
 }

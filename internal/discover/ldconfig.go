@@ -21,14 +21,14 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/sirupsen/logrus"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 )
 
 // NewLDCacheUpdateHook creates a discoverer that updates the ldcache for the specified mounts. A logger can also be specified
-func NewLDCacheUpdateHook(logger *logrus.Logger, mounts Discover, nvidiaCTKPath string) (Discover, error) {
+func NewLDCacheUpdateHook(logger logger.Interface, mounts Discover, xdxctCTKPath string) (Discover, error) {
 	d := ldconfig{
 		logger:        logger,
-		nvidiaCTKPath: nvidiaCTKPath,
+		xdxctCTKPath: xdxctCTKPath,
 		mountsFrom:    mounts,
 	}
 
@@ -37,8 +37,8 @@ func NewLDCacheUpdateHook(logger *logrus.Logger, mounts Discover, nvidiaCTKPath 
 
 type ldconfig struct {
 	None
-	logger        *logrus.Logger
-	nvidiaCTKPath string
+	logger        logger.Interface
+	xdxctCTKPath string
 	mountsFrom    Discover
 }
 
@@ -49,7 +49,7 @@ func (d ldconfig) Hooks() ([]Hook, error) {
 		return nil, fmt.Errorf("failed to discover mounts for ldcache update: %v", err)
 	}
 	h := CreateLDCacheUpdateHook(
-		d.nvidiaCTKPath,
+		d.xdxctCTKPath,
 		getLibraryPaths(mounts),
 	)
 	return []Hook{h}, nil

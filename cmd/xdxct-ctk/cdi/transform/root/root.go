@@ -21,20 +21,16 @@ import (
 	"io"
 	"os"
 
-	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/spec"
-	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/transform"
-	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"tags.cncf.io/container-device-interface/pkg/cdi"
+
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi/spec"
+	transformroot "github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi/transform/root"
 )
 
-type loadSaver interface {
-	Load() (spec.Interface, error)
-	Save(spec.Interface) error
-}
-
 type command struct {
-	logger *logrus.Logger
+	logger logger.Interface
 }
 
 type transformOptions struct {
@@ -44,12 +40,13 @@ type transformOptions struct {
 
 type options struct {
 	transformOptions
-	from string
-	to   string
+	from       string
+	to         string
+	relativeTo string
 }
 
 // NewCommand constructs a generate-cdi command with the specified logger
-func NewCommand(logger *logrus.Logger) *cli.Command {
+func NewCommand(logger logger.Interface) *cli.Command {
 	c := command{
 		logger: logger,
 	}
@@ -73,6 +70,11 @@ func (m command) build() *cli.Command {
 
 	c.Flags = []cli.Flag{
 		&cli.StringFlag{
+			Name:        "from",
+			Usage:       "specify the root to be transformed",
+			Destination: &opts.from,
+		},
+		&cli.StringFlag{
 			Name:        "input",
 			Usage:       "Specify the file to read the CDI specification from. If this is '-' the specification is read from STDIN",
 			Value:       "-",
@@ -84,9 +86,10 @@ func (m command) build() *cli.Command {
 			Destination: &opts.output,
 		},
 		&cli.StringFlag{
-			Name:        "from",
-			Usage:       "specify the root to be transformed",
-			Destination: &opts.from,
+			Name:        "relative-to",
+			Usage:       "specify whether the transform is relative to the host or to the container. One of [ host | container ]",
+			Value:       "host",
+			Destination: &opts.relativeTo,
 		},
 		&cli.StringFlag{
 			Name:        "to",
@@ -100,6 +103,12 @@ func (m command) build() *cli.Command {
 }
 
 func (m command) validateFlags(c *cli.Context, opts *options) error {
+	switch opts.relativeTo {
+	case "host":
+	case "container":
+	default:
+		return fmt.Errorf("invalid --relative-to value: %v", opts.relativeTo)
+	}
 	return nil
 }
 
@@ -109,9 +118,10 @@ func (m command) run(c *cli.Context, opts *options) error {
 		return fmt.Errorf("failed to load CDI specification: %w", err)
 	}
 
-	err = transform.NewRootTransformer(
-		opts.from,
-		opts.to,
+	err = transformroot.New(
+		transformroot.WithRoot(opts.from),
+		transformroot.WithTargetRoot(opts.to),
+		transformroot.WithRelativeTo(opts.relativeTo),
 	).Transform(spec.Raw())
 	if err != nil {
 		return fmt.Errorf("failed to transform CDI specification: %w", err)

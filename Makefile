@@ -25,7 +25,7 @@ docker-native:
 include $(CURDIR)/docker/docker.mk
 
 ifeq ($(IMAGE_NAME),)
-REGISTRY ?= nvidia
+REGISTRY ?= xdxct
 IMAGE_NAME = $(REGISTRY)/container-toolkit
 endif
 

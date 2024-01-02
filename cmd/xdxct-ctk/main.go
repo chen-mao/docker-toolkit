@@ -19,6 +19,7 @@ package main
 import (
 	"os"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/cdi"
 	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/config"
 	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/hook"
@@ -27,21 +28,21 @@ import (
 	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/info"
 
-	log "github.com/sirupsen/logrus"
 	cli "github.com/urfave/cli/v2"
 )
-
-var logger = log.New()
 
 // options defines the options that can be set for the CLI through config files,
 // environment variables, or command line flags
 type options struct {
 	// Debug indicates whether the CLI is started in "debug" mode
 	Debug bool
+	// Quiet indicates whether the CLI is started in "quiet" mode
+	Quiet bool
 }
 
 func main() {
 	// Create a options struct to hold the parsed environment variables or command line flags
+	logger := log.New()
 	opts := options{}
 
 	// Create the top-level CLI
@@ -60,6 +61,12 @@ func main() {
 			Usage:       "Enable debug-level logging",
 			Destination: &opts.Debug,
 			EnvVars:     []string{"XDXCT_CTK_DEBUG"},
+		},
+		&cli.BoolFlag{
+			Name:        "quiet",
+			Usage:       "Suppress all output except for errors; overrides --debug",
+			Destination: &opts.Quiet,
+			EnvVars:     []string{"NVIDIA_CTK_QUIET"},
 		},
 	}
 
@@ -86,7 +93,7 @@ func main() {
 	// Run the CLI
 	err := c.Run(os.Args)
 	if err != nil {
-		log.Errorf("%v", err)
-		log.Exit(1)
+		logger.Errorf("%v", err)
+		logger.Exit(1)
 	}
 }

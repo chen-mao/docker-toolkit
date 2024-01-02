@@ -24,10 +24,10 @@ import (
 	"syscall"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine"
 	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine/containerd"
 	"github.com/XDXCT/xdxct-container-toolkit/tools/container/operator"
-	log "github.com/sirupsen/logrus"
 	cli "github.com/urfave/cli/v2"
 )
 
