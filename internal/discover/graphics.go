@@ -49,27 +49,27 @@ func NewDRMNodesDiscoverer(logger logger.Interface, devices image.VisibleDevices
 
 // NewGraphicsMountsDiscoverer creates a discoverer for the mounts required by graphics tools such as vulkan.
 func NewGraphicsMountsDiscoverer(logger logger.Interface, driver *root.Driver, xdxctCTKPath string) (Discover, error) {
-	pciMount := newMounts(
-		logger,
-		lookup.NewFileLocator(
-			lookup.WithLogger(logger),
-			lookup.WithRoot(driver.Root),
-			lookup.WithSearchPaths(
-				"/usr/lib/x86_64-linux-gnu",
-				"/usr/lib64",
-			),
-			lookup.WithCount(1),
-		),
-		driver.Root,
-		[]string{
-			"libpciaccess.so.0",
-		},
-	)
+	// pciMount := newMounts(
+	// 	logger,
+	// 	lookup.NewFileLocator(
+	// 		lookup.WithLogger(logger),
+	// 		lookup.WithRoot(driver.Root),
+	// 		lookup.WithSearchPaths(
+	// 			"/usr/lib/x86_64-linux-gnu",
+	// 			"/usr/lib64",
+	// 		),
+	// 		lookup.WithCount(1),
+	// 	),
+	// 	driver.Root,
+	// 	[]string{
+	// 		"libpciaccess.so.0",
+	// 	},
+	// )
 
 	xorg := optionalXorgDiscoverer(logger, driver, xdxctCTKPath)
 
 	discover := Merge(
-		pciMount,
+		// pciMount,
 		xorg,
 	)
 
@@ -252,6 +252,7 @@ func newXorgDiscoverer(logger logger.Interface, driver *root.Driver, xdxctCTKPat
 				"/opt/xdxgpu/lib/xorg/modules/drivers",
 				"/usr/lib/x86_64-linux-gnu/dri",
 				"/usr/lib64/xorg/modules/drivers",
+				"/usr/lib/xorg/modules/drivers",
 				"/usr/lib64/dri",
 			),
 		),

@@ -73,8 +73,6 @@ fi
 %changelog
 # As of 1.10.0-1 we generate the release information automatically
 * %{release_date} XDXCT CORPORATION <tools@xdxct.com> %{version}-%{release}
-- See https://gitlab.com/nvidia/container-toolkit/container-toolkit/-/blob/%{git_commit}/CHANGELOG.md
-- Bump libnvidia-container dependency to libnvidia-container-tools >= %{libnvidia_container_tools_version}
 
 # The BASE package consists of the NVIDIA Container Runtime and the NVIDIA Container Toolkit CLI.
 # This allows the package to be installed on systems where no NVIDIA Container CLI is available.

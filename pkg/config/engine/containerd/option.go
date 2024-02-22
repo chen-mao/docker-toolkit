@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine"
 	"github.com/pelletier/go-toml"
 	log "github.com/sirupsen/logrus"
@@ -30,6 +31,7 @@ const (
 )
 
 type builder struct {
+	logger               logger.Interface
 	path                 string
 	runtimeType          string
 	useLegacyConfig      bool
@@ -38,6 +40,13 @@ type builder struct {
 
 // Option defines a function that can be used to configure the config builder
 type Option func(*builder)
+
+// WithLogger sets the logger for the config builder
+func WithLogger(logger logger.Interface) Option {
+	return func(b *builder) {
+		b.logger = logger
+	}
+}
 
 // WithPath sets the path for the config builder
 func WithPath(path string) Option {

@@ -80,6 +80,35 @@ func NewDriverPyDirDiscoverer(logger logger.Interface, driverRoot string) discov
 
 // NewDriverLibraryDiscoverer creates a discoverer for the libraries associated with the specified driver version.
 func NewDriverLibraryDiscoverer(logger logger.Interface, driver *root.Driver, xdxctCTKPath string) (discover.Discover, error) {
+	libxdxgpu_driver := []string{
+		"libxdxgpu-ml.so.*.*",
+		"libdrm.so",
+		"libva-drm.so",
+		"libva.so",
+		"libva-x11.so",
+		"libEGL_mesa.so",
+		"libEGL.so",
+		"libglapi.so",
+		"libGLdispatch.so",
+		"libGLESv1_CM.so",
+		"libGLESv1_CM_xdxgpu.so",
+		"libGLESv2.so",
+		"libGLESv2_xdxgpu.so",
+		"libGL.so",
+		"libGL_xdxgpu.so",
+		"libGLX_mesa.so",
+		"libGLX.so",
+		"libOpenGL.so",
+		"libusc_xdxgpu.so",
+		"libufgen_xdxgpu.so",
+		"libgsl_xdxgpu.so",
+		"libdri_xdxgpu.so",
+		"libdrm_xdxgpu.so",
+		"libvlk_xdxgpu.so",
+		"libxdxgpu_mesa_wsi.so",
+		"libOpenCL.so*",
+	}
+
 	libraries := discover.NewMounts(
 		logger,
 		lookup.NewFileLocator(
@@ -88,42 +117,11 @@ func NewDriverLibraryDiscoverer(logger logger.Interface, driver *root.Driver, xd
 			lookup.WithSearchPaths(
 				"/opt/xdxgpu/lib/x86_64-linux-gnu",
 				"/usr/lib64/xdxgpu",
+				"/usr/lib/x86_64-linux-gnu/xdxgpu",
 			),
 		),
 		driver.Root,
-		// libraryPaths,
-		[]string{
-			"libxdxgpu-ml.so",
-			"libdrm.so.2",
-			"libva-drm.so.2",
-			"libva.so.2",
-			"libCL_xdxgpu.so.1",
-			// "libCL_xdxgpu.so*",
-			"libOpenCL.so*",
-			"libva-x11.so.2",
-
-			"libEGL_mesa.so.0",
-			"libEGL.so.1",
-			"libglapi.so.0",
-			"libGLdispatch.so.0",
-			"libGLESv1_CM.so.1",
-			"libGLESv1_CM_xdxgpu.so",
-			"libGLESv2.so.2",
-			"libGLESv2_xdxgpu.so",
-			"libGL.so.1",
-			"libGL_xdxgpu.so",
-			"libGLX_mesa.so.0",
-			"libGLX.so.0",
-			"libOpenGL.so.0",
-			"libusc_xdxgpu.so",
-			"libufgen_xdxgpu.so",
-			"libgsl_xdxgpu.so",
-			"libdri_xdxgpu.so",
-			"libdrm_xdxgpu.so.1",
-			"libxdxgpu_mesa_wsi.so",
-			"libvlk_xdxgpu.so",
-			"libvlk_xdxgpu.so.1",
-		},
+		libxdxgpu_driver,
 	)
 
 	hooks, _ := discover.NewLDCacheUpdateHook(logger, libraries, xdxctCTKPath)
