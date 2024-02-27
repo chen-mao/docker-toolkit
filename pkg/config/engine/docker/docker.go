@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/XDXCT/xdxct-container-toolkit/pkg/config/engine"
 )
 
@@ -21,6 +22,10 @@ func New(opts ...Option) (engine.Interface, error) {
 	b := &builder{}
 	for _, opt := range opts {
 		opt(b)
+	}
+
+	if b.logger == nil {
+		b.logger = logger.New()
 	}
 
 	return b.build()
@@ -92,6 +97,11 @@ func (c *Config) RemoveRuntime(name string) error {
 	*c = config
 
 	return nil
+}
+
+// Set sets the specified docker option
+func (c *Config) Set(key string, value interface{}) {
+	(*c)[key] = value
 }
 
 // Save writes the config to the specified path

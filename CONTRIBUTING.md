@@ -1,6 +1,6 @@
-# Contribute to the NVIDIA Container Toolkit
+# Contribute to the XDXCT Container Toolkit
 
-Want to hack on the NVIDIA Container Toolkit Project? Awesome!
+Want to hack on the XDXCT Container Toolkit Project? Awesome!
 We only require you to sign your work, the below section describes this!
 
 ## Sign your work

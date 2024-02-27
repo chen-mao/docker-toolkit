@@ -18,7 +18,7 @@ engine.
 
 ### Generate CDI specifications
 
-The [Container Device Interface (CDI)](https://github.com/container-orchestrated-devices/container-device-interface) provides
+The [Container Device Interface (CDI)](https://tags.cncf.io/container-device-interface) provides
 a vendor-agnostic mechanism to make arbitrary devices accessible in containerized environments. To allow NVIDIA devices to be
 used in these environments, the NVIDIA Container Toolkit CLI includes functionality to generate a CDI specification for the
 available NVIDIA GPUs in a system.

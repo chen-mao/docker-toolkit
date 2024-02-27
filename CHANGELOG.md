@@ -1,12 +1,16 @@
-# NVIDIA Container Toolkit Changelog
+# XDXCT Container Toolkit Changelog
+
+## v1.0.0~rc.1
+
+* Initial release.
 
 ## v1.14.0-rc.1
 
-* Add support for updating containerd configs to the `nvidia-ctk runtime configure` command.
+* Add support for updating containerd configs to the `xdxct-ctk runtime configure` command.
 * Create file in `etc/ld.so.conf.d` with permissions `644` to support non-root containers.
 * Generate CDI specification files with `644` permissions to allow rootless applications (e.g. podman)
 * Add `nvidia-ctk cdi list` command to show the known CDI devices.
-* Add support for generating merged devices (e.g. `all` device) to the nvcdi API.
+* Add support for generating merged devices (e.g. `all` device) to the xdxcdi API.
 * Use *.* pattern to locate libcuda.so when generating a CDI specification to support platforms where a patch version is not specified.
 * Update go-nvlib to skip devices that are not MIG capable when generating CDI specifications.
 * Add `nvidia-container-runtime-hook.path` config option to specify NVIDIA Container Runtime Hook path explicitly.
@@ -35,7 +39,7 @@
 * Fix the generation of CDI specifications for management containers when the driver libraries are not in the LDCache.
 * Add transformers to deduplicate and simplify CDI specifications.
 * Generate a simplified CDI specification by default. This means that entities in the common edits in a spec are not included in device definitions.
-* Also return an error from the nvcdi.New constructor instead of panicing.
+* Also return an error from the xdxcdi.New constructor instead of panicing.
 * Detect XOrg libraries for injection and CDI spec generation.
 * Add `nvidia-ctk system create-device-nodes` command to create control devices.
 * Add `nvidia-ctk cdi transform` command to apply transforms to CDI specifications.

@@ -2,14 +2,14 @@
 
 set -e
 
-NVIDIA_CONTAINER_RUNTIME_HOOK=/usr/bin/nvidia-container-runtime-hook
-NVIDIA_CONTAINER_TOOLKIT=/usr/bin/xdxct-container-toolkit
+XDXCT_CONTAINER_RUNTIME_HOOK=/usr/bin/xdxct-container-runtime-hook
+XDXCT_CONTAINER_TOOLKIT=/usr/bin/xdxct-container-toolkit
 
 case "$1" in
     configure)
-        if [ -f "${NVIDIA_CONTAINER_RUNTIME_HOOK}" ]; then
-		if [ ! -e "${NVIDIA_CONTAINER_TOOLKIT}" ]; then
-			ln -s ${NVIDIA_CONTAINER_RUNTIME_HOOK} ${NVIDIA_CONTAINER_TOOLKIT}
+        if [ -f "${XDXCT_CONTAINER_RUNTIME_HOOK}" ]; then
+		if [ ! -e "${XDXCT_CONTAINER_TOOLKIT}" ]; then
+			ln -s ${XDXCT_CONTAINER_RUNTIME_HOOK} ${XDXCT_CONTAINER_TOOLKIT}
 		fi
         fi
     ;;

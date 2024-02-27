@@ -18,16 +18,15 @@ package defaultsubcommand
 
 import (
 	"fmt"
-	"io"
-	"os"
 
-	nvctkConfig "github.com/XDXCT/xdxct-container-toolkit/internal/config"
-	"github.com/sirupsen/logrus"
+	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/config/flags"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/config"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/urfave/cli/v2"
 )
 
 type command struct {
-	logger *logrus.Logger
+	logger logger.Interface
 }
 
 // options stores the subcommand options
@@ -36,7 +35,7 @@ type options struct {
 }
 
 // NewCommand constructs a default command with the specified logger
-func NewCommand(logger *logrus.Logger) *cli.Command {
+func NewCommand(logger logger.Interface) *cli.Command {
 	c := command{
 		logger: logger,
 	}
@@ -45,12 +44,12 @@ func NewCommand(logger *logrus.Logger) *cli.Command {
 
 // build creates the CLI command
 func (m command) build() *cli.Command {
-	opts := options{}
+	opts := flags.Options{}
 
 	// Create the 'default' command
 	c := cli.Command{
-		Name:    "generate-default",
-		Aliases: []string{"default"},
+		Name:    "default",
+		Aliases: []string{"create-default", "generate-default"},
 		Usage:   "Generate the default NVIDIA Container Toolkit configuration file",
 		Before: func(c *cli.Context) error {
 			return m.validateFlags(c, &opts)
@@ -63,39 +62,36 @@ func (m command) build() *cli.Command {
 	c.Flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:        "output",
-			Usage:       "Specify the file to output the generated configuration for to. If this is '' the configuration is ouput to STDOUT.",
-			Destination: &opts.output,
+			Aliases:     []string{"o"},
+			Usage:       "Specify the output file to write to; If not specified, the output is written to stdout",
+			Destination: &opts.Output,
 		},
 	}
 
 	return &c
 }
 
-func (m command) validateFlags(c *cli.Context, opts *options) error {
-	return nil
+func (m command) validateFlags(c *cli.Context, opts *flags.Options) error {
+	return opts.Validate()
 }
 
-func (m command) run(c *cli.Context, opts *options) error {
-	defaultConfig, err := nvctkConfig.GetDefaultConfigToml()
+func (m command) run(c *cli.Context, opts *flags.Options) error {
+	cfgToml, err := config.New()
 	if err != nil {
-		return fmt.Errorf("unable to get default config: %v", err)
+		return fmt.Errorf("unable to load or create config: %v", err)
 	}
 
-	var output io.Writer
-	if opts.output == "" {
-		output = os.Stdout
-	} else {
-		outputFile, err := os.Create(opts.output)
-		if err != nil {
-			return fmt.Errorf("unable to create output file: %v", err)
-		}
-		defer outputFile.Close()
-		output = outputFile
+	if err := opts.EnsureOutputFolder(); err != nil {
+		return fmt.Errorf("failed to create output directory: %v", err)
 	}
-
-	_, err = defaultConfig.WriteTo(output)
+	output, err := opts.CreateOutput()
 	if err != nil {
-		return fmt.Errorf("unable to write to output: %v", err)
+		return fmt.Errorf("failed to open output file: %v", err)
+	}
+	defer output.Close()
+
+	if _, err = cfgToml.Save(output); err != nil {
+		return fmt.Errorf("failed to write output: %v", err)
 	}
 
 	return nil

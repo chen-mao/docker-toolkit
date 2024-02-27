@@ -18,19 +18,19 @@ package hook
 
 import (
 	chmod "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/hook/chmod"
-
-	symlinks "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/hook/create-symlinks"
+	
 	ldcache "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/hook/update-ldcache"
-	"github.com/sirupsen/logrus"
+	symlinks "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/hook/create-symlinks"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/urfave/cli/v2"
 )
 
 type hookCommand struct {
-	logger *logrus.Logger
+	logger logger.Interface
 }
 
 // NewCommand constructs a hook command with the specified logger
-func NewCommand(logger *logrus.Logger) *cli.Command {
+func NewCommand(logger logger.Interface) *cli.Command {
 	c := hookCommand{
 		logger: logger,
 	}

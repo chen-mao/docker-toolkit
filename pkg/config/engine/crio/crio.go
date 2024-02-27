@@ -100,6 +100,13 @@ func (c *Config) RemoveRuntime(name string) error {
 	return nil
 }
 
+// Set sets the specified cri-o option.
+func (c *Config) Set(key string, value interface{}) {
+	config := (toml.Tree)(*c)
+	config.Set(key, value)
+	*c = (Config)(config)
+}
+
 // Save writes the config to the specified path
 func (c Config) Save(path string) (int64, error) {
 	config := (toml.Tree)(c)

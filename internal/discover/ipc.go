@@ -17,14 +17,15 @@
 package discover
 
 import (
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
-	"github.com/sirupsen/logrus"
 )
 
 type ipcMounts mounts
 
+// NOT NEED
 // NewIPCDiscoverer creats a discoverer for NVIDIA IPC sockets.
-func NewIPCDiscoverer(logger *logrus.Logger, driverRoot string) (Discover, error) {
+func NewIPCDiscoverer(logger logger.Interface, driverRoot string) (Discover, error) {
 	sockets := newMounts(
 		logger,
 		lookup.NewFileLocator(

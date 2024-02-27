@@ -25,20 +25,16 @@ import (
 	"strings"
 )
 
-// Device major numbers and device names for NVIDIA devices
+// Device major numbers and device names for XDXCT devices
 const (
-	NVIDIAUVMMinor      = 0
-	NVIDIAUVMToolsMinor = 1
-	NVIDIACTLMinor      = 255
-	NVIDIAModesetMinor  = 254
+	XDXCTUVMMinor      = 0
+	XDXCTUVMToolsMinor = 1
+	XDXCTCTLMinor      = 226
 
-	NVIDIAFrontend = Name("nvidia-frontend")
-	NVIDIAGPU      = NVIDIAFrontend
-	NVIDIACaps     = Name("nvidia-caps")
-	NVIDIAUVM      = Name("nvidia-uvm")
-
-	procDevicesPath    = "/proc/devices"
-	nvidiaDevicePrefix = "nvidia"
+	XDXCTFrontend     = Name("xdxct-frontend")
+	XDXCTGPU          = XDXCTFrontend
+	procDevicesPath   = "/proc/devices"
+	xdxctDevicePrefix = "xdxct"
 )
 
 // Name represents the name of a device as specified under /proc/devices
@@ -72,14 +68,14 @@ func (d devices) Get(name Name) (Major, bool) {
 }
 
 // GetNVIDIADevices returns the set of NVIDIA Devices on the machine
-func GetNVIDIADevices() (Devices, error) {
-	return nvidiaDevices(procDevicesPath)
+func GetXDXCTDevices() (Devices, error) {
+	return xdxctDevices(procDevicesPath)
 }
 
 // nvidiaDevices returns the set of NVIDIA Devices from the specified devices file.
 // This is useful for testing since we may be testing on a system where `/proc/devices` does
 // contain a reference to NVIDIA devices.
-func nvidiaDevices(devicesPath string) (Devices, error) {
+func xdxctDevices(devicesPath string) (Devices, error) {
 	devicesFile, err := os.Open(devicesPath)
 	if os.IsNotExist(err) {
 		return nil, nil
@@ -89,18 +85,18 @@ func nvidiaDevices(devicesPath string) (Devices, error) {
 	}
 	defer devicesFile.Close()
 
-	return nvidiaDeviceFrom(devicesFile)
+	return xdxctDeviceFrom(devicesFile)
 }
 
-var errNoNvidiaDevices = errors.New("no NVIDIA devices found")
+var errNoNvidiaDevices = errors.New("no XDXCT devices found")
 
-func nvidiaDeviceFrom(reader io.Reader) (devices, error) {
+func xdxctDeviceFrom(reader io.Reader) (devices, error) {
 	allDevices := devicesFrom(reader)
 	nvidiaDevices := make(devices)
 
 	var hasNvidiaDevices bool
 	for n, d := range allDevices {
-		if !strings.HasPrefix(string(n), nvidiaDevicePrefix) {
+		if !strings.HasPrefix(string(n), xdxctDevicePrefix) {
 			continue
 		}
 		nvidiaDevices[n] = d

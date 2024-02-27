@@ -1,27 +1,45 @@
+/**
+# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+**/
+
 package modifier
 
 import (
 	"fmt"
 	"strings"
 
+	"tags.cncf.io/container-device-interface/pkg/parser"
+
 	"github.com/XDXCT/xdxct-container-toolkit/internal/config"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/config/image"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/modifier/cdi"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
-	cdi "github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
-	"github.com/opencontainers/runtime-spec/specs-go"
-	"github.com/sirupsen/logrus"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi/spec"
 )
 
-type cdiModifier struct {
-	logger   *logrus.Logger
-	specDirs []string
-	devices  []string
-}
+const (
+	visibleDevicesEnvvar = "XDXCT_VISIBLE_DEVICES"
+	visibleDevicesVoid   = "void"
+)
 
 // NewCDIModifier creates an OCI spec modifier that determines the modifications to make based on the
-// CDI specifications available on the system. The NVIDIA_VISIBLE_DEVICES enviroment variable is
+// CDI specifications available on the system. The XDXCT_VISIBLE_DEVICES environment variable is
 // used to select the devices to include.
-func NewCDIModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec) (oci.SpecModifier, error) {
+func NewCDIModifier(logger logger.Interface, cfg *config.Config, ociSpec oci.Spec) (oci.SpecModifier, error) {
 	devices, err := getDevicesFromSpec(logger, ociSpec, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get required devices from OCI specification: %v", err)
@@ -32,21 +50,27 @@ func NewCDIModifier(logger *logrus.Logger, cfg *config.Config, ociSpec oci.Spec)
 	}
 	logger.Debugf("Creating CDI modifier for devices: %v", devices)
 
-	specDirs := cdi.DefaultSpecDirs
-	if len(cfg.XDXCTContainerRuntimeConfig.Modes.CDI.SpecDirs) > 0 {
-		specDirs = cfg.XDXCTContainerRuntimeConfig.Modes.CDI.SpecDirs
+	automaticDevices := filterAutomaticDevices(devices)
+	if len(automaticDevices) != len(devices) && len(automaticDevices) > 0 {
+		return nil, fmt.Errorf("requesting a CDI device with vendor 'xdxct.com' is not supported when requesting other CDI devices")
+	}
+	if len(automaticDevices) > 0 {
+		automaticModifier, err := newAutomaticCDISpecModifier(logger, cfg, automaticDevices)
+		if err == nil {
+			return automaticModifier, nil
+		}
+		logger.Warningf("Failed to create the automatic CDI modifier: %w", err)
+		logger.Debugf("Falling back to the standard CDI modifier")
 	}
 
-	m := cdiModifier{
-		logger:   logger,
-		specDirs: specDirs,
-		devices:  devices,
-	}
-
-	return m, nil
+	return cdi.New(
+		cdi.WithLogger(logger),
+		cdi.WithDevices(devices...),
+		cdi.WithSpecDirs(cfg.XDXCTContainerRuntimeConfig.Modes.CDI.SpecDirs...),
+	)
 }
 
-func getDevicesFromSpec(logger *logrus.Logger, ociSpec oci.Spec, cfg *config.Config) ([]string, error) {
+func getDevicesFromSpec(logger logger.Interface, ociSpec oci.Spec, cfg *config.Config) ([]string, error) {
 	rawSpec, err := ociSpec.Load()
 	if err != nil {
 		return nil, fmt.Errorf("failed to load OCI spec: %v", err)
@@ -64,12 +88,19 @@ func getDevicesFromSpec(logger *logrus.Logger, ociSpec oci.Spec, cfg *config.Con
 	if err != nil {
 		return nil, err
 	}
+	if cfg.AcceptDeviceListAsVolumeMounts {
+		mountDevices := container.CDIDevicesFromMounts()
+		if len(mountDevices) > 0 {
+			return mountDevices, nil
+		}
+	}
+
 	envDevices := container.DevicesFromEnvvars(visibleDevicesEnvvar)
 
 	var devices []string
 	seen := make(map[string]bool)
 	for _, name := range envDevices.List() {
-		if !cdi.IsQualifiedName(name) {
+		if !parser.IsQualifiedName(name) {
 			name = fmt.Sprintf("%s=%s", cfg.XDXCTContainerRuntimeConfig.Modes.CDI.DefaultKind, name)
 		}
 		if seen[name] {
@@ -110,7 +141,7 @@ func getAnnotationDevices(prefixes []string, annotations map[string]string) ([]s
 	var annotationDevices []string
 	for key, devices := range devicesByKey {
 		for _, device := range devices {
-			if !cdi.IsQualifiedName(device) {
+			if !parser.IsQualifiedName(device) {
 				return nil, fmt.Errorf("invalid device name %q in annotation %q", device, key)
 			}
 			if seen[device] {
@@ -124,21 +155,70 @@ func getAnnotationDevices(prefixes []string, annotations map[string]string) ([]s
 	return annotationDevices, nil
 }
 
-// Modify loads the CDI registry and injects the specified CDI devices into the OCI runtime specification.
-func (m cdiModifier) Modify(spec *specs.Spec) error {
-	registry := cdi.GetRegistry(
-		cdi.WithSpecDirs(m.specDirs...),
-		cdi.WithAutoRefresh(false),
-	)
-	if err := registry.Refresh(); err != nil {
-		m.logger.Debugf("The following error was triggered when refreshing the CDI registry: %v", err)
+// filterAutomaticDevices searches for "automatic" device names in the input slice.
+// "Automatic" devices are a well-defined list of CDI device names which, when requested,
+// trigger the generation of a CDI spec at runtime. This removes the need to generate a
+// CDI spec on the system a-priori as well as keep it up-to-date.
+func filterAutomaticDevices(devices []string) []string {
+	var automatic []string
+	for _, device := range devices {
+		vendor, class, _ := parser.ParseDevice(device)
+		if vendor == "xdxct.com" && class == "gpu" {
+			automatic = append(automatic, device)
+		}
 	}
+	return automatic
+}
 
-	m.logger.Debugf("Injecting devices using CDI: %v", m.devices)
-	_, err := registry.InjectDevices(spec, m.devices...)
+func newAutomaticCDISpecModifier(logger logger.Interface, cfg *config.Config, devices []string) (oci.SpecModifier, error) {
+	logger.Debugf("Generating in-memory CDI specs for devices %v", devices)
+	spec, err := generateAutomaticCDISpec(logger, cfg, devices)
 	if err != nil {
-		return fmt.Errorf("failed to inject CDI devices: %v", err)
+		return nil, fmt.Errorf("failed to generate CDI spec: %w", err)
+	}
+	cdiModifier, err := cdi.New(
+		cdi.WithLogger(logger),
+		cdi.WithSpec(spec.Raw()),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to construct CDI modifier: %w", err)
 	}
 
-	return nil
+	return cdiModifier, nil
+}
+
+func generateAutomaticCDISpec(logger logger.Interface, cfg *config.Config, devices []string) (spec.Interface, error) {
+	cdilib, err := xdxcdi.New(
+		xdxcdi.WithLogger(logger),
+		xdxcdi.WithXDXCTCTKPath(cfg.XDXCTCTKConfig.Path),
+		xdxcdi.WithDriverRoot(cfg.XDXCTContainerCLIConfig.Root),
+		xdxcdi.WithVendor("xdxct.com"),
+		xdxcdi.WithClass("gpu"),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to construct CDI library: %w", err)
+	}
+
+	identifiers := []string{}
+	for _, device := range devices {
+		_, _, id := parser.ParseDevice(device)
+		identifiers = append(identifiers, id)
+	}
+
+	deviceSpecs, err := cdilib.GetDeviceSpecsByID(identifiers...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get CDI device specs: %w", err)
+	}
+
+	commonEdits, err := cdilib.GetCommonEdits()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get common CDI spec edits: %w", err)
+	}
+
+	return spec.New(
+		spec.WithDeviceSpecs(deviceSpecs),
+		spec.WithEdits(*commonEdits.ContainerEdits),
+		spec.WithVendor("xdxct.com"),
+		spec.WithClass("gpu"),
+	)
 }

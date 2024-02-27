@@ -98,6 +98,8 @@ func main() {
 
 	// Run the CLI
 	log.Infof("Starting %v", c.Name)
+
+	log.Infof("RemainingArgs: %v", remainingArgs)
 	if err := c.Run(remainingArgs); err != nil {
 		log.Errorf("error running xdxct-toolkit: %v", err)
 		os.Exit(1)
@@ -177,6 +179,7 @@ func ParseArgs(args []string) ([]string, string, error) {
 
 func verifyFlags(o *options) error {
 	log.Infof("Verifying Flags")
+	log.Infof("root: %v, runtime: %v", o.root, o.runtime)
 	if o.root == "" {
 		return fmt.Errorf("the install root must be specified")
 	}
@@ -236,6 +239,7 @@ func installToolkit(o *options) error {
 		"--toolkit-root",
 		filepath.Join(o.root, toolkitSubDir),
 	}
+	log.Infof("toolkit command: %v", toolkitCommand)
 	// Command returns the Cmd struct to execute the named program with the given arguments.
 	cmd := exec.Command("sh", "-c", strings.Join(cmdline, " "))
 	cmd.Stdout = os.Stdout

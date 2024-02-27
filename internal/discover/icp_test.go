@@ -19,15 +19,17 @@ package discover
 import (
 	"testing"
 
-	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
-	"github.com/sirupsen/logrus"
+	testlog "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
+
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
 )
 
 func TestIPCMounts(t *testing.T) {
+	logger, _ := testlog.NewNullLogger()
 	l := ipcMounts(
 		mounts{
-			logger: logrus.New(),
+			logger: logger,
 			lookup: &lookup.LocatorMock{
 				LocateFunc: func(path string) ([]string, error) {
 					return []string{"/host/path"}, nil

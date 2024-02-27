@@ -30,7 +30,7 @@ import (
 	"unsafe"
 
 	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup/symlinks"
-	log "github.com/sirupsen/logrus"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 )
 
 const ldcachePath = "/etc/ld.so.cache"
@@ -94,16 +94,23 @@ type ldcache struct {
 	entries    []entry2
 
 	root   string
-	logger *log.Logger
+	logger logger.Interface
 }
 
 // New creates a new LDCache with the specified logger and root.
-func New(logger *log.Logger, root string) (LDCache, error) {
+func New(logger logger.Interface, root string) (LDCache, error) {
 	path := filepath.Join(root, ldcachePath)
 
 	logger.Debugf("Opening ld.conf at %v", path)
 	f, err := os.Open(path)
-	if err != nil {
+	if os.IsNotExist(err) {
+		logger.Warningf("Could not find ld.so.cache at %v; creating empty cache", path)
+		e := &empty{
+			logger: logger,
+			path:   path,
+		}
+		return e, nil
+	} else if err != nil {
 		return nil, err
 	}
 	defer f.Close()

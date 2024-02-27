@@ -7,13 +7,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/XDXCT/xdxct-container-toolkit/internal/system"
-	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi"
-	"github.com/XDXCT/xdxct-container-toolkit/pkg/nvcdi/transform"
-	"github.com/container-orchestrated-devices/container-device-interface/pkg/cdi"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/system/devices"
+	"github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi"
+	transformroot "github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi/transform/root"
 	toml "github.com/pelletier/go-toml"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"tags.cncf.io/container-device-interface/pkg/cdi"
 )
 
 const (
@@ -262,6 +262,8 @@ func Install(cli *cli.Context, opts *options) error {
 	toolkitConfigDir := filepath.Join(opts.toolkitRoot, ".config", "xdxct-container-runtime")
 	toolkitConfigPath := filepath.Join(toolkitConfigDir, configFilename)
 
+	log.Infof("toolkitConfigDir: %v, toolkitConfigPath: %v", toolkitConfigDir, toolkitConfigPath)
+
 	// 创建:/usr/local/xdxct/toolkit/.config/xdxct-container-runtime 目录
 	err = createDirectories(opts.toolkitRoot, toolkitConfigDir)
 	if err != nil && !opts.ignoreErrors {
@@ -385,7 +387,9 @@ func installToolkitConfig(c *cli.Context, toolkitConfigPath string, xdxctContain
 
 	// Read the ldconfig path from the config as this may differ per platform
 	// On ubuntu-based systems this ends in `.real`
-	ldconfigPath := fmt.Sprintf("%s", config.GetDefault("xdxct-container-cli.ldconfig", "/sbin/ldconfig.real"))
+
+	ldconfigPath := fmt.Sprintf("%s", config.GetDefault("xdxct-container-cli.ldconfig", getLdConfigPath()))
+	// ldconfigPath := fmt.Sprintf("%s", config.GetDefault("xdxct-container-cli.ldconfig", "/sbin/ldconfig.real"))
 	// Use the driver run root as the root:
 	driverLdconfigPath := "@" + filepath.Join(opts.DriverRoot, strings.TrimPrefix(ldconfigPath, "@/"))
 
@@ -663,8 +667,15 @@ func createDirectories(dir ...string) error {
 	return nil
 }
 
+func getLdConfigPath() string {
+	if _, err := os.Stat("/sbin/ldconfig.real"); err == nil {
+		return "@/sbin/ldconfig.real"
+	}
+	return "@/sbin/ldconfig"
+}
+
 // generateCDISpec generates a CDI spec for use in managemnt containers
-func generateCDISpec(opts *options, xdxctCTKPath string) error {
+func generateCDISpec(opts *options, nvidiaCTKPath string) error {
 	if !opts.cdiEnabled {
 		return nil
 	}
@@ -674,21 +685,23 @@ func generateCDISpec(opts *options, xdxctCTKPath string) error {
 	}
 
 	log.Infof("Creating control device nodes at %v", opts.DriverRootCtrPath)
-	s, err := system.New()
+	devices, err := devices.New(
+		devices.WithDevRoot(opts.DriverRootCtrPath),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to create library: %v", err)
 	}
-	if err := s.CreateNVIDIAControlDeviceNodesAt(opts.DriverRootCtrPath); err != nil {
+	if err := devices.CreateNVIDIAControlDevices(); err != nil {
 		return fmt.Errorf("failed to create control device nodes: %v", err)
 	}
 
 	log.Info("Generating CDI spec for management containers")
-	cdilib, err := nvcdi.New(
-		nvcdi.WithMode(nvcdi.ModeManagement),
-		nvcdi.WithDriverRoot(opts.DriverRootCtrPath),
-		nvcdi.WithNVIDIACTKPath(xdxctCTKPath),
-		nvcdi.WithVendor(opts.cdiVendor),
-		nvcdi.WithClass(opts.cdiClass),
+	cdilib, err := xdxcdi.New(
+		xdxcdi.WithMode(xdxcdi.ModeManagement),
+		xdxcdi.WithDriverRoot(opts.DriverRootCtrPath),
+		xdxcdi.WithXDXCTCTKPath(nvidiaCTKPath),
+		xdxcdi.WithVendor(opts.cdiVendor),
+		xdxcdi.WithClass(opts.cdiClass),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to create CDI library for management containers: %v", err)
@@ -698,9 +711,9 @@ func generateCDISpec(opts *options, xdxctCTKPath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to genereate CDI spec for management containers: %v", err)
 	}
-	err = transform.NewRootTransformer(
-		opts.DriverRootCtrPath,
-		opts.DriverRoot,
+	err = transformroot.New(
+		transformroot.WithRoot(opts.DriverRootCtrPath),
+		transformroot.WithTargetRoot(opts.DriverRoot),
 	).Transform(spec.Raw())
 	if err != nil {
 		return fmt.Errorf("failed to transform driver root in CDI spec: %v", err)

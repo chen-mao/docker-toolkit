@@ -14,6 +14,7 @@ import (
 	"syscall"
 
 	"github.com/XDXCT/xdxct-container-toolkit/internal/info"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
 )
 
@@ -75,15 +76,15 @@ func doPrestart() {
 	if err != nil || hook == nil {
 		log.Panicln("error getting hook config:", err)
 	}
-	cli := hook.NvidiaContainerCLI
-
-	if !hook.XDXCTContainerRuntimeHook.SkipModeDetection && info.ResolveAutoMode(&logInterceptor{}, hook.NVIDIAContainerRuntime.Mode) != "legacy" {
-		log.Panicln("invoking the NVIDIA Container Runtime Hook directly (e.g. specifying the docker --gpus flag) is not supported. Please use the NVIDIA Container Runtime (e.g. specify the --runtime=nvidia flag) instead.")
-	}
+	cli := hook.XdxctContainerCLI
 
 	container := getContainerConfig(*hook)
-	nvidia := container.Nvidia
-	if nvidia == nil {
+	if !hook.XDXCTContainerRuntimeHook.SkipModeDetection && info.ResolveAutoMode(&logInterceptor{}, hook.XDXCTContainerRuntime.Mode, container.Image) != "legacy" {
+		log.Panicln("invoking the XDXCT Container Runtime Hook directly (e.g. specifying the docker --gpus flag) is not supported. Please use the NVIDIA Container Runtime (e.g. specify the --runtime=nvidia flag) instead.")
+	}
+
+	xdxct := container.Xdxct
+	if xdxct == nil {
 		// Not a GPU container, nothing to do.
 		return
 	}
@@ -115,25 +116,19 @@ func doPrestart() {
 	if cli.NoCgroups {
 		args = append(args, "--no-cgroups")
 	}
-	if len(nvidia.Devices) > 0 {
-		args = append(args, fmt.Sprintf("--device=%s", nvidia.Devices))
-	}
-	if len(nvidia.MigConfigDevices) > 0 {
-		args = append(args, fmt.Sprintf("--mig-config=%s", nvidia.MigConfigDevices))
-	}
-	if len(nvidia.MigMonitorDevices) > 0 {
-		args = append(args, fmt.Sprintf("--mig-monitor=%s", nvidia.MigMonitorDevices))
+	if len(xdxct.Devices) > 0 {
+		args = append(args, fmt.Sprintf("--device=%s", xdxct.Devices))
 	}
 
-	for _, cap := range strings.Split(nvidia.DriverCapabilities, ",") {
+	for _, cap := range strings.Split(xdxct.DriverCapabilities, ",") {
 		if len(cap) == 0 {
 			break
 		}
 		args = append(args, capabilityToCLI(cap))
 	}
 
-	if !hook.DisableRequire && !nvidia.DisableRequire {
-		for _, req := range nvidia.Requirements {
+	if !hook.DisableRequire && !xdxct.DisableRequire {
+		for _, req := range xdxct.Requirements {
 			args = append(args, fmt.Sprintf("--require=%s", req))
 		}
 	}
@@ -160,7 +155,7 @@ func main() {
 	flag.Parse()
 
 	if *versionflag {
-		fmt.Printf("%v version %v\n", "NVIDIA Container Runtime Hook", info.GetVersionString())
+		fmt.Printf("%v version %v\n", "XDXCT Container Runtime Hook", info.GetVersionString())
 		return
 	}
 
@@ -185,10 +180,10 @@ func main() {
 }
 
 // logInterceptor implements the info.Logger interface to allow for logging from this function.
-type logInterceptor struct{}
+type logInterceptor struct {
+	logger.NullLogger
+}
 
 func (l *logInterceptor) Infof(format string, args ...interface{}) {
 	log.Printf(format, args...)
 }
-
-func (l *logInterceptor) Debugf(format string, args ...interface{}) {}

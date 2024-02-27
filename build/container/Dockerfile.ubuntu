@@ -37,8 +37,7 @@ FROM ${BASE_REG}/ubuntu:base-${BASE_DIST}
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libcap2 \
-    curl \
-        && \
+    curl && \
     rm -rf /var/lib/apt/lists/*
 
 ENV XDXCT_DISABLE_REQUIRE="true"
@@ -66,10 +65,12 @@ ENV PACKAGE_ARCH "amd64"
 #     fi
 
 # 在容器安装了xdxct-container.,在容器已经有so,bin.
+# RUN dpkg -i \
+#     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container1_1.*.deb \
+#     ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container-tools_1.*.deb \
+#     ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-toolkit*_${PACKAGE_VERSION}*.deb
 RUN dpkg -i \
-    ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container1_1.*.deb \
-    ${PACKAGE_DIST}/${PACKAGE_ARCH}/libxdxct-container-tools_1.*.deb \
-    ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-toolkit*_${PACKAGE_VERSION}*.deb
+    ${PACKAGE_DIST}/${PACKAGE_ARCH}/xdxct-container-modules_1.0.0~rc.1-0_amd64.deb
 
 WORKDIR /work
 

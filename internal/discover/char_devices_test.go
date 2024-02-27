@@ -20,9 +20,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
 	testlog "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
+
+	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
 )
 
 func TestCharDevices(t *testing.T) {

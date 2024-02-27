@@ -2,12 +2,12 @@
 
 set -e
 
-NVIDIA_CONTAINER_RUNTIME_HOOK=/usr/bin/nvidia-container-runtime-hook
-NVIDIA_CONTAINER_TOOLKIT=/usr/bin/xdxct-container-toolkit
+XDXCT_CONTAINER_RUNTIME_HOOK=/usr/bin/xdxct-container-runtime-hook
+XDXCT_CONTAINER_TOOLKIT=/usr/bin/xdxct-container-toolkit
 
 case "$1" in
     purge)
-        [ -L "${NVIDIA_CONTAINER_TOOLKIT}" ] && rm ${NVIDIA_CONTAINER_TOOLKIT}
+        [ -L "${XDXCT_CONTAINER_TOOLKIT}" ] && rm ${XDXCT_CONTAINER_TOOLKIT}
     ;;
 
     upgrade|failed-upgrade|remove|abort-install|abort-upgrade|disappear)

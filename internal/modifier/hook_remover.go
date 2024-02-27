@@ -20,14 +20,14 @@ import (
 	"path/filepath"
 
 	"github.com/XDXCT/xdxct-container-toolkit/internal/config"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
 	"github.com/opencontainers/runtime-spec/specs-go"
-	"github.com/sirupsen/logrus"
 )
 
 // nvidiaContainerRuntimeHookRemover is a spec modifer that detects and removes inserted nvidia-container-runtime hooks
 type nvidiaContainerRuntimeHookRemover struct {
-	logger *logrus.Logger
+	logger logger.Interface
 }
 
 var _ oci.SpecModifier = (*nvidiaContainerRuntimeHookRemover)(nil)

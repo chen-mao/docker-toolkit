@@ -18,16 +18,16 @@ package runtime
 
 import (
 	"github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/runtime/configure"
-	"github.com/sirupsen/logrus"
+	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 	"github.com/urfave/cli/v2"
 )
 
 type runtimeCommand struct {
-	logger *logrus.Logger
+	logger logger.Interface
 }
 
 // NewCommand constructs a runtime command with the specified logger
-func NewCommand(logger *logrus.Logger) *cli.Command {
+func NewCommand(logger logger.Interface) *cli.Command {
 	c := runtimeCommand{
 		logger: logger,
 	}
@@ -38,7 +38,7 @@ func (m runtimeCommand) build() *cli.Command {
 	// Create the 'runtime' command
 	runtime := cli.Command{
 		Name:  "runtime",
-		Usage: "A collection of runtime-related utilities for the NVIDIA Container Toolkit",
+		Usage: "A collection of runtime-related utilities for the XDXCT Container Toolkit",
 	}
 
 	runtime.Subcommands = []*cli.Command{

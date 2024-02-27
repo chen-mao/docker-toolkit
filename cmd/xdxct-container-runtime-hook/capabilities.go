@@ -35,7 +35,7 @@ func capabilityToCLI(cap string) string {
 	return ""
 }
 
-// DriverCapabilities is used to process the NVIDIA_DRIVER_CAPABILITIES environment
+// DriverCapabilities is used to process the XDXCT_DRIVER_CAPABILITIES environment
 // variable. Operations include default values, filtering, and handling meta values such as "all"
 type DriverCapabilities string
 
