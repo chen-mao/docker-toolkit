@@ -1,19 +1,3 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package xdxcdi
 
 import (
@@ -27,7 +11,7 @@ import (
 type deviceFolderPermissions struct {
 	logger        logger.Interface
 	devRoot       string
-	nvidiaCTKPath string
+	xdxctCTKPath string
 	devices       discover.Discover
 }
 
@@ -36,14 +20,14 @@ var _ discover.Discover = (*deviceFolderPermissions)(nil)
 // newDeviceFolderPermissionHookDiscoverer creates a discoverer that can be used to update the permissions for the parent folders of nested device nodes from the specified set of device specs.
 // This works around an issue with rootless podman when using crun as a low-level runtime.
 // See https://github.com/containers/crun/issues/1047
-// The nested devices that are applicable to the NVIDIA GPU devices are:
+// The nested devices that are applicable to the XDXCT GPU devices are:
 //   - DRM devices at /dev/dri/*
-//   - NVIDIA Caps devices at /dev/nvidia-caps/*
-func newDeviceFolderPermissionHookDiscoverer(logger logger.Interface, devRoot string, nvidiaCTKPath string, devices discover.Discover) discover.Discover {
+//   - XDXCT Caps devices at /dev/xdxct-caps/*
+func newDeviceFolderPermissionHookDiscoverer(logger logger.Interface, devRoot string, xdxctCTKPath string, devices discover.Discover) discover.Discover {
 	d := &deviceFolderPermissions{
 		logger:        logger,
 		devRoot:       devRoot,
-		nvidiaCTKPath: nvidiaCTKPath,
+		xdxctCTKPath: xdxctCTKPath,
 		devices:       devices,
 	}
 
@@ -70,8 +54,8 @@ func (d *deviceFolderPermissions) Hooks() ([]discover.Hook, error) {
 		args = append(args, "--path", folder)
 	}
 
-	hook := discover.CreateNvidiaCTKHook(
-		d.nvidiaCTKPath,
+	hook := discover.CreateXdxctCTKHook(
+		d.xdxctCTKPath,
 		"chmod",
 		args...,
 	)
@@ -83,7 +67,7 @@ func (d *deviceFolderPermissions) getDeviceSubfolders() ([]string, error) {
 	// For now we only consider the following special case paths
 	allowedPaths := map[string]bool{
 		"/dev/dri":         true,
-		"/dev/nvidia-caps": true,
+		"/dev/xdxct-caps": true,
 	}
 
 	devices, err := d.devices.Devices()

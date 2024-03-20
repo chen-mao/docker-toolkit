@@ -80,7 +80,7 @@ func doPrestart() {
 
 	container := getContainerConfig(*hook)
 	if !hook.XDXCTContainerRuntimeHook.SkipModeDetection && info.ResolveAutoMode(&logInterceptor{}, hook.XDXCTContainerRuntime.Mode, container.Image) != "legacy" {
-		log.Panicln("invoking the XDXCT Container Runtime Hook directly (e.g. specifying the docker --gpus flag) is not supported. Please use the NVIDIA Container Runtime (e.g. specify the --runtime=nvidia flag) instead.")
+		log.Panicln("invoking the XDXCT Container Runtime Hook directly (e.g. specifying the docker --gpus flag) is not supported. Please use the XDXCT Container Runtime (e.g. specify the --runtime=xdxct flag) instead.")
 	}
 
 	xdxct := container.Xdxct

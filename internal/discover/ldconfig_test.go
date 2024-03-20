@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package discover
 
 import (
@@ -25,7 +9,7 @@ import (
 )
 
 const (
-	testNvidiaCTKPath = "/foo/bar/nvidia-ctk"
+	testXdxctCTKPath = "/foo/bar/xdxct-ctk"
 )
 
 func TestLDCacheUpdateHook(t *testing.T) {
@@ -40,7 +24,7 @@ func TestLDCacheUpdateHook(t *testing.T) {
 	}{
 		{
 			description:  "empty mounts",
-			expectedArgs: []string{"nvidia-ctk", "hook", "update-ldcache"},
+			expectedArgs: []string{"xdxct-ctk", "hook", "update-ldcache"},
 		},
 		{
 			description:   "mount error",
@@ -63,7 +47,7 @@ func TestLDCacheUpdateHook(t *testing.T) {
 					Path: "/usr/local/lib/libbar.so",
 				},
 			},
-			expectedArgs: []string{"nvidia-ctk", "hook", "update-ldcache", "--folder", "/usr/local/lib", "--folder", "/usr/local/libother"},
+			expectedArgs: []string{"xdxct-ctk", "hook", "update-ldcache", "--folder", "/usr/local/lib", "--folder", "/usr/local/libother"},
 		},
 		{
 			description: "host paths are ignored",
@@ -73,7 +57,7 @@ func TestLDCacheUpdateHook(t *testing.T) {
 					Path:     "/usr/local/lib/libfoo.so",
 				},
 			},
-			expectedArgs: []string{"nvidia-ctk", "hook", "update-ldcache", "--folder", "/usr/local/lib"},
+			expectedArgs: []string{"xdxct-ctk", "hook", "update-ldcache", "--folder", "/usr/local/lib"},
 		},
 	}
 
@@ -85,12 +69,12 @@ func TestLDCacheUpdateHook(t *testing.T) {
 				},
 			}
 			expectedHook := Hook{
-				Path:      testNvidiaCTKPath,
+				Path:      testXdxctCTKPath,
 				Args:      tc.expectedArgs,
 				Lifecycle: "createContainer",
 			}
 
-			d, err := NewLDCacheUpdateHook(logger, mountMock, testNvidiaCTKPath)
+			d, err := NewLDCacheUpdateHook(logger, mountMock, testXdxctCTKPath)
 			require.NoError(t, err)
 
 			hooks, err := d.Hooks()

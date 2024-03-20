@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2020-2021, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-*/
-
 package main
 
 import (
@@ -36,14 +20,14 @@ const (
 	restartModeSystemd = "systemd"
 	restartModeNone    = "none"
 
-	nvidiaRuntimeName               = "nvidia"
-	nvidiaRuntimeBinary             = "nvidia-container-runtime"
-	nvidiaExperimentalRuntimeName   = "nvidia-experimental"
-	nvidiaExperimentalRuntimeBinary = "nvidia-container-runtime.experimental"
+	xdxctRuntimeName               = "xdxct"
+	xdxctRuntimeBinary             = "xdxct-container-runtime"
+	xdxctExperimentalRuntimeName   = "xdxct-experimental"
+	xdxctExperimentalRuntimeBinary = "xdxct-container-runtime.experimental"
 
 	defaultConfig        = "/etc/containerd/config.toml"
 	defaultSocket        = "/run/containerd/containerd.sock"
-	defaultRuntimeClass  = "nvidia"
+	defaultRuntimeClass  = "xdxct"
 	defaultRuntmeType    = "io.containerd.runc.v2"
 	defaultSetAsDefault  = true
 	defaultRestartMode   = restartModeSignal
@@ -55,10 +39,10 @@ const (
 	socketMessageToGetPID = ""
 )
 
-// nvidiaRuntimeBinaries defines a map of runtime names to binary names
-var nvidiaRuntimeBinaries = map[string]string{
-	nvidiaRuntimeName:             nvidiaRuntimeBinary,
-	nvidiaExperimentalRuntimeName: nvidiaExperimentalRuntimeBinary,
+// xdxctRuntimeBinaries defines a map of runtime names to binary names
+var xdxctRuntimeBinaries = map[string]string{
+	xdxctRuntimeName:             xdxctRuntimeBinary,
+	xdxctExperimentalRuntimeName: xdxctExperimentalRuntimeBinary,
 }
 
 // options stores the configuration from the command line or environment variables
@@ -82,7 +66,7 @@ func main() {
 	// Create the top-level CLI
 	c := cli.NewApp()
 	c.Name = "containerd"
-	c.Usage = "Update a containerd config with the nvidia-container-runtime"
+	c.Usage = "Update a containerd config with the xdxct-container-runtime"
 	c.Version = "0.1.0"
 
 	// Create the 'setup' subcommand
@@ -133,7 +117,7 @@ func main() {
 		&cli.StringFlag{
 			Name:        "runtime-class",
 			Aliases:     []string{"r"},
-			Usage:       "The name of the runtime class to set for the nvidia-container-runtime",
+			Usage:       "The name of the runtime class to set for the xdxct-container-runtime",
 			Value:       defaultRuntimeClass,
 			Destination: &options.runtimeClass,
 			EnvVars:     []string{"CONTAINERD_RUNTIME_CLASS"},
@@ -149,7 +133,7 @@ func main() {
 		&cli.BoolFlag{
 			Name:        "set-as-default",
 			Aliases:     []string{"d"},
-			Usage:       "Set nvidia-container-runtime as the default runtime",
+			Usage:       "Set xdxct-container-runtime as the default runtime",
 			Value:       defaultSetAsDefault,
 			Destination: &options.setAsDefault,
 			EnvVars:     []string{"CONTAINERD_SET_AS_DEFAULT"},
@@ -176,9 +160,9 @@ func main() {
 			EnvVars:     []string{"CONTAINERD_USE_LEGACY_CONFIG"},
 		},
 		&cli.StringSliceFlag{
-			Name:        "nvidia-container-runtime-modes.cdi.annotation-prefixes",
+			Name:        "xdxct-container-runtime-modes.cdi.annotation-prefixes",
 			Destination: &options.ContainerRuntimeModesCDIAnnotationPrefixes,
-			EnvVars:     []string{"NVIDIA_CONTAINER_RUNTIME_MODES_CDI_ANNOTATION_PREFIXES"},
+			EnvVars:     []string{"XDXCT_CONTAINER_RUNTIME_MODES_CDI_ANNOTATION_PREFIXES"},
 		},
 	}
 
@@ -192,7 +176,7 @@ func main() {
 	}
 }
 
-// Setup updates a containerd configuration to include the nvidia-containerd-runtime and reloads it
+// Setup updates a containerd configuration to include the xdxct-containerd-runtime and reloads it
 func Setup(c *cli.Context, o *options) error {
 	log.Infof("Starting 'setup' for %v", c.App.Name)
 
@@ -236,7 +220,7 @@ func Setup(c *cli.Context, o *options) error {
 	return nil
 }
 
-// Cleanup reverts a containerd configuration to remove the nvidia-containerd-runtime and reloads it
+// Cleanup reverts a containerd configuration to remove the xdxct-containerd-runtime and reloads it
 func Cleanup(c *cli.Context, o *options) error {
 	log.Infof("Starting 'cleanup' for %v", c.App.Name)
 
@@ -293,7 +277,7 @@ func ParseArgs(c *cli.Context) (string, error) {
 	return runtimeDir, nil
 }
 
-// UpdateConfig updates the containerd config to include the nvidia-container-runtime
+// UpdateConfig updates the containerd config to include the xdxct-container-runtime
 func UpdateConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
 		operator.WithXdxctRuntimeName(o.runtimeClass),
@@ -310,7 +294,7 @@ func UpdateConfig(cfg engine.Interface, o *options) error {
 	return nil
 }
 
-// RevertConfig reverts the containerd config to remove the nvidia-container-runtime
+// RevertConfig reverts the containerd config to remove the xdxct-container-runtime
 func RevertConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
 		operator.WithXdxctRuntimeName(o.runtimeClass),

@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package image
 
 import (
@@ -29,11 +13,11 @@ import (
 
 const (
 	envCUDAVersion          = "CUDA_VERSION"
-	envNVRequirePrefix      = "NVIDIA_REQUIRE_"
+	envNVRequirePrefix      = "XDXCT_REQUIRE_"
 	envNVRequireCUDA        = envNVRequirePrefix + "CUDA"
 	envNVRequireJetpack     = envNVRequirePrefix + "JETPACK"
-	envNVDisableRequire     = "NVIDIA_DISABLE_REQUIRE"
-	envNVDriverCapabilities = "NVIDIA_DRIVER_CAPABILITIES"
+	envNVDisableRequire     = "XDXCT_DISABLE_REQUIRE"
+	envNVDriverCapabilities = "XDXCT_DRIVER_CAPABILITIES"
 )
 
 // CUDA represents a CUDA image that can be used for GPU computing. This wraps
@@ -78,21 +62,21 @@ func (i CUDA) HasEnvvar(key string) bool {
 
 // IsLegacy returns whether the associated CUDA image is a "legacy" image. An
 // image is considered legacy if it has a CUDA_VERSION environment variable defined
-// and no NVIDIA_REQUIRE_CUDA environment variable defined.
+// and no XDXCT_REQUIRE_CUDA environment variable defined.
 func (i CUDA) IsLegacy() bool {
 	legacyCudaVersion := i.env[envCUDAVersion]
 	cudaRequire := i.env[envNVRequireCUDA]
 	return len(legacyCudaVersion) > 0 && len(cudaRequire) == 0
 }
 
-// GetRequirements returns the requirements from all NVIDIA_REQUIRE_ environment
+// GetRequirements returns the requirements from all XDXCT_REQUIRE_ environment
 // variables.
 func (i CUDA) GetRequirements() ([]string, error) {
 	if i.HasDisableRequire() {
 		return nil, nil
 	}
 
-	// All variables with the "NVIDIA_REQUIRE_" prefix are passed to nvidia-container-cli
+	// All variables with the "XDXCT_REQUIRE_" prefix are passed to xdxct-container-cli
 	var requirements []string
 	for name, value := range i.env {
 		if strings.HasPrefix(name, envNVRequirePrefix) && !strings.HasPrefix(name, envNVRequireJetpack) {
@@ -110,11 +94,11 @@ func (i CUDA) GetRequirements() ([]string, error) {
 	return requirements, nil
 }
 
-// HasDisableRequire checks for the value of the NVIDIA_DISABLE_REQUIRE. If set
+// HasDisableRequire checks for the value of the XDXCT_DISABLE_REQUIRE. If set
 // to a valid (true) boolean value this can be used to disable the requirement checks
 func (i CUDA) HasDisableRequire() bool {
 	if disable, exists := i.env[envNVDisableRequire]; exists {
-		// i.logger.Debugf("NVIDIA_DISABLE_REQUIRE=%v; skipping requirement checks", disable)
+		// i.logger.Debugf("XDXCT_DISABLE_REQUIRE=%v; skipping requirement checks", disable)
 		d, _ := strconv.ParseBool(disable)
 		return d
 	}
@@ -223,7 +207,7 @@ const (
 )
 
 // DevicesFromMounts returns a list of device specified as mounts.
-// TODO: This should be merged with getDevicesFromMounts used in the NVIDIA Container Runtime
+// TODO: This should be merged with getDevicesFromMounts used in the XDXCT Container Runtime
 func (i CUDA) DevicesFromMounts() []string {
 	root := filepath.Clean(deviceListAsVolumeMountsRoot)
 	seen := make(map[string]bool)

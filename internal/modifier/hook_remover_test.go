@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package modifier
 
 import (
@@ -57,13 +41,13 @@ func TestHookRemover(t *testing.T) {
 			},
 		},
 		{
-			description: "modification removes existing nvidia-container-runtime-hook",
+			description: "modification removes existing xdxct-container-runtime-hook",
 			spec: &specs.Spec{
 				Hooks: &specs.Hooks{
 					Prestart: []specs.Hook{
 						{
-							Path: "/path/to/nvidia-container-runtime-hook",
-							Args: []string{"/path/to/nvidia-container-runtime-hook", "prestart"},
+							Path: "/path/to/xdxct-container-runtime-hook",
+							Args: []string{"/path/to/xdxct-container-runtime-hook", "prestart"},
 						},
 					},
 				},
@@ -96,7 +80,7 @@ func TestHookRemover(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			m := nvidiaContainerRuntimeHookRemover{logger: logger}
+			m := xdxctContainerRuntimeHookRemover{logger: logger}
 
 			err := m.Modify(tc.spec)
 			if tc.expectedError != nil {

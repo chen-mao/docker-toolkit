@@ -57,9 +57,9 @@ func (r rt) Run(argv []string) (rerr error) {
 	}
 
 	r.logger.Debugf("Command line arguments: %v", argv)
-	runtime, err := newNVIDIAContainerRuntime(r.logger, cfg, argv)
+	runtime, err := newXDXCTContainerRuntime(r.logger, cfg, argv)
 	if err != nil {
-		return fmt.Errorf("failed to create NVIDIA Container Runtime: %v", err)
+		return fmt.Errorf("failed to create XDXCT Container Runtime: %v", err)
 	}
 
 	if printVersion {

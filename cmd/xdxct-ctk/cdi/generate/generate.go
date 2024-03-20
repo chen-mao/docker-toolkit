@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package generate
 
 import (
@@ -120,7 +104,7 @@ func (m command) build() *cli.Command {
 		},
 		&cli.StringFlag{
 			Name:        "xdxct-ctk-path",
-			Usage:       "Specify the path to use for the nvidia-ctk in the generated CDI specification. If this is left empty, the path will be searched.",
+			Usage:       "Specify the path to use for the xdxct-ctk in the generated CDI specification. If this is left empty, the path will be searched.",
 			Destination: &opts.xdxctCTKPath,
 		},
 		&cli.StringFlag{
@@ -137,19 +121,6 @@ func (m command) build() *cli.Command {
 			Value:       "gpu",
 			Destination: &opts.class,
 		},
-
-		// The CSV format file is used to support tegra series chips
-		// &cli.StringSliceFlag{
-		// 	Name:        "csv.file",
-		// 	Usage:       "The path to the list of CSV files to use when generating the CDI specification in CSV mode.",
-		// 	Value:       cli.NewStringSlice(csv.DefaultFileList()...),
-		// 	Destination: &opts.csv.files,
-		// },
-		// &cli.StringSliceFlag{
-		// 	Name:        "csv.ignore-pattern",
-		// 	Usage:       "Specify a pattern the CSV mount specifications.",
-		// 	Destination: &opts.csv.ignorePatterns,
-		// },
 	}
 
 	return &c

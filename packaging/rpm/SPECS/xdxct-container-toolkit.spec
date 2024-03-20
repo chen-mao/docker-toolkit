@@ -74,8 +74,8 @@ fi
 # As of 1.10.0-1 we generate the release information automatically
 * %{release_date} XDXCT CORPORATION <tools@xdxct.com> %{version}-%{release}
 
-# The BASE package consists of the NVIDIA Container Runtime and the NVIDIA Container Toolkit CLI.
-# This allows the package to be installed on systems where no NVIDIA Container CLI is available.
+# The BASE package consists of the XDXCT Container Runtime and the XDXCT Container Toolkit CLI.
+# This allows the package to be installed on systems where no XDXCT Container CLI is available.
 %package base
 Summary: XDXCT Container Toolkit Base
 Obsoletes: xdxct-container-runtime <= 3.5.0-1, xdxct-container-runtime-hook <= 1.4.0-2

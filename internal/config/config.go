@@ -118,7 +118,7 @@ func getLdConfigPath() string {
 	return "@/sbin/ldconfig"
 }
 
-// getCommentedUserGroup returns whether the nvidia-container-cli user and group config option should be commented.
+// getCommentedUserGroup returns whether the xdxct-container-cli user and group config option should be commented.
 func getCommentedUserGroup() bool {
 	uncommentIf := map[string]bool{
 		"suse":     true,

@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package symlinks
 
 import (
@@ -23,10 +7,8 @@ import (
 	"strings"
 
 	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
-	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/lookup/symlinks"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/oci"
-	"github.com/XDXCT/xdxct-container-toolkit/internal/platform-support/tegra/csv"
 	"github.com/urfave/cli/v2"
 )
 
@@ -99,32 +81,7 @@ func (m command) run(c *cli.Context, cfg *config) error {
 		return fmt.Errorf("failed to determined container root: %v", err)
 	}
 
-	csvFiles := cfg.filenames.Value()
-
-	chainLocator := lookup.NewSymlinkChainLocator(
-		lookup.WithLogger(m.logger),
-		lookup.WithRoot(cfg.hostRoot),
-	)
-
 	var candidates []string
-	for _, file := range csvFiles {
-		mountSpecs, err := csv.NewCSVFileParser(m.logger, file).Parse()
-		if err != nil {
-			m.logger.Debugf("Skipping CSV file %v: %v", file, err)
-			continue
-		}
-
-		for _, ms := range mountSpecs {
-			if ms.Type != csv.MountSpecSym {
-				continue
-			}
-			targets, err := chainLocator.Locate(ms.Path)
-			if err != nil {
-				m.logger.Warningf("Failed to locate symlink %v", ms.Path)
-			}
-			candidates = append(candidates, targets...)
-		}
-	}
 
 	created := make(map[string]bool)
 	// candidates is a list of absolute paths to symlinks in a chain, or the final target of the chain.

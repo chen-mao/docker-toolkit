@@ -1,19 +1,3 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package xdxcdi
 
 import (
@@ -71,7 +55,7 @@ func (l *xdxmllib) GetGPUDeviceEdits(d device.Device) (*cdi.ContainerEdits, erro
 type byPathHookDiscoverer struct {
 	logger        logger.Interface
 	devRoot       string
-	nvidiaCTKPath string
+	xdxctCTKPath string
 	pciBusID      string
 	deviceNodes   discover.Discover
 }
@@ -79,7 +63,7 @@ type byPathHookDiscoverer struct {
 var _ discover.Discover = (*byPathHookDiscoverer)(nil)
 
 // newFullGPUDiscoverer creates a discoverer for the full GPU defined by the specified device.
-func newFullGPUDiscoverer(logger logger.Interface, devRoot string, nvidiaCTKPath string, d device.Device) (discover.Discover, error) {
+func newFullGPUDiscoverer(logger logger.Interface, devRoot string, xdxctCTKPath string, d device.Device) (discover.Discover, error) {
 	// In xdxgpu driver, get deviceNodePaths by PciInfo
 	pciInfo, ret := d.GetPciInfo()
 	if ret != xdxml.SUCCESS {
@@ -104,7 +88,7 @@ func newFullGPUDiscoverer(logger logger.Interface, devRoot string, nvidiaCTKPath
 	byPathHooks := &byPathHookDiscoverer{
 		logger:        logger,
 		devRoot:       devRoot,
-		nvidiaCTKPath: nvidiaCTKPath,
+		xdxctCTKPath: xdxctCTKPath,
 		pciBusID:      pciBusID,
 		deviceNodes:   deviceNodes,
 	}
@@ -112,7 +96,7 @@ func newFullGPUDiscoverer(logger logger.Interface, devRoot string, nvidiaCTKPath
 	deviceFolderPermissionHooks := newDeviceFolderPermissionHookDiscoverer(
 		logger,
 		devRoot,
-		nvidiaCTKPath,
+		xdxctCTKPath,
 		deviceNodes,
 	)
 
@@ -147,8 +131,8 @@ func (d *byPathHookDiscoverer) Hooks() ([]discover.Hook, error) {
 		args = append(args, "--link", l)
 	}
 
-	hook := discover.CreateNvidiaCTKHook(
-		d.nvidiaCTKPath,
+	hook := discover.CreateXdxctCTKHook(
+		d.xdxctCTKPath,
 		"create-symlinks",
 		args...,
 	)

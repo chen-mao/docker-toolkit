@@ -7,5 +7,4 @@ The XDXCT Container Toolkit allows users to build and run GPU accelerated contai
 ## Getting Started
 
 **Make sure you have installed the [XDXCT driver] for your Linux Distribution**
-**Note that you do not need to install the CUDA Toolkit on the host system, but the XDXCT driver needs to be installed**
 

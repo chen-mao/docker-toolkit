@@ -1,20 +1,7 @@
-# Copyright (c) 2017-2021, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # Supported OSs by architecture
 AMD64_TARGETS := ubuntu20.04
 X86_64_TARGETS := centos7
+ARM64_TARGETS := ubuntu20.04
 
 # Define top-level build targets
 docker%: SHELL:=/bin/bash
@@ -76,16 +63,16 @@ docker-all: $(AMD64_TARGETS) $(X86_64_TARGETS) \
 --%: TARGET_PLATFORM = $(*)
 --%: VERSION = $(patsubst $(OS)%-$(ARCH),%,$(TARGET_PLATFORM))
 --%: BASEIMAGE = $(OS):$(VERSION)
---%: BUILDIMAGE = nvidia/$(LIB_NAME)/$(OS)$(VERSION)-$(ARCH)
+--%: BUILDIMAGE = xdxct/$(LIB_NAME)/$(OS)$(VERSION)-$(ARCH)
 --%: DOCKERFILE = $(CURDIR)/docker/Dockerfile.$(OS)
 --%: ARTIFACTS_DIR = $(DIST_DIR)/$(OS)$(VERSION)/$(ARCH)
 --%: docker-build-%
 	@
 
-LIBNVIDIA_CONTAINER_VERSION ?= $(LIB_VERSION)
-LIBNVIDIA_CONTAINER_TAG ?= $(LIB_TAG)
+LIBXDXCT_CONTAINER_VERSION ?= $(LIB_VERSION)
+LIBXDXCT_CONTAINER_TAG ?= $(LIB_TAG)
 
-LIBNVIDIA_CONTAINER_TOOLS_VERSION := $(LIBNVIDIA_CONTAINER_VERSION)$(if $(LIBNVIDIA_CONTAINER_TAG),~$(LIBNVIDIA_CONTAINER_TAG))-0
+LIBXDXCT_CONTAINER_TOOLS_VERSION := $(LIBXDXCT_CONTAINER_VERSION)$(if $(LIBXDXCT_CONTAINER_TAG),~$(LIBXDXCT_CONTAINER_TAG))-0
 
 # private ubuntu target
 --ubuntu%: OS := ubuntu
@@ -116,7 +103,7 @@ LIBNVIDIA_CONTAINER_TOOLS_VERSION := $(LIBNVIDIA_CONTAINER_VERSION)$(if $(LIBNVI
 
 docker-build-%:
 	@echo "Building for $(TARGET_PLATFORM)"
-	docker pull --platform=linux/$(ARCH) $(BASEIMAGE)
+	# docker pull --platform=linux/$(ARCH) $(BASEIMAGE)
 	DOCKER_BUILDKIT=1 \
 	$(DOCKER) build \
 	    --platform=linux/$(ARCH) \
@@ -126,7 +113,7 @@ docker-build-%:
 	    --build-arg PKG_NAME="$(LIB_NAME)" \
 	    --build-arg PKG_VERS="$(PACKAGE_VERSION)" \
 	    --build-arg PKG_REV="$(PACKAGE_REVISION)" \
-	    --build-arg LIBNVIDIA_CONTAINER_TOOLS_VERSION="$(LIBNVIDIA_CONTAINER_TOOLS_VERSION)" \
+	    --build-arg LIBXDXCT_CONTAINER_TOOLS_VERSION="$(LIBXDXCT_CONTAINER_TOOLS_VERSION)" \
 	    --build-arg GIT_COMMIT="$(GIT_COMMIT)" \
 	    --tag $(BUILDIMAGE) \
 	    --file $(DOCKERFILE) .
@@ -138,7 +125,7 @@ docker-build-%:
 	    $(BUILDIMAGE)
 
 docker-clean:
-	IMAGES=$$(docker images "nvidia/$(LIB_NAME)/*" --format="{{.ID}}"); \
+	IMAGES=$$(docker images "xdxct/$(LIB_NAME)/*" --format="{{.ID}}"); \
 	if [ "$${IMAGES}" != "" ]; then \
 	    docker rmi -f $${IMAGES}; \
 	fi

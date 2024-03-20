@@ -15,12 +15,10 @@ import (
 )
 
 const (
-	envCUDAVersion          = "CUDA_VERSION"
-	envNVRequirePrefix      = "XDXCT_REQUIRE_"
-	envNVRequireCUDA        = envNVRequirePrefix + "CUDA"
-	envNVDisableRequire     = "XDXCT_DISABLE_REQUIRE"
-	envNVVisibleDevices     = "XDXCT_VISIBLE_DEVICES"
-	envNVDriverCapabilities = "XDXCT_DRIVER_CAPABILITIES"
+	envXDXRequirePrefix      = "XDXCT_REQUIRE_"
+	envXDXDisableRequire     = "XDXCT_DISABLE_REQUIRE"
+	envXDXVisibleDevices     = "XDXCT_VISIBLE_DEVICES"
+	envXDXDriverCapabilities = "XDXCT_DRIVER_CAPABILITIES"
 )
 
 const (
@@ -178,7 +176,7 @@ func getDevicesFromEnvvar(image image.CUDA, swarmResourceEnvvars []string) *stri
 	if hasSwarmEnvvar {
 		devices = image.DevicesFromEnvvars(swarmResourceEnvvars...).List()
 	} else {
-		devices = image.DevicesFromEnvvars(envNVVisibleDevices).List()
+		devices = image.DevicesFromEnvvars(envXDXVisibleDevices).List()
 	}
 
 	if len(devices) == 0 {
@@ -266,8 +264,8 @@ func (c *HookConfig) getDriverCapabilities(cudaImage image.CUDA, legacyImage boo
 
 	capabilities := supportedDriverCapabilities.Intersection(image.DefaultDriverCapabilities)
 
-	capsEnvSpecified := cudaImage.HasEnvvar(envNVDriverCapabilities)
-	capsEnv := cudaImage.Getenv(envNVDriverCapabilities)
+	capsEnvSpecified := cudaImage.HasEnvvar(envXDXDriverCapabilities)
+	capsEnv := cudaImage.Getenv(envXDXDriverCapabilities)
 
 	if !capsEnvSpecified && legacyImage {
 		// Environment variable unset with legacy image: set all capabilities.

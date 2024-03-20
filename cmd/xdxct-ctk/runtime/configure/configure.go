@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package configure
 
 import (
@@ -129,8 +113,8 @@ func (m command) build() *cli.Command {
 			Destination: &config.xdxctRuntime.path,
 		},
 		&cli.StringFlag{
-			Name:        "nvidia-runtime-hook-path",
-			Usage:       "specify the path to the NVIDIA Container Runtime hook executable",
+			Name:        "xdxct-runtime-hook-path",
+			Usage:       "specify the path to the XDXCT Container Runtime hook executable",
 			Value:       defaultXDXCTRuntimeHookExpecutablePath,
 			Destination: &config.xdxctRuntime.hookPath,
 		},
@@ -193,7 +177,7 @@ func (m command) configureWrapper(c *cli.Context, config *config) error {
 	return fmt.Errorf("unsupported config-mode: %v", config.mode)
 }
 
-// configureConfigFile updates the specified container engine config file to enable the NVIDIA runtime.
+// configureConfigFile updates the specified container engine config file to enable the XDXCT runtime.
 func (m command) configureConfigFile(c *cli.Context, config *config) error {
 	configFilePath := config.resolveConfigFilePath()
 
@@ -278,7 +262,7 @@ func (c *config) getOuputConfigPath() string {
 	return c.resolveConfigFilePath()
 }
 
-// configureOCIHook creates and configures the OCI hook for the NVIDIA runtime
+// configureOCIHook creates and configures the OCI hook for the XDXCT runtime
 func (m *command) configureOCIHook(c *cli.Context, config *config) error {
 	err := ocihook.CreateHook(config.hookFilePath, config.xdxctRuntime.hookPath)
 	if err != nil {

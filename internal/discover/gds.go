@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package discover
 
 import (
@@ -33,7 +17,7 @@ func NewGDSDiscoverer(logger logger.Interface, driverRoot string, devRoot string
 	devices := NewCharDeviceDiscoverer(
 		logger,
 		devRoot,
-		[]string{"/dev/nvidia-fs*"},
+		[]string{"/dev/xdxct-fs*"},
 	)
 
 	udev := NewMounts(
@@ -62,7 +46,7 @@ func NewGDSDiscoverer(logger logger.Interface, driverRoot string, devRoot string
 	return &d, nil
 }
 
-// Devices discovers the nvidia-fs device nodes for use with GPUDirect Storage
+// Devices discovers the xdxct-fs device nodes for use with GPUDirect Storage
 func (d *gdsDeviceDiscoverer) Devices() ([]Device, error) {
 	return d.devices.Devices()
 }
@@ -72,7 +56,7 @@ func (d *gdsDeviceDiscoverer) Devices() ([]Device, error) {
 func (d *gdsDeviceDiscoverer) Mounts() ([]Mount, error) {
 	devices, err := d.Devices()
 	if err != nil || len(devices) == 0 {
-		d.logger.Debugf("No nvidia-fs devices detected; skipping detection of mounts")
+		d.logger.Debugf("No xdxct-fs devices detected; skipping detection of mounts")
 		return nil, nil
 	}
 

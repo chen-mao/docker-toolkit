@@ -24,3 +24,6 @@ go.work
 *.log
 *.txt
 *.toml
+
+# vscode cache
+.vscode

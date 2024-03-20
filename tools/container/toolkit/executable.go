@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-*/
-
 package main
 
 import (
@@ -40,9 +24,9 @@ type executable struct {
 	argLines []string
 }
 
-// install installs an executable component of the NVIDIA container toolkit. The source executable
+// install installs an executable component of the XDXCT container toolkit. The source executable
 // is copied to a `.real` file and a wapper is created to set up the environment as required.
-// destFolder: /usr/local/nvidia/toolkit
+// destFolder: /usr/local/xdxct/toolkit
 func (e executable) install(destFolder string) (string, error) {
 	log.Infof("Installing executable '%v' to %v", e.source, destFolder)
 
@@ -59,8 +43,8 @@ func (e executable) install(destFolder string) (string, error) {
 		return "", fmt.Errorf("error wrapping '%v': %v", installedDotfileName, err)
 	}
 	log.Infof("Installed wrapper '%v'", wrapperFilename)
-	// Installed '/usr/local/nvidia/toolkit/nvidia-container-runtime.real'
-	// Installed wrapper '/usr/local/nvidia/toolkit/nvidia-container-runtime'
+	// Installed '/usr/local/xdxct/toolkit/xdxct-container-runtime.real'
+	// Installed wrapper '/usr/local/xdxct/toolkit/xdxct-container-runtime'
 	return wrapperFilename, nil
 }
 

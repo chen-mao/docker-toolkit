@@ -108,9 +108,9 @@ func newRuntimeInstaller(source string, target executableTarget, env map[string]
 	---------*/
 	// preLines := []string{
 	// 	"",
-	// 	"cat /proc/modules | grep -e \"^nvidia \" >/dev/null 2>&1",
+	// 	"cat /proc/modules | grep -e \"^xdxct \" >/dev/null 2>&1",
 	// 	"if [ \"${?}\" != \"0\" ]; then",
-	// 	"	echo \"nvidia driver modules are not yet loaded, invoking runc directly\"",
+	// 	"	echo \"xdxct driver modules are not yet loaded, invoking runc directly\"",
 	// 	"	exec runc \"$@\"",
 	// 	"fi",
 	// 	"",
@@ -133,14 +133,14 @@ func newRuntimeInstaller(source string, target executableTarget, env map[string]
 }
 
 // func findLibraryRoot(root string) (string, error) {
-// 	libnvidiamlPath, err := findManagementLibrary(root)
+// 	libxdxctmlPath, err := findManagementLibrary(root)
 // 	if err != nil {
 // 		return "", fmt.Errorf("error locating XDXCT management library: %v", err)
 // 	}
 
-// 	return filepath.Dir(libnvidiamlPath), nil
+// 	return filepath.Dir(libxdxctmlPath), nil
 // }
 
 // func findManagementLibrary(root string) (string, error) {
-// 	return findLibrary(root, "libnvidia-ml.so")
+// 	return findLibrary(root, "libxdxct-ml.so")
 // }

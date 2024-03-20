@@ -1,20 +1,5 @@
-#! /bin/bash
-# Copyright (c) 2019-2021, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 readonly CRIO_HOOKS_DIR="/usr/share/containers/oci/hooks.d"
-readonly CRIO_HOOK_FILENAME="oci-nvidia-hook.json"
+readonly CRIO_HOOK_FILENAME="oci-xdxct-hook.json"
 
 # shellcheck disable=SC2015
 [ -t 2 ] && readonly LOG_TTY=1 || readonly LOG_NO_TTY=1
@@ -75,8 +60,8 @@ testing::setup() {
 	mkdir -p "${shared_dir}/etc/containerd"
 	mkdir -p "${shared_dir}/etc/docker"
 	mkdir -p "${shared_dir}/run/docker/containerd"
-	mkdir -p "${shared_dir}/run/nvidia"
-	mkdir -p "${shared_dir}/usr/local/nvidia"
+	mkdir -p "${shared_dir}/run/xdxct"
+	mkdir -p "${shared_dir}/usr/local/xdxct"
 	mkdir -p "${shared_dir}${CRIO_HOOKS_DIR}"
 }
 
@@ -108,8 +93,8 @@ testing::docker_run::toolkit::shell() {
 		-v "${shared_dir}/etc/containerd:/etc/containerd" \
 		-v "${shared_dir}/etc/docker:/etc/docker" \
 		-v "${shared_dir}/run/docker/containerd:/run/docker/containerd" \
-		-v "${shared_dir}/run/nvidia:/run/nvidia" \
-		-v "${shared_dir}/usr/local/nvidia:/usr/local/nvidia" \
+		-v "${shared_dir}/run/xdxct:/run/xdxct" \
+		-v "${shared_dir}/usr/local/xdxct:/usr/local/xdxct" \
 		-v "${shared_dir}${CRIO_HOOKS_DIR}:${CRIO_HOOKS_DIR}" \
 		"${toolkit_container_image}" "-c" "$*"
 }

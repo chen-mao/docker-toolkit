@@ -1,19 +1,3 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package devchar
 
 import (
@@ -82,7 +66,7 @@ func (m command) build() *cli.Command {
 		},
 		&cli.StringFlag{
 			Name:        "driver-root",
-			Usage:       "The path to the driver root. `DRIVER_ROOT`/dev is searched for NVIDIA device nodes.",
+			Usage:       "The path to the driver root. `DRIVER_ROOT`/dev is searched for XDXCT device nodes.",
 			Value:       "/",
 			Destination: &cfg.driverRoot,
 			EnvVars:     []string{"DRIVER_ROOT"},
@@ -102,13 +86,13 @@ func (m command) build() *cli.Command {
 		},
 		&cli.BoolFlag{
 			Name:        "load-kernel-modules",
-			Usage:       "Load the NVIDIA kernel modules before creating symlinks. This is only applicable when --create-all is set.",
+			Usage:       "Load the XDXCT kernel modules before creating symlinks. This is only applicable when --create-all is set.",
 			Destination: &cfg.loadKernelModules,
 			EnvVars:     []string{"LOAD_KERNEL_MODULES"},
 		},
 		&cli.BoolFlag{
 			Name:        "create-device-nodes",
-			Usage:       "Create the NVIDIA control device nodes in the driver root if they do not exist. This is only applicable when --create-all is set",
+			Usage:       "Create the XDXCT control device nodes in the driver root if they do not exist. This is only applicable when --create-all is set",
 			Destination: &cfg.createDeviceNodes,
 			EnvVars:     []string{"CREATE_DEVICE_NODES"},
 		},
@@ -182,7 +166,7 @@ create:
 
 		case event := <-watcher.Events:
 			deviceNode := filepath.Base(event.Name)
-			if !strings.HasPrefix(deviceNode, "nvidia") {
+			if !strings.HasPrefix(deviceNode, "xdxct") {
 				continue
 			}
 			if event.Op&fsnotify.Create == fsnotify.Create {
@@ -279,7 +263,7 @@ func (m linkCreator) setup() error {
 			modules.WithRoot(m.driverRoot),
 		)
 		if err := modules.LoadAll(); err != nil {
-			return fmt.Errorf("failed to load NVIDIA kernel modules: %v", err)
+			return fmt.Errorf("failed to load XDXCT kernel modules: %v", err)
 		}
 	}
 	return nil
@@ -334,7 +318,7 @@ func WithCreateDeviceNodes(createDeviceNodes bool) Option {
 	}
 }
 
-// CreateLinks creates symlinks for all NVIDIA device nodes found in the driver root.
+// CreateLinks creates symlinks for all XDXCT device nodes found in the driver root.
 func (m linkCreator) CreateLinks() error {
 	deviceNodes, err := m.lister.DeviceNodes()
 	if err != nil {

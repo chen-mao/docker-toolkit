@@ -1,18 +1,4 @@
-/**
-# Copyright (c) NVIDIA CORPORATIOm.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
+
 
 package devices
 
@@ -28,7 +14,7 @@ import (
 
 var errInvalidDeviceNode = errors.New("invalid device node")
 
-// Interface provides a set of utilities for interacting with NVIDIA devices on the system.
+// Interface provides a set of utilities for interacting with XDXCT devices on the system.
 type Interface struct {
 	devices.Devices
 
@@ -84,7 +70,7 @@ func (m *Interface) createDeviceNode(path string, major int, minor int) error {
 	return m.Mknode(path, major, minor)
 }
 
-// Major returns the major number for the specified NVIDIA device node.
+// Major returns the major number for the specified XDXCT device node.
 // If the device node is not supported, an error is returned.
 func (m *Interface) Major(node string) (int64, error) {
 	var valid bool

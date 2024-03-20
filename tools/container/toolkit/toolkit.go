@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/XDXCT/xdxct-container-toolkit/internal/system/devices"
 	"github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi"
 	transformroot "github.com/XDXCT/xdxct-container-toolkit/pkg/xdxcdi/transform/root"
 	toml "github.com/pelletier/go-toml"
@@ -675,7 +674,7 @@ func getLdConfigPath() string {
 }
 
 // generateCDISpec generates a CDI spec for use in managemnt containers
-func generateCDISpec(opts *options, nvidiaCTKPath string) error {
+func generateCDISpec(opts *options, xdxctCTKPath string) error {
 	if !opts.cdiEnabled {
 		return nil
 	}
@@ -684,22 +683,11 @@ func generateCDISpec(opts *options, nvidiaCTKPath string) error {
 		return nil
 	}
 
-	log.Infof("Creating control device nodes at %v", opts.DriverRootCtrPath)
-	devices, err := devices.New(
-		devices.WithDevRoot(opts.DriverRootCtrPath),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to create library: %v", err)
-	}
-	if err := devices.CreateNVIDIAControlDevices(); err != nil {
-		return fmt.Errorf("failed to create control device nodes: %v", err)
-	}
-
 	log.Info("Generating CDI spec for management containers")
 	cdilib, err := xdxcdi.New(
 		xdxcdi.WithMode(xdxcdi.ModeManagement),
 		xdxcdi.WithDriverRoot(opts.DriverRootCtrPath),
-		xdxcdi.WithXDXCTCTKPath(nvidiaCTKPath),
+		xdxcdi.WithXDXCTCTKPath(xdxctCTKPath),
 		xdxcdi.WithVendor(opts.cdiVendor),
 		xdxcdi.WithClass(opts.cdiClass),
 	)

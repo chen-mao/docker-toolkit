@@ -1,6 +1,6 @@
 package config
 
-// RuntimeConfig stores the config options for the NVIDIA Container Runtime
+// RuntimeConfig stores the config options for the XDXCT Container Runtime
 type RuntimeConfig struct {
 	DebugFilePath string `toml:"debug"`
 	// LogLevel defines the logging level for the application
