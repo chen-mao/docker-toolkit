@@ -19,7 +19,7 @@ func New(logger logger.Interface, requirements []string) *Requirements {
 		requirements: requirements,
 		properties: map[string]constraints.Property{
 			// Set up the supported properties. These are overridden with actual values.
-			CUDA:   constraints.NewVersionProperty(CUDA, ""),
+			GPU:   constraints.NewVersionProperty(GPU, ""),
 			ARCH:   constraints.NewVersionProperty(ARCH, ""),
 			DRIVER: constraints.NewVersionProperty(DRIVER, ""),
 			BRAND:  constraints.NewStringProperty(BRAND, ""),

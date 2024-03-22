@@ -8,17 +8,17 @@ import (
 )
 
 type builder struct {
-	env            map[string]string
-	mounts         []specs.Mount
+	env    map[string]string
+	mounts []specs.Mount
 	disableRequire bool
 }
 
-// New creates a new CUDA image from the input options.
-func New(opt ...Option) (CUDA, error) {
+// New creates a new GPU image from the input options.
+func New(opt ...Option) (GPU, error) {
 	b := &builder{}
 	for _, o := range opt {
 		if err := o(b); err != nil {
-			return CUDA{}, err
+			return GPU{}, err
 		}
 	}
 	if b.env == nil {
@@ -28,20 +28,20 @@ func New(opt ...Option) (CUDA, error) {
 	return b.build()
 }
 
-// build creates a CUDA image from the builder.
-func (b builder) build() (CUDA, error) {
+// build creates a GPU image from the builder.
+func (b builder) build() (GPU, error) {
 	if b.disableRequire {
-		b.env[envNVDisableRequire] = "true"
+		b.env[envXDXDisableRequire] = "true"
 	}
 
-	c := CUDA{
+	c := GPU{
 		env:    b.env,
 		mounts: b.mounts,
 	}
 	return c, nil
 }
 
-// Option is a functional option for creating a CUDA image.
+// Option is a functional option for creating a GPU image.
 type Option func(*builder) error
 
 // WithDisableRequire sets the disable require option.
@@ -52,7 +52,7 @@ func WithDisableRequire(disableRequire bool) Option {
 	}
 }
 
-// WithEnv sets the environment variables to use when creating the CUDA image.
+// WithEnv sets the environment variables to use when creating the GPU image.
 // Note that this also overwrites the values set with WithEnvMap.
 func WithEnv(env []string) Option {
 	return func(b *builder) error {
@@ -68,7 +68,7 @@ func WithEnv(env []string) Option {
 	}
 }
 
-// WithEnvMap sets the environment variable map to use when creating the CUDA image.
+// WithEnvMap sets the environment variable map to use when creating the GPU image.
 // Note that this also overwrites the values set with WithEnv.
 func WithEnvMap(env map[string]string) Option {
 	return func(b *builder) error {
@@ -77,7 +77,7 @@ func WithEnvMap(env map[string]string) Option {
 	}
 }
 
-// WithMounts sets the mounts associated with the CUDA image.
+// WithMounts sets the mounts associated with the GPU image.
 func WithMounts(mounts []specs.Mount) Option {
 	return func(b *builder) error {
 		b.mounts = mounts

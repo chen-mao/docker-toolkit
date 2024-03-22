@@ -7,30 +7,29 @@ import (
 	"strings"
 
 	"github.com/opencontainers/runtime-spec/specs-go"
-	"golang.org/x/mod/semver"
+	// "golang.org/x/mod/semver"
 	"tags.cncf.io/container-device-interface/pkg/parser"
 )
 
 const (
-	envCUDAVersion          = "CUDA_VERSION"
-	envNVRequirePrefix      = "XDXCT_REQUIRE_"
-	envNVRequireCUDA        = envNVRequirePrefix + "CUDA"
-	envNVRequireJetpack     = envNVRequirePrefix + "JETPACK"
-	envNVDisableRequire     = "XDXCT_DISABLE_REQUIRE"
-	envNVDriverCapabilities = "XDXCT_DRIVER_CAPABILITIES"
+	envGPUVersion            = "GPU_VERSION"
+	envXDXRequirePrefix      = "XDXCT_REQUIRE_"
+	envXDXRequireGPU         = envXDXRequirePrefix + "GPU"
+	envXDXDisableRequire     = "XDXCT_DISABLE_REQUIRE"
+	envXDXDriverCapabilities = "XDXCT_DRIVER_CAPABILITIES"
 )
 
-// CUDA represents a CUDA image that can be used for GPU computing. This wraps
+// GPU represents a GPU image that can be used for GPU computing. This wraps
 // a map of environment variable to values that can be used to perform lookups
 // such as requirements.
-type CUDA struct {
+type GPU struct {
 	env    map[string]string
 	mounts []specs.Mount
 }
 
-// NewCUDAImageFromSpec creates a CUDA image from the input OCI runtime spec.
-// The process environment is read (if present) to construc the CUDA Image.
-func NewCUDAImageFromSpec(spec *specs.Spec) (CUDA, error) {
+// NewGPUImageFromSpec creates a GPU image from the input OCI runtime spec.
+// The process environment is read (if present) to construc the GPU Image.
+func NewGPUImageFromSpec(spec *specs.Spec) (GPU, error) {
 	var env []string
 	if spec != nil && spec.Process != nil {
 		env = spec.Process.Env
@@ -42,36 +41,36 @@ func NewCUDAImageFromSpec(spec *specs.Spec) (CUDA, error) {
 	)
 }
 
-// NewCUDAImageFromEnv creates a CUDA image from the input environment. The environment
+// NewGPUImageFromEnv creates a GPU image from the input environment. The environment
 // is a list of strings of the form ENVAR=VALUE.
-func NewCUDAImageFromEnv(env []string) (CUDA, error) {
+func NewGPUImageFromEnv(env []string) (GPU, error) {
 	return New(WithEnv(env))
 }
 
 // Getenv returns the value of the specified environment variable.
 // If the environment variable is not specified, an empty string is returned.
-func (i CUDA) Getenv(key string) string {
+func (i GPU) Getenv(key string) string {
 	return i.env[key]
 }
 
 // HasEnvvar checks whether the specified envvar is defined in the image.
-func (i CUDA) HasEnvvar(key string) bool {
+func (i GPU) HasEnvvar(key string) bool {
 	_, exists := i.env[key]
 	return exists
 }
 
-// IsLegacy returns whether the associated CUDA image is a "legacy" image. An
-// image is considered legacy if it has a CUDA_VERSION environment variable defined
-// and no XDXCT_REQUIRE_CUDA environment variable defined.
-func (i CUDA) IsLegacy() bool {
-	legacyCudaVersion := i.env[envCUDAVersion]
-	cudaRequire := i.env[envNVRequireCUDA]
-	return len(legacyCudaVersion) > 0 && len(cudaRequire) == 0
+// IsLegacy returns whether the associated GPU image is a "legacy" image. An
+// image is considered legacy if it has a GPU_VERSION environment variable defined
+// and no XDXCT_REQUIRE_GPU environment variable defined.
+func (i GPU) IsLegacy() bool {
+	legacyGpuVersion := i.env[envGPUVersion]
+	gpuRequire := i.env[envXDXRequireGPU]
+	return len(legacyGpuVersion) > 0 && len(gpuRequire) == 0
 }
 
 // GetRequirements returns the requirements from all XDXCT_REQUIRE_ environment
 // variables.
-func (i CUDA) GetRequirements() ([]string, error) {
+func (i GPU) GetRequirements() ([]string, error) {
 	if i.HasDisableRequire() {
 		return nil, nil
 	}
@@ -79,25 +78,17 @@ func (i CUDA) GetRequirements() ([]string, error) {
 	// All variables with the "XDXCT_REQUIRE_" prefix are passed to xdxct-container-cli
 	var requirements []string
 	for name, value := range i.env {
-		if strings.HasPrefix(name, envNVRequirePrefix) && !strings.HasPrefix(name, envNVRequireJetpack) {
+		if strings.HasPrefix(name, envXDXRequirePrefix) {
 			requirements = append(requirements, value)
 		}
-	}
-	if i.IsLegacy() {
-		v, err := i.legacyVersion()
-		if err != nil {
-			return nil, fmt.Errorf("failed to get version: %v", err)
-		}
-		cudaRequire := fmt.Sprintf("cuda>=%s", v)
-		requirements = append(requirements, cudaRequire)
 	}
 	return requirements, nil
 }
 
 // HasDisableRequire checks for the value of the XDXCT_DISABLE_REQUIRE. If set
 // to a valid (true) boolean value this can be used to disable the requirement checks
-func (i CUDA) HasDisableRequire() bool {
-	if disable, exists := i.env[envNVDisableRequire]; exists {
+func (i GPU) HasDisableRequire() bool {
+	if disable, exists := i.env[envXDXDisableRequire]; exists {
 		// i.logger.Debugf("XDXCT_DISABLE_REQUIRE=%v; skipping requirement checks", disable)
 		d, _ := strconv.ParseBool(disable)
 		return d
@@ -107,7 +98,7 @@ func (i CUDA) HasDisableRequire() bool {
 }
 
 // DevicesFromEnvvars returns the devices requested by the image through environment variables
-func (i CUDA) DevicesFromEnvvars(envVars ...string) VisibleDevices {
+func (i GPU) DevicesFromEnvvars(envVars ...string) VisibleDevices {
 	// We concantenate all the devices from the specified env.
 	var isSet bool
 	var devices []string
@@ -140,8 +131,8 @@ func (i CUDA) DevicesFromEnvvars(envVars ...string) VisibleDevices {
 }
 
 // GetDriverCapabilities returns the requested driver capabilities.
-func (i CUDA) GetDriverCapabilities() DriverCapabilities {
-	env := i.env[envNVDriverCapabilities]
+func (i GPU) GetDriverCapabilities() DriverCapabilities {
+	env := i.env[envXDXDriverCapabilities]
 
 	capabilities := make(DriverCapabilities)
 	for _, c := range strings.Split(env, ",") {
@@ -151,40 +142,8 @@ func (i CUDA) GetDriverCapabilities() DriverCapabilities {
 	return capabilities
 }
 
-func (i CUDA) legacyVersion() (string, error) {
-	cudaVersion := i.env[envCUDAVersion]
-	majorMinor, err := parseMajorMinorVersion(cudaVersion)
-	if err != nil {
-		return "", fmt.Errorf("invalid CUDA version %v: %v", cudaVersion, err)
-	}
-
-	return majorMinor, nil
-}
-
-func parseMajorMinorVersion(version string) (string, error) {
-	vVersion := "v" + strings.TrimPrefix(version, "v")
-
-	if !semver.IsValid(vVersion) {
-		return "", fmt.Errorf("invalid version string")
-	}
-
-	majorMinor := strings.TrimPrefix(semver.MajorMinor(vVersion), "v")
-	parts := strings.Split(majorMinor, ".")
-
-	var err error
-	_, err = strconv.ParseUint(parts[0], 10, 32)
-	if err != nil {
-		return "", fmt.Errorf("invalid major version")
-	}
-	_, err = strconv.ParseUint(parts[1], 10, 32)
-	if err != nil {
-		return "", fmt.Errorf("invalid minor version")
-	}
-	return majorMinor, nil
-}
-
 // OnlyFullyQualifiedCDIDevices returns true if all devices requested in the image are requested as CDI devices/
-func (i CUDA) OnlyFullyQualifiedCDIDevices() bool {
+func (i GPU) OnlyFullyQualifiedCDIDevices() bool {
 	var hasCDIdevice bool
 	for _, device := range i.DevicesFromEnvvars("XDXCT_VISIBLE_DEVICES").List() {
 		if !parser.IsQualifiedName(device) {
@@ -208,7 +167,7 @@ const (
 
 // DevicesFromMounts returns a list of device specified as mounts.
 // TODO: This should be merged with getDevicesFromMounts used in the XDXCT Container Runtime
-func (i CUDA) DevicesFromMounts() []string {
+func (i GPU) DevicesFromMounts() []string {
 	root := filepath.Clean(deviceListAsVolumeMountsRoot)
 	seen := make(map[string]bool)
 	var devices []string
@@ -241,7 +200,7 @@ func (i CUDA) DevicesFromMounts() []string {
 }
 
 // CDIDevicesFromMounts returns a list of CDI devices specified as mounts on the image.
-func (i CUDA) CDIDevicesFromMounts() []string {
+func (i GPU) CDIDevicesFromMounts() []string {
 	var devices []string
 	for _, mountDevice := range i.DevicesFromMounts() {
 		if !strings.HasPrefix(mountDevice, "cdi/") {

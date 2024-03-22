@@ -13,7 +13,7 @@ import (
 
 // NewGraphicsModifier constructs a modifier that injects graphics-related modifications into an OCI runtime specification.
 // The value of the XDXCT_DRIVER_CAPABILITIES environment variable is checked to determine if this modification should be made.
-func NewGraphicsModifier(logger logger.Interface, cfg *config.Config, image image.CUDA) (oci.SpecModifier, error) {
+func NewGraphicsModifier(logger logger.Interface, cfg *config.Config, image image.GPU) (oci.SpecModifier, error) {
 	if required, reason := requiresGraphicsModifier(image); !required {
 		logger.Infof("No graphics modifier required: %v", reason)
 		return nil, nil
@@ -52,12 +52,12 @@ func NewGraphicsModifier(logger logger.Interface, cfg *config.Config, image imag
 }
 
 // requiresGraphicsModifier determines whether a graphics modifier is required.
-func requiresGraphicsModifier(cudaImage image.CUDA) (bool, string) {
-	if devices := cudaImage.DevicesFromEnvvars(visibleDevicesEnvvar); len(devices.List()) == 0 {
+func requiresGraphicsModifier(gpuImage image.GPU) (bool, string) {
+	if devices := gpuImage.DevicesFromEnvvars(visibleDevicesEnvvar); len(devices.List()) == 0 {
 		return false, "no devices requested"
 	}
 
-	if !cudaImage.GetDriverCapabilities().Any(image.DriverCapabilityGraphics, image.DriverCapabilityDisplay) {
+	if !gpuImage.GetDriverCapabilities().Any(image.DriverCapabilityGraphics, image.DriverCapabilityDisplay) {
 		return false, "no required capabilities requested"
 	}
 

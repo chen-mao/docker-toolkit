@@ -39,7 +39,7 @@ type xdxctConfig struct {
 type containerConfig struct {
 	Pid    int
 	Rootfs string
-	Image  image.CUDA
+	Image  image.GPU
 	Xdxct  *xdxctConfig
 }
 
@@ -161,7 +161,7 @@ func isPrivileged(s *Spec) bool {
 	return image.IsPrivileged(&fullSpec)
 }
 
-func getDevicesFromEnvvar(image image.CUDA, swarmResourceEnvvars []string) *string {
+func getDevicesFromEnvvar(image image.GPU, swarmResourceEnvvars []string) *string {
 	// We check if the image has at least one of the Swarm resource envvars defined and use this
 	// if specified.
 	var hasSwarmEnvvar bool
@@ -225,7 +225,7 @@ func getDevicesFromMounts(mounts []Mount) *string {
 	return &ret
 }
 
-func getDevices(hookConfig *HookConfig, image image.CUDA, mounts []Mount, privileged bool) *string {
+func getDevices(hookConfig *HookConfig, image image.GPU, mounts []Mount, privileged bool) *string {
 	// If enabled, try and get the device list from volume mounts first
 	if hookConfig.AcceptDeviceListAsVolumeMounts {
 		devices := getDevicesFromMounts(mounts)
@@ -249,7 +249,7 @@ func getDevices(hookConfig *HookConfig, image image.CUDA, mounts []Mount, privil
 	return nil
 }
 
-func getMigDevices(image image.CUDA, envvar string) *string {
+func getMigDevices(image image.GPU, envvar string) *string {
 	if !image.HasEnvvar(envvar) {
 		return nil
 	}
@@ -257,15 +257,15 @@ func getMigDevices(image image.CUDA, envvar string) *string {
 	return &devices
 }
 
-func (c *HookConfig) getDriverCapabilities(cudaImage image.CUDA, legacyImage bool) image.DriverCapabilities {
+func (c *HookConfig) getDriverCapabilities(gpuImage image.GPU, legacyImage bool) image.DriverCapabilities {
 	// We use the default driver capabilities by default. This is filtered to only include the
 	// supported capabilities
 	supportedDriverCapabilities := image.NewDriverCapabilities(c.SupportedDriverCapabilities.String())
 
 	capabilities := supportedDriverCapabilities.Intersection(image.DefaultDriverCapabilities)
 
-	capsEnvSpecified := cudaImage.HasEnvvar(envXDXDriverCapabilities)
-	capsEnv := cudaImage.Getenv(envXDXDriverCapabilities)
+	capsEnvSpecified := gpuImage.HasEnvvar(envXDXDriverCapabilities)
+	capsEnv := gpuImage.Getenv(envXDXDriverCapabilities)
 
 	if !capsEnvSpecified && legacyImage {
 		// Environment variable unset with legacy image: set all capabilities.
@@ -284,7 +284,7 @@ func (c *HookConfig) getDriverCapabilities(cudaImage image.CUDA, legacyImage boo
 	return capabilities
 }
 
-func getXdxctConfig(hookConfig *HookConfig, image image.CUDA, mounts []Mount, privileged bool) *xdxctConfig {
+func getXdxctConfig(hookConfig *HookConfig, image image.GPU, mounts []Mount, privileged bool) *xdxctConfig {
 	legacyImage := image.IsLegacy()
 
 	var devices string

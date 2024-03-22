@@ -68,7 +68,7 @@ func getDevicesFromSpec(logger logger.Interface, ociSpec oci.Spec, cfg *config.C
 		return annotationDevices, nil
 	}
 
-	container, err := image.NewCUDAImageFromSpec(rawSpec)
+	container, err := image.NewGPUImageFromSpec(rawSpec)
 	if err != nil {
 		return nil, err
 	}

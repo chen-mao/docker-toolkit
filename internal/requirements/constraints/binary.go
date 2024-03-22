@@ -27,7 +27,7 @@ func (c binary) Assert() error {
 		return nil
 	}
 
-	// error_setx(err, "unsatisfied condition: %s, please update your driver to a newer version, or use an earlier cuda container", predicate_format);
+	// error_setx(err, "unsatisfied condition: %s, please update your driver to a newer version, or use an earlier gpu container", predicate_format);
 	return fmt.Errorf("unsatisfied condition: %v (%v)", c.String(), c.left.String())
 }
 

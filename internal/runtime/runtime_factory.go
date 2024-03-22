@@ -50,7 +50,7 @@ func newSpecModifier(logger logger.Interface, cfg *config.Config, ociSpec oci.Sp
 		return nil, fmt.Errorf("failed to load OCI spec: %v", err)
 	}
 
-	image, err := image.NewCUDAImageFromSpec(rawSpec)
+	image, err := image.NewGPUImageFromSpec(rawSpec)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func newSpecModifier(logger logger.Interface, cfg *config.Config, ociSpec oci.Sp
 	return modifiers, nil
 }
 
-func newModeModifier(logger logger.Interface, mode string, cfg *config.Config, ociSpec oci.Spec, image image.CUDA) (oci.SpecModifier, error) {
+func newModeModifier(logger logger.Interface, mode string, cfg *config.Config, ociSpec oci.Spec, image image.GPU) (oci.SpecModifier, error) {
 	switch mode {
 	case "legacy":
 		return modifier.NewStableRuntimeModifier(logger, cfg.XDXCTContainerRuntimeHookConfig.Path), nil

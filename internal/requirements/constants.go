@@ -4,6 +4,6 @@ package requirements
 const (
 	ARCH   = "arch"
 	BRAND  = "brand"
-	CUDA   = "cuda"
+	GPU   = "gpu"
 	DRIVER = "driver"
 )

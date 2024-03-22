@@ -122,19 +122,19 @@ func TestIsLibName(t *testing.T) {
 			isLib: false,
 		},
 		{
-			name:  "notlibcuda.so",
+			name:  "notlibgpu.so",
 			isLib: false,
 		},
 		{
-			name:  "libcuda.so",
+			name:  "libgpu.so",
 			isLib: true,
 		},
 		{
-			name:  "libcuda.so.1",
+			name:  "libgpu.so.1",
 			isLib: true,
 		},
 		{
-			name:  "libcuda.soNOT",
+			name:  "libgpu.soNOT",
 			isLib: false,
 		},
 	}
