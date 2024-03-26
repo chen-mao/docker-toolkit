@@ -31,8 +31,7 @@ xdxct-ctk cdi generate
 The default is to print the specification to STDOUT and a filename can be specified using the `--output` flag.
 
 The specification will contain a device entries as follows (where applicable):
-* An `xdxct.com/gpu=gpu{INDEX}` device for each non-MIG-enabled full GPU in the system
-* An `xdxct.com/gpu=mig{GPU_INDEX}:{MIG_INDEX}` device for each MIG-device in the system
+* An `xdxct.com/gpu=gpu{INDEX}` device for each full GPU in the system
 * A special device called `xdxct.com/gpu=all` which represents all available devices.
 
 For example, to generate the CDI specification in the default location where CDI-enabled tools such as `podman`, `containerd`, `cri-o`, or the XDXCT Container Runtime can be configured to load it, the following command can be run:

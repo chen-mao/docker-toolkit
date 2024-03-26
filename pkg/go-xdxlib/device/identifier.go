@@ -22,7 +22,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Identifier can be used to refer to a GPU or MIG device.
+// Identifier can be used to refer to a GPU.
 // This includes a device index or UUID.
 type Identifier string
 

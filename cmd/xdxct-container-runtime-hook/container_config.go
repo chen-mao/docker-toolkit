@@ -249,14 +249,6 @@ func getDevices(hookConfig *HookConfig, image image.GPU, mounts []Mount, privile
 	return nil
 }
 
-func getMigDevices(image image.GPU, envvar string) *string {
-	if !image.HasEnvvar(envvar) {
-		return nil
-	}
-	devices := image.Getenv(envvar)
-	return &devices
-}
-
 func (c *HookConfig) getDriverCapabilities(gpuImage image.GPU, legacyImage bool) image.DriverCapabilities {
 	// We use the default driver capabilities by default. This is filtered to only include the
 	// supported capabilities
