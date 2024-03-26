@@ -1,7 +1,6 @@
 package system
 
 import (
-	devchar "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/create-dev-char-symlinks"
 	devicenodes "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/create-device-nodes"
 	ldcache "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/print-ldcache"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
@@ -28,7 +27,6 @@ func (m command) build() *cli.Command {
 	}
 
 	system.Subcommands = []*cli.Command{
-		devchar.NewCommand(m.logger),
 		devicenodes.NewCommand(m.logger),
 		ldcache.NewCommand(m.logger),
 	}
