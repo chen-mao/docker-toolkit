@@ -1,23 +1,6 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package system
 
 import (
-	devchar "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/create-dev-char-symlinks"
 	devicenodes "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/create-device-nodes"
 	ldcache "github.com/XDXCT/xdxct-container-toolkit/cmd/xdxct-ctk/system/print-ldcache"
 	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
@@ -40,11 +23,10 @@ func (m command) build() *cli.Command {
 	// Create the 'system' command
 	system := cli.Command{
 		Name:  "system",
-		Usage: "A collection of system-related utilities for the NVIDIA Container Toolkit",
+		Usage: "A collection of system-related utilities for the XDXCT Container Toolkit",
 	}
 
 	system.Subcommands = []*cli.Command{
-		devchar.NewCommand(m.logger),
 		devicenodes.NewCommand(m.logger),
 		ldcache.NewCommand(m.logger),
 	}

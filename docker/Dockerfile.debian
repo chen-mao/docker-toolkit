@@ -36,8 +36,8 @@ ARG PKG_NAME
 ARG PKG_VERS
 ARG PKG_REV
 
-ENV DEBFULLNAME "NVIDIA CORPORATION"
-ENV DEBEMAIL "cudatools@nvidia.com"
+ENV DEBFULLNAME "XDXCT CORPORATION"
+ENV DEBEMAIL ""
 ENV REVISION "$PKG_VERS-$PKG_REV"
 ENV SECTION ""
 
@@ -56,17 +56,16 @@ RUN make PREFIX=${DIST_DIR} cmds
 WORKDIR $DIST_DIR
 COPY packaging/debian ./debian
 
-ARG LIBNVIDIA_CONTAINER_TOOLS_VERSION
-ENV LIBNVIDIA_CONTAINER_TOOLS_VERSION ${LIBNVIDIA_CONTAINER_TOOLS_VERSION}
+ARG LIBXDXCT_CONTAINER_TOOLS_VERSION
+ENV LIBXDXCT_CONTAINER_TOOLS_VERSION ${LIBXDXCT_CONTAINER_TOOLS_VERSION}
 
 RUN dch --create --package="${PKG_NAME}" \
-        --newversion "${REVISION}" \
-            "See https://gitlab.com/nvidia/container-toolkit/container-toolkit/-/blob/${GIT_COMMIT}/CHANGELOG.md for the changelog" && \
-    dch --append "Bump libxdxct-container dependency to ${LIBNVIDIA_CONTAINER1_VERSION}" && \
+        --newversion "${REVISION}"  && \
+    dch --append "Bump libxdxct-container dependency to ${LIBXDXCT_CONTAINER1_VERSION}" && \
     dch -r "" && \
     if [ "$REVISION" != "$(dpkg-parsechangelog --show-field=Version)" ]; then exit 1; fi
 
 CMD export DISTRIB="$(lsb_release -cs)" && \
-    debuild -eDISTRIB -eSECTION -eLIBNVIDIA_CONTAINER_TOOLS_VERSION -eVERSION="${REVISION}" \
+    debuild -eDISTRIB -eSECTION -eLIBXDXCT_CONTAINER_TOOLS_VERSION -eVERSION="${REVISION}" \
     --dpkg-buildpackage-hook='sh debian/prepare' -i -us -uc -b && \
     mv /tmp/*.deb /dist

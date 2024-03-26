@@ -1,19 +1,3 @@
-/*
-# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-*/
-
 package devices
 
 import (
@@ -67,14 +51,14 @@ func (d devices) Get(name Name) (Major, bool) {
 	return device, exists
 }
 
-// GetNVIDIADevices returns the set of NVIDIA Devices on the machine
+// GetXDXCTDevices returns the set of XDXCT Devices on the machine
 func GetXDXCTDevices() (Devices, error) {
 	return xdxctDevices(procDevicesPath)
 }
 
-// nvidiaDevices returns the set of NVIDIA Devices from the specified devices file.
+// xdxctDevices returns the set of XDXCT Devices from the specified devices file.
 // This is useful for testing since we may be testing on a system where `/proc/devices` does
-// contain a reference to NVIDIA devices.
+// contain a reference to XDXCT devices.
 func xdxctDevices(devicesPath string) (Devices, error) {
 	devicesFile, err := os.Open(devicesPath)
 	if os.IsNotExist(err) {
@@ -88,25 +72,25 @@ func xdxctDevices(devicesPath string) (Devices, error) {
 	return xdxctDeviceFrom(devicesFile)
 }
 
-var errNoNvidiaDevices = errors.New("no XDXCT devices found")
+var errNoXdxctDevices = errors.New("no XDXCT devices found")
 
 func xdxctDeviceFrom(reader io.Reader) (devices, error) {
 	allDevices := devicesFrom(reader)
-	nvidiaDevices := make(devices)
+	xdxctDevices := make(devices)
 
-	var hasNvidiaDevices bool
+	var hasXdxctDevices bool
 	for n, d := range allDevices {
 		if !strings.HasPrefix(string(n), xdxctDevicePrefix) {
 			continue
 		}
-		nvidiaDevices[n] = d
-		hasNvidiaDevices = true
+		xdxctDevices[n] = d
+		hasXdxctDevices = true
 	}
 
-	if !hasNvidiaDevices {
-		return nil, errNoNvidiaDevices
+	if !hasXdxctDevices {
+		return nil, errNoXdxctDevices
 	}
-	return nvidiaDevices, nil
+	return xdxctDevices, nil
 }
 
 func devicesFrom(reader io.Reader) devices {

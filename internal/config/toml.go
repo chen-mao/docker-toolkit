@@ -1,19 +1,3 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package config
 
 import (
@@ -180,15 +164,15 @@ func (t *Toml) commentDefaults() *Toml {
 	asToml := (*toml.Tree)(t)
 	commentedDefaults := map[string]interface{}{
 		"swarm-resource": "DOCKER_RESOURCE_GPU",
-		"accept-nvidia-visible-devices-envvar-when-unprivileged": true,
-		"accept-nvidia-visible-devices-as-volume-mounts":         false,
-		"nvidia-container-cli.root":                              "/run/nvidia/driver",
-		"nvidia-container-cli.path":                              "/usr/bin/nvidia-container-cli",
-		"nvidia-container-cli.debug":                             "/var/log/nvidia-container-toolkit.log",
-		"nvidia-container-cli.ldcache":                           "/etc/ld.so.cache",
-		"nvidia-container-cli.no-cgroups":                        false,
-		"nvidia-container-cli.user":                              "root:video",
-		"nvidia-container-runtime.debug":                         "/var/log/nvidia-container-runtime.log",
+		"accept-xdxct-visible-devices-envvar-when-unprivileged": true,
+		"accept-xdxct-visible-devices-as-volume-mounts":         false,
+		"xdxct-container-cli.root":                              "/run/xdxct/driver",
+		"xdxct-container-cli.path":                              "/usr/bin/xdxct-container-cli",
+		"xdxct-container-cli.debug":                             "/var/log/xdxct-container-toolkit.log",
+		"xdxct-container-cli.ldcache":                           "/etc/ld.so.cache",
+		"xdxct-container-cli.no-cgroups":                        false,
+		"xdxct-container-cli.user":                              "root:video",
+		"xdxct-container-runtime.debug":                         "/var/log/xdxct-container-runtime.log",
 	}
 	for k, v := range commentedDefaults {
 		set := asToml.Get(k)
@@ -201,10 +185,10 @@ func (t *Toml) commentDefaults() *Toml {
 }
 
 func shouldComment(key string, defaultValue interface{}, setTo interface{}) bool {
-	if key == "nvidia-container-cli.user" && !getCommentedUserGroup() {
+	if key == "xdxct-container-cli.user" && !getCommentedUserGroup() {
 		return false
 	}
-	if key == "nvidia-container-runtime.debug" && setTo == "/dev/null" {
+	if key == "xdxct-container-runtime.debug" && setTo == "/dev/null" {
 		return true
 	}
 	if setTo == nil || defaultValue == setTo || setTo == "" {

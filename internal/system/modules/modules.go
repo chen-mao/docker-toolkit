@@ -1,19 +1,3 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package modules
 
 import (
@@ -23,7 +7,7 @@ import (
 	"github.com/XDXCT/xdxct-container-toolkit/internal/logger"
 )
 
-// Interface provides a set of utilities for interacting with NVIDIA modules on the system.
+// Interface provides a set of utilities for interacting with XDXCT modules on the system.
 type Interface struct {
 	logger logger.Interface
 
@@ -55,9 +39,9 @@ func New(opts ...Option) *Interface {
 	return m
 }
 
-// LoadAll loads all the NVIDIA kernel modules.
+// LoadAll loads all the XDXCT kernel modules.
 func (m *Interface) LoadAll() error {
-	modules := []string{"nvidia", "nvidia-uvm", "nvidia-modeset"}
+	modules := []string{"xdxct"}
 
 	for _, module := range modules {
 		if err := m.Load(module); err != nil {
@@ -69,10 +53,10 @@ func (m *Interface) LoadAll() error {
 
 var errInvalidModule = fmt.Errorf("invalid module")
 
-// Load loads the specified NVIDIA kernel module.
+// Load loads the specified XDXCT kernel module.
 // If the root is specified we first chroot into this root.
 func (m *Interface) Load(module string) error {
-	if !strings.HasPrefix(module, "nvidia") {
+	if !strings.HasPrefix(module, "xdxct") {
 		return errInvalidModule
 	}
 

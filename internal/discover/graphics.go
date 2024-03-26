@@ -1,19 +1,3 @@
-/**
-# Copyright (c) 2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package discover
 
 import (
@@ -35,13 +19,13 @@ import (
 // TODO: The logic for creating DRM devices should be consolidated between this
 // and the logic for generating CDI specs for a single device. This is only used
 // when applying OCI spec modifications to an incoming spec in "legacy" mode.
-func NewDRMNodesDiscoverer(logger logger.Interface, devices image.VisibleDevices, devRoot string, nvidiaCTKPath string) (Discover, error) {
+func NewDRMNodesDiscoverer(logger logger.Interface, devices image.VisibleDevices, devRoot string, xdxctCTKPath string) (Discover, error) {
 	drmDeviceNodes, err := newDRMDeviceDiscoverer(logger, devices, devRoot)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create DRM device discoverer: %v", err)
 	}
 
-	drmByPathSymlinks := newCreateDRMByPathSymlinks(logger, drmDeviceNodes, devRoot, nvidiaCTKPath)
+	drmByPathSymlinks := newCreateDRMByPathSymlinks(logger, drmDeviceNodes, devRoot, xdxctCTKPath)
 
 	discover := Merge(drmDeviceNodes, drmByPathSymlinks)
 	return discover, nil
@@ -79,16 +63,16 @@ func NewGraphicsMountsDiscoverer(logger logger.Interface, driver *root.Driver, x
 type drmDevicesByPath struct {
 	None
 	logger        logger.Interface
-	nvidiaCTKPath string
+	xdxctCTKPath string
 	devRoot       string
 	devicesFrom   Discover
 }
 
 // newCreateDRMByPathSymlinks creates a discoverer for a hook to create the by-path symlinks for DRM devices discovered by the specified devices discoverer
-func newCreateDRMByPathSymlinks(logger logger.Interface, devices Discover, devRoot string, nvidiaCTKPath string) Discover {
+func newCreateDRMByPathSymlinks(logger logger.Interface, devices Discover, devRoot string, xdxctCTKPath string) Discover {
 	d := drmDevicesByPath{
 		logger:        logger,
-		nvidiaCTKPath: nvidiaCTKPath,
+		xdxctCTKPath: xdxctCTKPath,
 		devRoot:       devRoot,
 		devicesFrom:   devices,
 	}
@@ -118,8 +102,8 @@ func (d drmDevicesByPath) Hooks() ([]Hook, error) {
 		args = append(args, "--link", l)
 	}
 
-	hook := CreateNvidiaCTKHook(
-		d.nvidiaCTKPath,
+	hook := CreateXdxctCTKHook(
+		d.xdxctCTKPath,
 		"create-symlinks",
 		args...,
 	)
@@ -226,7 +210,7 @@ func newDRMDeviceFilter(logger logger.Interface, devices image.VisibleDevices, d
 type xorgHooks struct {
 	libraries     Discover
 	driverVersion string
-	nvidiaCTKPath string
+	xdxctCTKPath string
 }
 
 var _ Discover = (*xorgHooks)(nil)
@@ -251,6 +235,7 @@ func newXorgDiscoverer(logger logger.Interface, driver *root.Driver, xdxctCTKPat
 			lookup.WithSearchPaths(
 				"/opt/xdxgpu/lib/xorg/modules/drivers",
 				"/usr/lib/x86_64-linux-gnu/dri",
+				"/usr/lib/aarch64-linux-gnu/dri",
 				"/usr/lib64/xorg/modules/drivers",
 				"/usr/lib/xorg/modules/drivers",
 				"/usr/lib64/dri",
@@ -261,14 +246,13 @@ func newXorgDiscoverer(logger logger.Interface, driver *root.Driver, xdxctCTKPat
 			"xdxgpu_dri.so",
 			"xdxgpu_drv.so",
 			"xdxgpu_drv_*.so",
-			// fmt.Sprintf("nvidia/xorg/libglxserver_nvidia.so.%s", version),
 		},
 	)
 	version := "155"
 	xorgHooks := xorgHooks{
 		libraries:     xorgLibs,
 		driverVersion: version,
-		nvidiaCTKPath: xdxctCTKPath,
+		xdxctCTKPath: xdxctCTKPath,
 	}
 
 	xorgConfg := NewMounts(
@@ -309,7 +293,7 @@ func (m xorgHooks) Hooks() ([]Hook, error) {
 	var target string
 	for _, mount := range mounts {
 		filename := filepath.Base(mount.HostPath)
-		if filename == "libglxserver_nvidia.so."+m.driverVersion {
+		if filename == "libglxserver_xdxct.so."+m.driverVersion {
 			target = mount.Path
 		}
 	}
@@ -321,7 +305,7 @@ func (m xorgHooks) Hooks() ([]Hook, error) {
 	link := strings.TrimSuffix(target, "."+m.driverVersion)
 	links := []string{fmt.Sprintf("%s::%s", filepath.Base(target), link)}
 	symlinkHook := CreateCreateSymlinkHook(
-		m.nvidiaCTKPath,
+		m.xdxctCTKPath,
 		links,
 	)
 

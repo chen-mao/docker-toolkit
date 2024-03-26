@@ -1,18 +1,3 @@
-/**
-# Copyright (c) 2021-2022, NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
 
 package main
 
@@ -39,11 +24,11 @@ const (
 
 	// Hook-based settings
 	defaultHooksDir     = "/usr/share/containers/oci/hooks.d"
-	defaultHookFilename = "oci-nvidia-hook.json"
+	defaultHookFilename = "oci-xdxct-hook.json"
 
 	// Config-based settings
 	defaultConfig        = "/etc/crio/crio.conf"
-	defaultRuntimeClass  = "nvidia"
+	defaultRuntimeClass  = "xdxct"
 	defaultSetAsDefault  = true
 	defaultRestartMode   = restartModeSystemd
 	defaultHostRootMount = "/host"
@@ -70,14 +55,14 @@ func main() {
 	// Create the top-level CLI
 	c := cli.NewApp()
 	c.Name = "crio"
-	c.Usage = "Update cri-o hooks to include the NVIDIA runtime hook"
+	c.Usage = "Update cri-o hooks to include the XDXCT runtime hook"
 	c.ArgsUsage = "<toolkit_dirname>"
 	c.Version = "0.1.0"
 
 	// Create the 'setup' subcommand
 	setup := cli.Command{}
 	setup.Name = "setup"
-	setup.Usage = "Configure cri-o for NVIDIA GPU containers"
+	setup.Usage = "Configure cri-o for XDXCT GPU containers"
 	setup.ArgsUsage = "<toolkit_dirname>"
 	setup.Action = func(c *cli.Context) error {
 		return Setup(c, &options)
@@ -89,7 +74,7 @@ func main() {
 	// Create the 'cleanup' subcommand
 	cleanup := cli.Command{}
 	cleanup.Name = "cleanup"
-	cleanup.Usage = "Remove the NVIDIA-specific cri-o configuration"
+	cleanup.Usage = "Remove the XDXCT-specific cri-o configuration"
 	cleanup.Action = func(c *cli.Context) error {
 		return Cleanup(c, &options)
 	}
@@ -138,7 +123,7 @@ func main() {
 		},
 		&cli.StringFlag{
 			Name:        "runtime-class",
-			Usage:       "The name of the runtime class to set for the nvidia-container-runtime",
+			Usage:       "The name of the runtime class to set for the xdxct-container-runtime",
 			Value:       defaultRuntimeClass,
 			Destination: &options.runtimeClass,
 			EnvVars:     []string{"CRIO_RUNTIME_CLASS"},
@@ -146,7 +131,7 @@ func main() {
 		// The flags below are only used by the 'setup' command.
 		&cli.BoolFlag{
 			Name:        "set-as-default",
-			Usage:       "Set nvidia-container-runtime as the default runtime",
+			Usage:       "Set xdxct-container-runtime as the default runtime",
 			Value:       defaultSetAsDefault,
 			Destination: &options.setAsDefault,
 			EnvVars:     []string{"CRIO_SET_AS_DEFAULT"},
@@ -210,7 +195,7 @@ func setupHook(o *options) error {
 	return nil
 }
 
-// setupConfig updates the cri-o config for the NVIDIA container runtime
+// setupConfig updates the cri-o config for the XDXCT container runtime
 func setupConfig(o *options) error {
 	log.Infof("Updating config file")
 
@@ -270,7 +255,7 @@ func cleanupHook(o *options) error {
 	return nil
 }
 
-// cleanupConfig removes the NVIDIA container runtime from the cri-o config
+// cleanupConfig removes the XDXCT container runtime from the cri-o config
 func cleanupConfig(o *options) error {
 	log.Infof("Reverting config file modifications")
 
@@ -357,7 +342,7 @@ func generateOciHook(toolkitDir string) podmanHook {
 	return hook
 }
 
-// UpdateConfig updates the cri-o config to include the NVIDIA Container Runtime
+// UpdateConfig updates the cri-o config to include the XDXCT Container Runtime
 func UpdateConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
 		operator.WithXdxctRuntimeName(o.runtimeClass),
@@ -374,7 +359,7 @@ func UpdateConfig(cfg engine.Interface, o *options) error {
 	return nil
 }
 
-// RevertConfig reverts the cri-o config to remove the NVIDIA Container Runtime
+// RevertConfig reverts the cri-o config to remove the XDXCT Container Runtime
 func RevertConfig(cfg engine.Interface, o *options) error {
 	runtimes := operator.GetRuntimes(
 		operator.WithXdxctRuntimeName(o.runtimeClass),

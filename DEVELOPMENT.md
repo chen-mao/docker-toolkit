@@ -1,10 +1,10 @@
-# NVIDIA Container Toolkit Release Tooling
+# XDXCT Container Toolkit Release Tooling
 
-This repository allows for the components of the NVIDIA container stack to be
-built and released as the NVIDIA Container Toolkit from a single repository. The components:
+This repository allows for the components of the XDXCT container stack to be
+built and released as the XDXCT Container Toolkit from a single repository. The components:
 * `libxdxct-container`
-* `nvidia-container-runtime`
-* `nvidia-docker`
+* `xdxct-container-runtime`
+* `xdxct-docker`
 are included as submodules in the `third_party` folder.
 
 The `xdxct-container-toolkit` resides in this repo directly.
@@ -28,8 +28,8 @@ The packages are generated in the `dist` folder.
 ## Testing local changes
 
 In oder to use the same build logic to be used to generate packages with local changes,
-the location of the individual components can be overridded using the: `LIBNVIDIA_CONTAINER_ROOT`,
-`NVIDIA_CONTAINER_TOOLKIT_ROOT`, `NVIDIA_CONTAINER_RUNTIME_ROOT`, and `NVIDIA_DOCKER_ROOT`
+the location of the individual components can be overridded using the: `LIBXDXCT_CONTAINER_ROOT`,
+`XDXCT_CONTAINER_TOOLKIT_ROOT`, `XDXCT_CONTAINER_RUNTIME_ROOT`, and `XDXCT_DOCKER_ROOT`
 environment variables.
 
 ## Testing packages locally

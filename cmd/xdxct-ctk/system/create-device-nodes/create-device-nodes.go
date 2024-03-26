@@ -1,19 +1,3 @@
-/**
-# Copyright (c) NVIDIA CORPORATION.  All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-**/
-
 package createdevicenodes
 
 import (
@@ -52,7 +36,7 @@ func (m command) build() *cli.Command {
 
 	c := cli.Command{
 		Name:  "create-device-nodes",
-		Usage: "A utility to create NVIDIA device nodes",
+		Usage: "A utility to create XDXCT device nodes",
 		Before: func(c *cli.Context) error {
 			return m.validateFlags(c, &opts)
 		},
@@ -71,12 +55,12 @@ func (m command) build() *cli.Command {
 		},
 		&cli.BoolFlag{
 			Name:        "control-devices",
-			Usage:       "create all control device nodes: nvidiactl, nvidia-modeset, nvidia-uvm, nvidia-uvm-tools",
+			Usage:       "create all control device nodes.",
 			Destination: &opts.control,
 		},
 		&cli.BoolFlag{
 			Name:        "load-kernel-modules",
-			Usage:       "load the NVIDIA Kernel Modules before creating devices nodes",
+			Usage:       "load the XDXCT Kernel Modules before creating devices nodes",
 			Destination: &opts.loadKernelModules,
 		},
 		&cli.BoolFlag{
@@ -103,7 +87,7 @@ func (m command) run(c *cli.Context, opts *options) error {
 			modules.WithRoot(opts.driverRoot),
 		)
 		if err := modules.LoadAll(); err != nil {
-			return fmt.Errorf("failed to load NVIDIA kernel modules: %v", err)
+			return fmt.Errorf("failed to load XDXCT kernel modules: %v", err)
 		}
 	}
 

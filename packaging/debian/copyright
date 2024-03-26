@@ -3,7 +3,7 @@ Upstream-Name: xdxct-container-toolkit
 Source: https://github.com/XDXCT/xdxct-container-toolkit
 
 Files: *
-Copyright: 2017-2020 NVIDIA CORPORATION <cudatools@nvidia.com>
+Copyright: 2023-2024 XDXCT CORPORATION <tools@xdxct.com>
 License: Apache-2.0
 
 License: Apache-2.0
