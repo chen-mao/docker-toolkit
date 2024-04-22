@@ -101,7 +101,7 @@ func doPrestart() {
 	if cli.NoPivot {
 		args = append(args, "--no-pivot")
 	}
-	args = append(args, "--debug=/1.log")
+	args = append(args, "--debug=/tmp/libxdxctgpu.log")
 	if cli.Ldcache != nil {
 		args = append(args, fmt.Sprintf("--ldcache=%s", *cli.Ldcache))
 	}

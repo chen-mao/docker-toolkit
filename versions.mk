@@ -1,11 +1,11 @@
 LIB_NAME := xdxct-container-toolkit
 LIB_VERSION := 1.0.0
-LIB_TAG := rc.1
+# LIB_TAG := rc.1
 
 # The package version is the combination of the library version and tag.
 # If the tag is specified the two components are joined with a tilde (~).
 PACKAGE_VERSION := $(LIB_VERSION)$(if $(LIB_TAG),~$(LIB_TAG))
-PACKAGE_REVISION := 0
+PACKAGE_REVISION := 1
 
 # Specify the xdxct-docker2 and xdxct-container-runtime package versions.
 # Note: The build tooling uses `LIB_TAG` above as the version tag.

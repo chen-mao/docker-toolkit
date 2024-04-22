@@ -73,6 +73,7 @@ fi
 %changelog
 # As of 1.10.0-1 we generate the release information automatically
 * %{release_date} XDXCT CORPORATION <tools@xdxct.com> %{version}-%{release}
+- Release 1.0.0.
 
 # The BASE package consists of the XDXCT Container Runtime and the XDXCT Container Toolkit CLI.
 # This allows the package to be installed on systems where no XDXCT Container CLI is available.
